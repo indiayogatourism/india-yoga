@@ -1,0 +1,594 @@
+import Link from 'next/link'
+import { prisma } from '@/lib/prisma'
+import { formatPrice } from '@/lib/utils'
+
+export const revalidate = 3600 // Revalidate home page every hour
+
+async function getFeaturedPackages() {
+  try {
+    const pkgs = await prisma.package.findMany({
+      where: {
+        status: 'PUBLISHED'
+      },
+      take: 4,
+      orderBy: {
+        totalBookings: 'desc'
+      }
+    })
+    return pkgs
+  } catch (e) {
+    return []
+  }
+}
+
+async function getTestimonials() {
+  try {
+    return await prisma.review.findMany({
+      where: {
+        isPublished: true,
+        rating: 5
+      },
+      take: 3,
+      include: {
+        user: true,
+        package: true
+      }
+    })
+  } catch (e) {
+    return []
+  }
+}
+
+export default async function HomePage() {
+  const featuredPackages = await getFeaturedPackages()
+  const dbTestimonials = await getTestimonials()
+
+  // Standard high-quality mock retreats if database is empty/seeding
+  const mockPackages = [
+    {
+      id: '1',
+      slug: '4-days-yoga-meditation-retreat',
+      title: '4 Days Yoga & Meditation Retreat',
+      location: 'Rishikesh, India',
+      durationDays: 4,
+      durationNights: 3,
+      priceShared: 149,
+      featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb',
+      isBestseller: true,
+      inclusions: 'Daily Yoga • Meditation • Meals',
+      rating: 4.9,
+      reviewsCount: 125
+    },
+    {
+      id: '2',
+      slug: '5-days-detox-yoga-retreat',
+      title: '5 Days Detox & Yoga Retreat',
+      location: 'Rishikesh, India',
+      durationDays: 5,
+      durationNights: 4,
+      priceShared: 199,
+      featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDk30QEObl2k8oh7fcQBueTF65N9BWmaV3ZkFEx-IwV9X8AbWEGvDjdZsVeKDa6UjgtvTWYRkKdjnkPVJtV_3Nw8OPt-i6-1QwTChz_JIbN5Ajhbnk2Iiaa-OsDxXuHkjd2sEGQZieRNh469JeWf3tdoxY0lRn-r-qpLXngXofLaYSYrEE-fV_ga7ucnNT3Gme80JOeBQYFv0cPjN8Ysq3Nqh-SRqn8Y7DrMXS4hhXKsWN1m3KaUNhvQIohglA5nqLCXdQLDykF_B0o',
+      isBestseller: false,
+      inclusions: 'Yoga • Detox • Ayurveda • Meals',
+      rating: 4.8,
+      reviewsCount: 86
+    },
+    {
+      id: '3',
+      slug: '3-days-weekend-yoga-retreat',
+      title: '3 Days Weekend Yoga Retreat',
+      location: 'Rishikesh, India',
+      durationDays: 3,
+      durationNights: 2,
+      priceShared: 109,
+      featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAWCF3FNkFJLbVzL3jqGHa73fPpDI6Eih62gOI6ascq2xyzfCWb_p_tKmSBHMk1_W6r9aRBFx_DeSTW8t9NmWEihpsnAxgC7sKy77fHdsQFJABetSWSc8tuLwzW4Z9rrHY543Dv8KNCdiwnLZU84GDjA0h2USiT4sfOempqu1qZxhRQoBhJAZQRqnUhIHSmEFeQ72J-oJOOZ2v_GjbWy2G16WBKPTkNmy9iwXeV8c2gWGlZ1K_loofjKke13dNcEj1u2Q0R8eeeqQ3_',
+      isBestseller: false,
+      inclusions: 'Yoga • Meditation • Ganga Aarti',
+      rating: 4.7,
+      reviewsCount: 64
+    },
+    {
+      id: '4',
+      slug: '7-days-yoga-wellbeing-retreat',
+      title: '7 Days Yoga & Wellbeing Retreat',
+      location: 'Rishikesh, India',
+      durationDays: 7,
+      durationNights: 6,
+      priceShared: 279,
+      featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSQ4PkqcD83cx3q9NfEA2D4D0dACa2KEUrl3ocyJqQEj8MsZiKp7yVUjfsz1PhCLoRpbOpTPCoSruI3zUdpAXV495u5Nx2wyRvMXsbWoFsC8TpG2X0Rq4esc3tdBCS7oprShHV2A_7yXUHsa8M_BcP9MXTc2RSEM0uCMoKYPbsZe5DZsZM13f-jaDBBnIrbBe6i7bndREoFQiDr5xm7JKp_iXQ2Z8BSeyFbYuAFCn22z3Nhf5-im3Iko54LI1Rq4pmjJJZPzbrJGjh',
+      isBestseller: true,
+      inclusions: 'Yoga • Meditation • Nature • Meals',
+      rating: 4.9,
+      reviewsCount: 98
+    }
+  ]
+
+  const displayPackages = featuredPackages.length > 0 ? featuredPackages : mockPackages
+
+  const defaultTestimonials = [
+    {
+      name: 'Emily Johnson',
+      country: 'USA',
+      content: 'The most peaceful 4 days of my life. Perfect guidance, beautiful place and amazing people.',
+      rating: 5
+    },
+    {
+      name: 'Michael',
+      country: 'United Kingdom',
+      content: 'Unbelievable attention to detail. High-end comfort and authentic Himalayan lineage training in one package.',
+      rating: 5
+    }
+  ]
+
+  const displayTestimonials = dbTestimonials.length > 0
+    ? dbTestimonials.map(t => ({ name: t.user.name, country: t.country || 'International Guest', content: t.content, rating: t.rating }))
+    : defaultTestimonials
+
+  return (
+    <main className="bg-surface relative pb-12">
+      
+      {/* 1. HERO SECTION WITH SEARCH WIDGET */}
+      <section className="relative min-h-[600px] lg:h-[95vh] flex items-center justify-center overflow-hidden pt-24 pb-16">
+        <div className="absolute inset-0 w-full h-full">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/35 to-primary/30 z-10"></div>
+          <img
+            className="object-cover w-full h-full absolute inset-0 scale-105"
+            alt="A breathtaking yoga session overlooking Rishikesh and the holy Ganges"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSQ4PkqcD83cx3q9NfEA2D4D0dACa2KEUrl3ocyJqQEj8MsZiKp7yVUjfsz1PhCLoRpbOpTPCoSruI3zUdpAXV495u5Nx2wyRvMXsbWoFsC8TpG2X0Rq4esc3tdBCS7oprShHV2A_7yXUHsa8M_BcP9MXTc2RSEM0uCMoKYPbsZe5DZsZM13f-jaDBBnIrbBe6i7bndREoFQiDr5xm7JKp_iXQ2Z8BSeyFbYuAFCn22z3Nhf5-im3Iko54LI1Rq4pmjJJZPzbrJGjh"
+          />
+        </div>
+        
+        <div className="relative z-20 w-full max-w-[1280px] mx-auto px-6 md:px-12 flex flex-col items-center text-center">
+          
+          <span className="inline-block px-4 py-1.5 bg-tertiary-fixed-dim/20 backdrop-blur-sm border border-tertiary-fixed-dim/30 text-tertiary-fixed rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6">
+            ✦ RISHIKESH · KERALA · DHARAMSHALA ✦
+          </span>
+          
+          <h1 className="font-display-lg text-3xl md:text-5xl lg:text-7xl text-on-primary max-w-5xl mx-auto leading-[1.1] mb-4 md:mb-6 drop-shadow-lg">
+            Transform Your Life <br />
+            <span className="text-tertiary-fixed-dim font-headline-lg italic">in Rishikesh, India</span>
+          </h1>
+          
+          <p className="font-body-md text-xs md:text-lg text-on-primary/95 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed drop-shadow-sm">
+            Discover handpicked yoga retreats, schools &amp; wellness experiences in the Yoga Capital of the World.
+          </p>
+
+          {/* Desktop Search Bento Widget */}
+          <div className="hidden md:flex w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-full shadow-2xl p-3 items-center gap-3 border border-white/40">
+            {/* Destination */}
+            <div className="flex items-center gap-3 px-4 py-2 border-r border-outline-variant/30 w-1/4 text-left">
+              <span className="material-symbols-outlined text-primary text-xl">location_on</span>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Destination</span>
+                <span className="text-xs font-bold text-on-surface">Rishikesh, India</span>
+              </div>
+            </div>
+            {/* Duration */}
+            <div className="flex items-center gap-3 px-4 py-2 border-r border-outline-variant/30 w-1/4 text-left">
+              <span className="material-symbols-outlined text-primary text-xl">schedule</span>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Duration</span>
+                <span className="text-xs font-bold text-on-surface">Any Duration</span>
+              </div>
+            </div>
+            {/* Dates */}
+            <div className="flex items-center gap-3 px-4 py-2 border-r border-outline-variant/30 w-1/4 text-left">
+              <span className="material-symbols-outlined text-primary text-xl">calendar_month</span>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Dates</span>
+                <span className="text-xs font-bold text-on-surface">Select Dates</span>
+              </div>
+            </div>
+            {/* Guests */}
+            <div className="flex items-center gap-3 px-4 py-2 w-1/4 text-left">
+              <span className="material-symbols-outlined text-primary text-xl">group</span>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Guests</span>
+                <span className="text-xs font-bold text-on-surface">1 Guest</span>
+              </div>
+            </div>
+
+            <Link href="/packages" className="shrink-0">
+              <button className="bg-primary hover:bg-primary-container text-on-primary font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer text-sm">
+                Explore Retreats
+              </button>
+            </Link>
+          </div>
+
+          {/* Mobile Search Bento Widget (2x2 Selector grid + side-by-side buttons) */}
+          <div className="md:hidden w-full bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-4 border border-white/40 mt-4 flex flex-col gap-4 text-left">
+            <div className="grid grid-cols-2 gap-3">
+              {/* Destination */}
+              <div className="flex items-start gap-2 p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/10">
+                <span className="material-symbols-outlined text-primary text-lg mt-0.5">location_on</span>
+                <div className="flex flex-col">
+                  <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Destination</span>
+                  <span className="text-xs font-bold text-on-surface truncate">Rishikesh, India</span>
+                </div>
+              </div>
+              {/* Duration */}
+              <div className="flex items-start gap-2 p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/10">
+                <span className="material-symbols-outlined text-primary text-lg mt-0.5">schedule</span>
+                <div className="flex flex-col">
+                  <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Duration</span>
+                  <span className="text-xs font-bold text-on-surface truncate">Any Duration</span>
+                </div>
+              </div>
+              {/* Dates */}
+              <div className="flex items-start gap-2 p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/10">
+                <span className="material-symbols-outlined text-primary text-lg mt-0.5">calendar_month</span>
+                <div className="flex flex-col">
+                  <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Dates</span>
+                  <span className="text-xs font-bold text-on-surface truncate">Select Dates</span>
+                </div>
+              </div>
+              {/* Guests */}
+              <div className="flex items-start gap-2 p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/10">
+                <span className="material-symbols-outlined text-primary text-lg mt-0.5">group</span>
+                <div className="flex flex-col">
+                  <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Guests</span>
+                  <span className="text-xs font-bold text-on-surface truncate">1 Guest</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Link href="/packages" className="w-1/2">
+                <button className="w-full bg-primary hover:bg-primary-container text-on-primary font-bold text-xs py-3.5 rounded-xl transition-colors cursor-pointer text-center">
+                  Explore Retreats
+                </button>
+              </Link>
+              <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer" className="w-1/2">
+                <button className="w-full bg-white hover:bg-surface border border-outline-variant/60 text-secondary font-bold text-xs py-3.5 rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5 text-center">
+                  <span className="material-symbols-outlined text-sm">chat</span>
+                  WhatsApp Us
+                </button>
+              </a>
+            </div>
+          </div>
+
+          {/* Desktop trust badges row */}
+          <div className="hidden md:flex mt-12 flex-wrap justify-center gap-6 text-on-primary/95 text-xs font-bold">
+            <div className="flex items-center gap-1.5 bg-black/15 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
+              <span className="material-symbols-outlined text-tertiary-fixed-dim text-sm icon-fill">star</span>
+              <span>Trusted by International Travellers</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-black/15 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
+              <span className="material-symbols-outlined text-tertiary-fixed-dim text-sm icon-fill">verified_user</span>
+              <span>Verified Retreats &amp; Centers</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-black/15 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
+              <span className="material-symbols-outlined text-tertiary-fixed-dim text-sm icon-fill">local_offer</span>
+              <span>Best Price Guarantee</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-black/15 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
+              <span className="material-symbols-outlined text-tertiary-fixed-dim text-sm icon-fill">support_agent</span>
+              <span>24/7 Support Speaking Team</span>
+            </div>
+          </div>
+
+          {/* Mobile trust badges row (Horizontal scroll) */}
+          <div className="md:hidden mt-8 w-full overflow-x-auto no-scrollbar pb-2">
+            <div className="flex gap-3 whitespace-nowrap min-w-max">
+              <div className="flex items-center gap-1.5 bg-black/15 px-3 py-2 rounded-full border border-white/10 backdrop-blur-sm text-[10px] text-on-primary font-bold">
+                <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">star</span>
+                <span>Trusted by Travellers</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-black/15 px-3 py-2 rounded-full border border-white/10 backdrop-blur-sm text-[10px] text-on-primary font-bold">
+                <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">verified_user</span>
+                <span>Verified Retreats</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-black/15 px-3 py-2 rounded-full border border-white/10 backdrop-blur-sm text-[10px] text-on-primary font-bold">
+                <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">local_offer</span>
+                <span>Best Price Guarantee</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-black/15 px-3 py-2 rounded-full border border-white/10 backdrop-blur-sm text-[10px] text-on-primary font-bold">
+                <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">support_agent</span>
+                <span>24/7 Support English Team</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 2. FEATURED RETREATS */}
+      <section className="py-16 md:py-24 bg-[#F8F3E3]">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          
+          <div className="flex justify-between items-end mb-10">
+            <div className="max-w-2xl text-left">
+              <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold">
+                Featured Yoga Retreats in Rishikesh
+              </h2>
+            </div>
+            <Link
+              href="/packages"
+              className="flex items-center gap-1 text-primary hover:text-secondary font-bold transition-colors border-b border-primary hover:border-secondary pb-0.5 text-xs md:text-sm whitespace-nowrap"
+            >
+              View All
+              <span className="material-symbols-outlined text-xs">arrow_forward</span>
+            </Link>
+          </div>
+
+          {/* Desktop & Mobile Card Wrapper (Horizontal Snap Scroll on Mobile, Grid on Desktop) */}
+          <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 overflow-x-auto md:overflow-x-visible no-scrollbar gap-5 pb-4 md:pb-0 snap-x snap-mandatory">
+            {displayPackages.map((pkg) => (
+              <div
+                key={pkg.id}
+                className="snap-start shrink-0 w-[82vw] md:w-auto bg-surface rounded-2xl overflow-hidden ambient-shadow flex flex-col group hover:-translate-y-2 transition-transform duration-300 border border-outline-variant/10 relative"
+              >
+                {/* Image + Badges */}
+                <div className="relative h-44 w-full overflow-hidden">
+                  <div className="absolute top-3 left-3 z-10 flex gap-1">
+                    <span className="bg-primary/95 text-on-primary text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
+                      {pkg.durationDays} Days / {pkg.durationNights || (pkg.durationDays - 1)} Nights
+                    </span>
+                    {pkg.isBestseller && (
+                      <span className="bg-tertiary-fixed-dim text-on-tertiary-fixed text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
+                        Bestseller
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Heart Icon Toggle */}
+                  <button className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-primary/80 hover:bg-white hover:text-error transition-all duration-300">
+                    <span className="material-symbols-outlined text-[16px]">favorite</span>
+                  </button>
+
+                  <img
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    alt={pkg.title}
+                    src={pkg.featuredImage || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb'}
+                  />
+                </div>
+
+                {/* Content info */}
+                <div className="p-4 flex flex-col flex-1 text-left">
+                  <div className="flex items-center gap-0.5 text-[9px] font-bold text-secondary uppercase tracking-widest mb-1.5">
+                    <span className="material-symbols-outlined text-[12px]">location_on</span>
+                    {pkg.location}
+                  </div>
+                  
+                  <h3 className="font-headline-md text-primary text-lg font-bold leading-tight line-clamp-2 mb-2 group-hover:text-secondary transition-colors duration-300">
+                    {pkg.title}
+                  </h3>
+
+                  {/* Highlights/Inclusions details */}
+                  <div className="bg-surface-container-low p-2 rounded-lg text-[10px] text-on-surface-variant mb-3 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-xs text-secondary">spa</span>
+                    <span className="font-body-md line-clamp-1">
+                      {'inclusions' in pkg ? (pkg as any).inclusions : 'Daily Yoga · Meditation · Authentic Stays'}
+                    </span>
+                  </div>
+
+                  <hr className="border-outline-variant/10 mb-3" />
+
+                  {/* Rating + Price block */}
+                  <div className="flex justify-between items-center mt-auto">
+                    <div className="flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">star</span>
+                      <span className="text-xs font-bold text-on-surface">
+                        {('rating' in pkg ? (pkg as any).rating : 4.8)}
+                      </span>
+                      <span className="text-[9px] text-outline">
+                        ({('reviewsCount' in pkg ? (pkg as any).reviewsCount : 65)} Reviews)
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col text-right">
+                      <span className="text-[8px] text-outline uppercase tracking-wider">From</span>
+                      <span className="font-label-price text-primary font-bold text-sm">
+                        {formatPrice(pkg.priceShared)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <Link href={`/packages/${pkg.slug}`} className="mt-3 block w-full">
+                    <button className="w-full bg-primary/5 hover:bg-primary text-primary hover:text-on-primary font-bold text-[10px] py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center gap-0.5 cursor-pointer">
+                      View Details
+                    </button>
+                  </Link>
+
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 3. BROWSE BY EXPERIENCE */}
+      <section className="py-16 bg-surface border-b border-outline-variant/10">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12 text-center">
+          
+          <div className="max-w-2xl mx-auto mb-10 text-left md:text-center">
+            <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold">Browse by Experience</h2>
+          </div>
+
+          {/* Mobile optimized rounded squares with icons */}
+          <div className="flex overflow-x-auto no-scrollbar gap-4 pb-4 snap-x snap-mandatory">
+            {[
+              { label: 'Yoga Retreats', icon: 'self_improvement', href: '/packages?category=RETREAT' },
+              { label: 'Ayurveda', icon: 'spa', href: '/programmes' },
+              { label: 'Meditation', icon: 'psychology', href: '/packages?category=RETREAT' },
+              { label: 'Detox', icon: 'restaurant', href: '/packages?category=RETREAT' },
+              { label: 'Himalayan', icon: 'landscape', href: '/packages?category=TREK' },
+              { label: 'Couples', icon: 'favorite', href: '/packages' },
+              { label: 'Solo Female', icon: 'person', href: '/packages' }
+            ].map((cat, idx) => (
+              <Link
+                key={idx}
+                href={cat.href}
+                className="snap-start shrink-0 flex flex-col items-center w-20 group cursor-pointer"
+              >
+                <div className="w-14 h-14 rounded-xl bg-white border border-outline-variant/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shadow-sm mb-2">
+                  <span className="material-symbols-outlined text-xl">{cat.icon}</span>
+                </div>
+                <span className="font-body-md text-[10px] font-bold text-on-surface-variant group-hover:text-primary transition-colors text-center truncate w-full">
+                  {cat.label}
+                </span>
+              </Link>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 4. WHY CHOOSE INDIA YOGA TOURISM? */}
+      <section className="py-16 bg-surface-container-lowest text-left">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          
+          <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold mb-4">
+            Why Choose India Yoga Tourism (IYT)?
+          </h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-8">
+            {[
+              { title: 'Handpicked & Verified Retreats', icon: 'workspace_premium' },
+              { title: 'No Hidden Charges', icon: 'payments' },
+              { title: 'Local India Based Support Team', icon: 'support_agent' },
+              { title: 'English Speaking Assistance', icon: 'forum' },
+              { title: 'Safe & Comfortable Stays', icon: 'verified_user' }
+            ].map((feat, idx) => (
+              <div key={idx} className="flex flex-col items-center text-center p-4 rounded-xl bg-surface-container-low border border-outline-variant/10">
+                <span className="material-symbols-outlined text-secondary text-2xl mb-2">{feat.icon}</span>
+                <span className="font-bold text-[10px] text-primary leading-tight">{feat.title}</span>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 5. WHAT OUR GUESTS SAY */}
+      <section className="py-16 bg-surface border-b border-outline-variant/10 text-left">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          
+          <div className="flex justify-between items-end mb-8">
+            <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold">
+              What Our Guests Say
+            </h2>
+            <Link
+              href="/about"
+              className="flex items-center gap-1 text-primary hover:text-secondary font-bold transition-colors border-b border-primary hover:border-secondary pb-0.5 text-xs whitespace-nowrap"
+            >
+              View All Reviews
+              <span className="material-symbols-outlined text-xs">arrow_forward</span>
+            </Link>
+          </div>
+
+          {/* Horizontal Snap Scroll row for reviews & video play preview */}
+          <div className="flex overflow-x-auto no-scrollbar gap-4 pb-4 snap-x snap-mandatory">
+            {displayTestimonials.map((t, idx) => (
+              <div
+                key={idx}
+                className="snap-start shrink-0 w-[80vw] md:w-[400px] bg-white border border-outline-variant/20 rounded-2xl p-5 shadow-sm text-left flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex text-tertiary-fixed-dim mb-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <span key={i} className="material-symbols-outlined text-sm icon-fill">star</span>
+                    ))}
+                  </div>
+                  <p className="font-body-md text-xs text-on-surface-variant leading-relaxed">
+                    "{t.content}"
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="w-8 h-8 rounded-full bg-secondary/15 text-secondary font-bold text-xs flex items-center justify-center uppercase">
+                    {t.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-bold text-primary">— {t.name}</p>
+                    <p className="text-[9px] text-outline">{t.country}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Guest Video Preview Card */}
+            <div className="snap-start shrink-0 w-[80vw] md:w-[320px] h-36 md:h-auto relative rounded-2xl overflow-hidden shadow-sm border border-outline-variant/25 min-h-[140px]">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb"
+                alt="Guests Practicing Yoga"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/30 z-10"></div>
+              <div className="absolute inset-0 z-20 flex items-center justify-center">
+                <button className="w-10 h-10 rounded-full bg-white/90 text-primary flex items-center justify-center shadow-md cursor-pointer">
+                  <span className="material-symbols-outlined text-xl text-secondary icon-fill ml-0.5">play_arrow</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 6. BOTTOM VALUE PROPS BAR */}
+      <section className="bg-surface-container-low border-t border-outline-variant/30 py-8 relative z-10 mb-16 md:mb-0">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
+          
+          <div className="flex flex-col md:flex-row items-center gap-3">
+            <span className="material-symbols-outlined text-secondary text-2xl">event_repeat</span>
+            <div>
+              <h4 className="font-bold text-xs text-primary uppercase tracking-wider">Flexible Booking</h4>
+              <p className="text-[10px] text-on-surface-variant">Easy online rescheduling</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center gap-3">
+            <span className="material-symbols-outlined text-secondary text-2xl">shield</span>
+            <div>
+              <h4 className="font-bold text-xs text-primary uppercase tracking-wider">Secure Payments</h4>
+              <p className="text-[10px] text-on-surface-variant">100% safe checkout</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center gap-3">
+            <span className="material-symbols-outlined text-secondary text-2xl">cancel</span>
+            <div>
+              <h4 className="font-bold text-xs text-primary uppercase tracking-wider">Free Cancellation</h4>
+              <p className="text-[10px] text-on-surface-variant">Up to 7 days departure</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center gap-3">
+            <span className="material-symbols-outlined text-secondary text-2xl">support_agent</span>
+            <div>
+              <h4 className="font-bold text-xs text-primary uppercase tracking-wider">24/7 Support</h4>
+              <p className="text-[10px] text-on-surface-variant">We are here to guide you</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Mobile Sticky Footer Action Bar (WhatsApp & Call shortcuts) */}
+      <div className="md:hidden fixed bottom-4 left-4 right-4 z-40 flex gap-2 items-center">
+        <a
+          href="https://wa.me/919999999999"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 bg-[#1b4332] text-white hover:bg-primary-container px-4 py-3 rounded-full shadow-lg flex items-center gap-2 border border-white/20"
+        >
+          <span className="material-symbols-outlined text-sm bg-white/25 p-1 rounded-full text-white">chat</span>
+          <div className="flex flex-col text-left">
+            <span className="text-[10px] font-bold leading-none">Book on WhatsApp</span>
+            <span className="text-[8px] opacity-80 leading-none mt-0.5">Get Dates, Prices &amp; Instant Help</span>
+          </div>
+        </a>
+
+        <a
+          href="tel:+919999999999"
+          className="w-12 h-12 rounded-full bg-white border border-outline-variant/30 flex flex-col items-center justify-center text-primary shadow-lg hover:bg-surface shrink-0"
+        >
+          <span className="material-symbols-outlined text-lg">call</span>
+          <span className="text-[7px] font-bold uppercase tracking-wider -mt-0.5">Call Us</span>
+        </a>
+      </div>
+
+    </main>
+  )
+}
