@@ -55,9 +55,9 @@ export default async function HomePage() {
       priceShared: 149,
       featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb',
       isBestseller: true,
-      inclusions: 'Daily Yoga • Meditation • Meals',
-      rating: 4.9,
-      reviewsCount: 125
+      inclusions: ['Daily Yoga', 'Meditation', 'Meals'],
+      avgRating: 4.9,
+      totalReviews: 125
     },
     {
       id: '2',
@@ -69,9 +69,9 @@ export default async function HomePage() {
       priceShared: 199,
       featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDk30QEObl2k8oh7fcQBueTF65N9BWmaV3ZkFEx-IwV9X8AbWEGvDjdZsVeKDa6UjgtvTWYRkKdjnkPVJtV_3Nw8OPt-i6-1QwTChz_JIbN5Ajhbnk2Iiaa-OsDxXuHkjd2sEGQZieRNh469JeWf3tdoxY0lRn-r-qpLXngXofLaYSYrEE-fV_ga7ucnNT3Gme80JOeBQYFv0cPjN8Ysq3Nqh-SRqn8Y7DrMXS4hhXKsWN1m3KaUNhvQIohglA5nqLCXdQLDykF_B0o',
       isBestseller: false,
-      inclusions: 'Yoga • Detox • Ayurveda • Meals',
-      rating: 4.8,
-      reviewsCount: 86
+      inclusions: ['Yoga', 'Detox', 'Ayurveda', 'Meals'],
+      avgRating: 4.8,
+      totalReviews: 86
     },
     {
       id: '3',
@@ -83,9 +83,9 @@ export default async function HomePage() {
       priceShared: 109,
       featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAWCF3FNkFJLbVzL3jqGHa73fPpDI6Eih62gOI6ascq2xyzfCWb_p_tKmSBHMk1_W6r9aRBFx_DeSTW8t9NmWEihpsnAxgC7sKy77fHdsQFJABetSWSc8tuLwzW4Z9rrHY543Dv8KNCdiwnLZU84GDjA0h2USiT4sfOempqu1qZxhRQoBhJAZQRqnUhIHSmEFeQ72J-oJOOZ2v_GjbWy2G16WBKPTkNmy9iwXeV8c2gWGlZ1K_loofjKke13dNcEj1u2Q0R8eeeqQ3_',
       isBestseller: false,
-      inclusions: 'Yoga • Meditation • Ganga Aarti',
-      rating: 4.7,
-      reviewsCount: 64
+      inclusions: ['Yoga', 'Meditation', 'Ganga Aarti'],
+      avgRating: 4.7,
+      totalReviews: 64
     },
     {
       id: '4',
@@ -97,9 +97,9 @@ export default async function HomePage() {
       priceShared: 279,
       featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSQ4PkqcD83cx3q9NfEA2D4D0dACa2KEUrl3ocyJqQEj8MsZiKp7yVUjfsz1PhCLoRpbOpTPCoSruI3zUdpAXV495u5Nx2wyRvMXsbWoFsC8TpG2X0Rq4esc3tdBCS7oprShHV2A_7yXUHsa8M_BcP9MXTc2RSEM0uCMoKYPbsZe5DZsZM13f-jaDBBnIrbBe6i7bndREoFQiDr5xm7JKp_iXQ2Z8BSeyFbYuAFCn22z3Nhf5-im3Iko54LI1Rq4pmjJJZPzbrJGjh',
       isBestseller: true,
-      inclusions: 'Yoga • Meditation • Nature • Meals',
-      rating: 4.9,
-      reviewsCount: 98
+      inclusions: ['Yoga', 'Meditation', 'Nature', 'Meals'],
+      avgRating: 4.9,
+      totalReviews: 98
     }
   ]
 
@@ -121,12 +121,16 @@ export default async function HomePage() {
   ]
 
   const displayTestimonials = dbTestimonials.length > 0
-    ? dbTestimonials.map(t => ({ name: t.user.name, country: t.country || 'International Guest', content: t.content, rating: t.rating }))
+    ? dbTestimonials.map(t => ({
+        name: t.user.name,
+        country: t.country || 'International Guest',
+        content: t.content,
+        rating: t.rating
+      }))
     : defaultTestimonials
 
   return (
     <main className="bg-surface relative pb-12">
-      
       {/* 1. HERO SECTION WITH SEARCH WIDGET */}
       <section className="relative min-h-[600px] lg:h-[95vh] flex items-center justify-center overflow-hidden pt-24 pb-16">
         <div className="absolute inset-0 w-full h-full">
@@ -137,26 +141,25 @@ export default async function HomePage() {
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSQ4PkqcD83cx3q9NfEA2D4D0dACa2KEUrl3ocyJqQEj8MsZiKp7yVUjfsz1PhCLoRpbOpTPCoSruI3zUdpAXV495u5Nx2wyRvMXsbWoFsC8TpG2X0Rq4esc3tdBCS7oprShHV2A_7yXUHsa8M_BcP9MXTc2RSEM0uCMoKYPbsZe5DZsZM13f-jaDBBnIrbBe6i7bndREoFQiDr5xm7JKp_iXQ2Z8BSeyFbYuAFCn22z3Nhf5-im3Iko54LI1Rq4pmjJJZPzbrJGjh"
           />
         </div>
-        
+
         <div className="relative z-20 w-full max-w-[1280px] mx-auto px-6 md:px-12 flex flex-col items-center text-center">
-          
           <span className="inline-block px-4 py-1.5 bg-tertiary-fixed-dim/20 backdrop-blur-sm border border-tertiary-fixed-dim/30 text-tertiary-fixed rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6">
             ✦ RISHIKESH · KERALA · DHARAMSHALA ✦
           </span>
-          
-          <h1 className="font-display-lg text-3xl md:text-5xl lg:text-7xl text-on-primary max-w-5xl mx-auto leading-[1.1] mb-4 md:mb-6 drop-shadow-lg">
+
+          <h1 className="font-display-lg text-4xl md:text-5xl lg:text-7xl text-on-primary max-w-5xl mx-auto leading-[1.1] mb-4 md:mb-6 drop-shadow-lg">
             Transform Your Life <br />
             <span className="text-tertiary-fixed-dim font-headline-lg italic">in Rishikesh, India</span>
           </h1>
-          
-          <p className="font-body-md text-xs md:text-lg text-on-primary/95 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed drop-shadow-sm">
-            Discover handpicked yoga retreats, schools &amp; wellness experiences in the Yoga Capital of the World.
+
+          <p className="font-body-md text-sm md:text-lg text-on-primary/95 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed drop-shadow-sm">
+            Discover handpicked yoga retreats, schools & wellness experiences in the Yoga Capital of the World.
           </p>
 
           {/* Desktop Search Bento Widget */}
           <div className="hidden md:flex w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-full shadow-2xl p-3 items-center gap-3 border border-white/40">
             {/* Destination */}
-            <div className="flex items-center gap-3 px-4 py-2 border-r border-outline-variant/30 w-1/4 text-left">
+            <div className="flex items-center gap-3 px-6 py-2 border-r border-outline-variant/30 w-1/4 text-left">
               <span className="material-symbols-outlined text-primary text-xl">location_on</span>
               <div className="flex flex-col">
                 <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Destination</span>
@@ -164,7 +167,7 @@ export default async function HomePage() {
               </div>
             </div>
             {/* Duration */}
-            <div className="flex items-center gap-3 px-4 py-2 border-r border-outline-variant/30 w-1/4 text-left">
+            <div className="flex items-center gap-3 px-6 py-2 border-r border-outline-variant/30 w-1/4 text-left">
               <span className="material-symbols-outlined text-primary text-xl">schedule</span>
               <div className="flex flex-col">
                 <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Duration</span>
@@ -172,7 +175,7 @@ export default async function HomePage() {
               </div>
             </div>
             {/* Dates */}
-            <div className="flex items-center gap-3 px-4 py-2 border-r border-outline-variant/30 w-1/4 text-left">
+            <div className="flex items-center gap-3 px-6 py-2 border-r border-outline-variant/30 w-1/4 text-left">
               <span className="material-symbols-outlined text-primary text-xl">calendar_month</span>
               <div className="flex flex-col">
                 <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Dates</span>
@@ -180,7 +183,7 @@ export default async function HomePage() {
               </div>
             </div>
             {/* Guests */}
-            <div className="flex items-center gap-3 px-4 py-2 w-1/4 text-left">
+            <div className="flex items-center gap-3 px-6 py-2 w-1/4 text-left">
               <span className="material-symbols-outlined text-primary text-xl">group</span>
               <div className="flex flex-col">
                 <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Guests</span>
@@ -199,7 +202,7 @@ export default async function HomePage() {
           <div className="md:hidden w-full bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-4 border border-white/40 mt-4 flex flex-col gap-4 text-left">
             <div className="grid grid-cols-2 gap-3">
               {/* Destination */}
-              <div className="flex items-start gap-2 p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/10">
+              <div className="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
                 <span className="material-symbols-outlined text-primary text-lg mt-0.5">location_on</span>
                 <div className="flex flex-col">
                   <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Destination</span>
@@ -207,7 +210,7 @@ export default async function HomePage() {
                 </div>
               </div>
               {/* Duration */}
-              <div className="flex items-start gap-2 p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/10">
+              <div className="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
                 <span className="material-symbols-outlined text-primary text-lg mt-0.5">schedule</span>
                 <div className="flex flex-col">
                   <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Duration</span>
@@ -215,7 +218,7 @@ export default async function HomePage() {
                 </div>
               </div>
               {/* Dates */}
-              <div className="flex items-start gap-2 p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/10">
+              <div className="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
                 <span className="material-symbols-outlined text-primary text-lg mt-0.5">calendar_month</span>
                 <div className="flex flex-col">
                   <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Dates</span>
@@ -223,7 +226,7 @@ export default async function HomePage() {
                 </div>
               </div>
               {/* Guests */}
-              <div className="flex items-start gap-2 p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/10">
+              <div className="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
                 <span className="material-symbols-outlined text-primary text-lg mt-0.5">group</span>
                 <div className="flex flex-col">
                   <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Guests</span>
@@ -232,13 +235,13 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2.5">
               <Link href="/packages" className="w-1/2">
                 <button className="w-full bg-primary hover:bg-primary-container text-on-primary font-bold text-xs py-3.5 rounded-xl transition-colors cursor-pointer text-center">
                   Explore Retreats
                 </button>
               </Link>
-              <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer" className="w-1/2">
+              <a href="https://wa.me/919999876349" target="_blank" rel="noopener noreferrer" className="w-1/2">
                 <button className="w-full bg-white hover:bg-surface border border-outline-variant/60 text-secondary font-bold text-xs py-3.5 rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5 text-center">
                   <span className="material-symbols-outlined text-sm">chat</span>
                   WhatsApp Us
@@ -288,14 +291,12 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
       {/* 2. FEATURED RETREATS */}
       <section className="py-16 md:py-24 bg-[#F8F3E3]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          
           <div className="flex justify-between items-end mb-10">
             <div className="max-w-2xl text-left">
               <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold">
@@ -313,158 +314,291 @@ export default async function HomePage() {
 
           {/* Desktop & Mobile Card Wrapper (Horizontal Snap Scroll on Mobile, Grid on Desktop) */}
           <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 overflow-x-auto md:overflow-x-visible no-scrollbar gap-5 pb-4 md:pb-0 snap-x snap-mandatory">
-            {displayPackages.map((pkg) => (
-              <div
-                key={pkg.id}
-                className="snap-start shrink-0 w-[82vw] md:w-auto bg-surface rounded-2xl overflow-hidden ambient-shadow flex flex-col group hover:-translate-y-2 transition-transform duration-300 border border-outline-variant/10 relative"
-              >
-                {/* Image + Badges */}
-                <div className="relative h-44 w-full overflow-hidden">
-                  <div className="absolute top-3 left-3 z-10 flex gap-1">
-                    <span className="bg-primary/95 text-on-primary text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
-                      {pkg.durationDays} Days / {pkg.durationNights || (pkg.durationDays - 1)} Nights
-                    </span>
-                    {pkg.isBestseller && (
-                      <span className="bg-tertiary-fixed-dim text-on-tertiary-fixed text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
-                        Bestseller
+            {displayPackages.map((pkg) => {
+              const inclusionList = Array.isArray(pkg.inclusions) 
+                ? pkg.inclusions.slice(0, 3).join(' • ') 
+                : ((pkg as any).inclusions || 'Daily Yoga • Meditation • Meals');
+
+              return (
+                <div
+                  key={pkg.id}
+                  className="snap-start shrink-0 w-[82vw] md:w-auto bg-surface rounded-2xl overflow-hidden ambient-shadow flex flex-col group hover:-translate-y-2 transition-transform duration-300 border border-outline-variant/10 relative"
+                >
+                  {/* Image + Badges */}
+                  <div className="relative h-44 w-full overflow-hidden">
+                    <div className="absolute top-3 left-3 z-10 flex gap-1">
+                      <span className="bg-primary/95 text-on-primary text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
+                        {pkg.durationDays} Days / {pkg.durationNights || (pkg.durationDays - 1)} Nights
                       </span>
-                    )}
-                  </div>
-                  
-                  {/* Heart Icon Toggle */}
-                  <button className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-primary/80 hover:bg-white hover:text-error transition-all duration-300">
-                    <span className="material-symbols-outlined text-[16px]">favorite</span>
-                  </button>
-
-                  <img
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    alt={pkg.title}
-                    src={pkg.featuredImage || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb'}
-                  />
-                </div>
-
-                {/* Content info */}
-                <div className="p-4 flex flex-col flex-1 text-left">
-                  <div className="flex items-center gap-0.5 text-[9px] font-bold text-secondary uppercase tracking-widest mb-1.5">
-                    <span className="material-symbols-outlined text-[12px]">location_on</span>
-                    {pkg.location}
-                  </div>
-                  
-                  <h3 className="font-headline-md text-primary text-lg font-bold leading-tight line-clamp-2 mb-2 group-hover:text-secondary transition-colors duration-300">
-                    {pkg.title}
-                  </h3>
-
-                  {/* Highlights/Inclusions details */}
-                  <div className="bg-surface-container-low p-2 rounded-lg text-[10px] text-on-surface-variant mb-3 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-xs text-secondary">spa</span>
-                    <span className="font-body-md line-clamp-1">
-                      {'inclusions' in pkg ? (pkg as any).inclusions : 'Daily Yoga · Meditation · Authentic Stays'}
-                    </span>
-                  </div>
-
-                  <hr className="border-outline-variant/10 mb-3" />
-
-                  {/* Rating + Price block */}
-                  <div className="flex justify-between items-center mt-auto">
-                    <div className="flex items-center gap-0.5">
-                      <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">star</span>
-                      <span className="text-xs font-bold text-on-surface">
-                        {('rating' in pkg ? (pkg as any).rating : 4.8)}
-                      </span>
-                      <span className="text-[9px] text-outline">
-                        ({('reviewsCount' in pkg ? (pkg as any).reviewsCount : 65)} Reviews)
-                      </span>
+                      {pkg.isBestseller && (
+                        <span className="bg-tertiary-fixed-dim text-on-tertiary-fixed text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
+                          Bestseller
+                        </span>
+                      )}
                     </div>
 
-                    <div className="flex flex-col text-right">
-                      <span className="text-[8px] text-outline uppercase tracking-wider">From</span>
-                      <span className="font-label-price text-primary font-bold text-sm">
-                        {formatPrice(pkg.priceShared)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <Link href={`/packages/${pkg.slug}`} className="mt-3 block w-full">
-                    <button className="w-full bg-primary/5 hover:bg-primary text-primary hover:text-on-primary font-bold text-[10px] py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center gap-0.5 cursor-pointer">
-                      View Details
+                    {/* Heart Icon Toggle */}
+                    <button className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-primary/80 hover:bg-white hover:text-error transition-all duration-300">
+                      <span className="material-symbols-outlined text-[16px]">favorite</span>
                     </button>
-                  </Link>
 
+                    <img
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      alt={pkg.title}
+                      src={pkg.featuredImage || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb'}
+                    />
+                  </div>
+
+                  {/* Content info */}
+                  <div className="p-4 flex flex-col flex-1 text-left">
+                    <div className="flex items-center gap-0.5 text-[9px] font-bold text-secondary uppercase tracking-widest mb-1.5">
+                      <span className="material-symbols-outlined text-[12px]">location_on</span>
+                      {pkg.location}
+                    </div>
+
+                    <h3 className="font-headline-md text-primary text-lg font-bold leading-tight line-clamp-2 mb-2 group-hover:text-secondary transition-colors duration-300">
+                      {pkg.title}
+                    </h3>
+
+                    {/* Highlights/Inclusions details */}
+                    <div className="bg-surface-container-low p-2 rounded-lg text-[10px] text-on-surface-variant mb-3 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-xs text-secondary">spa</span>
+                      <span className="font-body-md line-clamp-1">
+                        {inclusionList}
+                      </span>
+                    </div>
+
+                    <hr className="border-outline-variant/10 mb-3" />
+
+                    {/* Rating + Price block */}
+                    <div className="flex justify-between items-center mt-auto">
+                      <div className="flex items-center gap-0.5">
+                        <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">star</span>
+                        <span className="text-xs font-bold text-on-surface">
+                          {(pkg as any).avgRating || 4.8}
+                        </span>
+                        <span className="text-[9px] text-outline">
+                          ({(pkg as any).totalReviews || 65} Reviews)
+                        </span>
+                      </div>
+
+                      <div className="flex flex-col text-right">
+                        <span className="text-[8px] text-outline uppercase tracking-wider">From</span>
+                        <span className="font-label-price text-primary font-bold text-sm">
+                          {formatPrice(pkg.priceShared)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <Link href={`/packages/${pkg.slug}`} className="mt-3 block w-full">
+                      <button className="w-full bg-primary/5 hover:bg-primary text-primary hover:text-on-primary font-bold text-[10px] py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center gap-0.5 cursor-pointer">
+                        View Details
+                      </button>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-
         </div>
       </section>
 
       {/* 3. BROWSE BY EXPERIENCE */}
       <section className="py-16 bg-surface border-b border-outline-variant/10">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 text-center">
-          
           <div className="max-w-2xl mx-auto mb-10 text-left md:text-center">
-            <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold">Browse by Experience</h2>
+            <span className="text-xs text-secondary font-bold uppercase tracking-widest mb-2 block">
+              EXPLORE MODALITIES
+            </span>
+            <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold mb-4">
+              Browse by Experience
+            </h2>
+            <p className="font-body-md text-xs md:text-sm text-on-surface-variant/80 max-w-xl mx-auto">
+              Filter and find the exact path of wisdom matching your inner journey.
+            </p>
           </div>
 
-          {/* Mobile optimized rounded squares with icons */}
-          <div className="flex overflow-x-auto no-scrollbar gap-4 pb-4 snap-x snap-mandatory">
+          {/* Premium modaility circle row (Horizontal scroll on mobile, wrap on desktop) */}
+          <div className="flex overflow-x-auto no-scrollbar gap-5 py-4 px-2 snap-x snap-mandatory md:justify-center md:flex-wrap md:overflow-visible">
             {[
-              { label: 'Yoga Retreats', icon: 'self_improvement', href: '/packages?category=RETREAT' },
-              { label: 'Ayurveda', icon: 'spa', href: '/programmes' },
-              { label: 'Meditation', icon: 'psychology', href: '/packages?category=RETREAT' },
-              { label: 'Detox', icon: 'restaurant', href: '/packages?category=RETREAT' },
-              { label: 'Himalayan', icon: 'landscape', href: '/packages?category=TREK' },
-              { label: 'Couples', icon: 'favorite', href: '/packages' },
-              { label: 'Solo Female', icon: 'person', href: '/packages' }
+              { 
+                label: 'Yoga Retreats', 
+                href: '/packages?category=RETREAT',
+                img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=150&q=80'
+              },
+              { 
+                label: 'Meditation Retreats', 
+                href: '/packages?category=RETREAT',
+                img: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=150&q=80'
+              },
+              { 
+                label: 'Ayurveda & Healing', 
+                href: '/programmes',
+                img: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=150&q=80'
+              },
+              { 
+                label: 'Detox Retreats', 
+                href: '/packages?category=RETREAT',
+                img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=150&q=80'
+              },
+              { 
+                label: 'Wellness Retreats', 
+                href: '/packages?category=RETREAT',
+                img: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=150&q=80'
+              },
+              { 
+                label: 'Solo Female Retreats', 
+                href: '/packages',
+                img: 'https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&w=150&q=80'
+              },
+              { 
+                label: 'Couples Retreats', 
+                href: '/packages',
+                img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=150&q=80'
+              },
+              { 
+                label: 'Himalayan Retreats', 
+                href: '/packages?category=TREK',
+                img: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=150&q=80'
+              }
             ].map((cat, idx) => (
               <Link
                 key={idx}
                 href={cat.href}
-                className="snap-start shrink-0 flex flex-col items-center w-20 group cursor-pointer"
+                className="snap-start shrink-0 flex flex-col items-center w-24 group cursor-pointer"
               >
-                <div className="w-14 h-14 rounded-xl bg-white border border-outline-variant/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shadow-sm mb-2">
-                  <span className="material-symbols-outlined text-xl">{cat.icon}</span>
+                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-white shadow-md group-hover:border-secondary transition-all duration-300 relative">
+                  <img
+                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    src={cat.img}
+                    alt={cat.label}
+                  />
                 </div>
-                <span className="font-body-md text-[10px] font-bold text-on-surface-variant group-hover:text-primary transition-colors text-center truncate w-full">
+                <span className="font-body-md text-[10px] font-bold text-on-surface-variant group-hover:text-primary transition-colors text-center mt-2 leading-tight truncate w-full">
                   {cat.label}
                 </span>
               </Link>
             ))}
           </div>
-
         </div>
       </section>
 
       {/* 4. WHY CHOOSE INDIA YOGA TOURISM? */}
-      <section className="py-16 bg-surface-container-lowest text-left">
+      <section className="py-16 md:py-24 bg-surface-container-lowest border-b border-outline-variant/10 text-left">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          
+          <span className="text-xs text-secondary font-bold uppercase tracking-widest mb-2 block">
+            OUR LINEAGE
+          </span>
           <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold mb-4">
             Why Choose India Yoga Tourism (IYT)?
           </h2>
+          <p className="font-body-md text-xs md:text-sm text-on-surface-variant/80 max-w-2xl mb-10">
+            We make your journey simple, safe, and deeply transformative. By bridging traditional guru-disciple lineages with high-end comforts, we deliver verified retreats.
+          </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-8">
+          {/* Desktop 3-Column Premium Layout */}
+          <div className="hidden lg:grid grid-cols-12 gap-8 items-center">
+            {/* Value props vertical list */}
+            <div className="col-span-4 flex flex-col gap-4">
+              {[
+                { title: 'Handpicked & Verified Retreats', icon: 'workspace_premium' },
+                { title: 'No Hidden Charges & Transparent Rates', icon: 'payments' },
+                { title: 'Local India-Based Support Team', icon: 'support_agent' },
+                { title: 'English-Speaking Guides & Teachers', icon: 'forum' },
+                { title: 'Safe & Comfortable Ashram Stays', icon: 'verified_user' },
+                { title: 'Best Price Assistance Guarantee', icon: 'local_offer' }
+              ].map((feat, idx) => (
+                <div key={idx} className="flex items-start gap-3 bg-surface/50 p-3.5 rounded-xl border border-outline-variant/10 shadow-sm">
+                  <span className="material-symbols-outlined text-secondary text-lg mt-0.5">{feat.icon}</span>
+                  <span className="font-bold text-xs text-primary leading-tight">{feat.title}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Video Player center card */}
+            <div className="col-span-5 relative rounded-2xl overflow-hidden shadow-lg border border-outline-variant/20 aspect-video w-full h-[280px] bg-black">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb"
+                alt="Experience the Real India Video Cover"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/20 z-0"></div>
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10 hover:bg-black/35 transition-colors cursor-pointer group z-10">
+                <div className="w-14 h-14 rounded-full bg-white/95 text-secondary flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                  <span className="material-symbols-outlined text-2xl icon-fill ml-0.5">play_arrow</span>
+                </div>
+              </div>
+              <div className="absolute bottom-4 left-4 right-4 text-center text-white font-bold text-xs bg-primary/80 backdrop-blur-sm py-2.5 rounded-xl border border-white/10 z-20">
+                Experience the Real India
+              </div>
+            </div>
+
+            {/* Google Reviews right card */}
+            <div className="col-span-3 bg-white border border-outline-variant/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-[280px]">
+              <div>
+                <div className="flex justify-between items-start">
+                  <span className="font-display-lg text-lg font-bold tracking-tight text-on-surface">Google</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-bold text-on-surface">4.9</span>
+                    <div className="flex text-amber-500">
+                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
+                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
+                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
+                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
+                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
+                    </div>
+                  </div>
+                </div>
+                <span className="text-[9px] text-outline uppercase tracking-wider block -mt-1 mb-4 font-bold">
+                  Based on 600+ Reviews
+                </span>
+                <p className="font-body-md text-xs text-on-surface-variant italic leading-relaxed line-clamp-3">
+                  "Unbelievable attention to detail. High-end comfort and authentic Himalayan lineage training in one package."
+                </p>
+                <p className="text-[10px] font-bold text-primary mt-2">— Sarah, USA</p>
+              </div>
+
+              <div className="flex justify-between items-center mt-auto pt-2">
+                <div className="flex -space-x-1.5">
+                  {['E', 'M', 'S', 'J'].map((initial, i) => (
+                    <div key={i} className="w-6 h-6 rounded-full border border-white bg-secondary/15 flex items-center justify-center text-[8px] font-bold text-secondary">
+                      {initial}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-1">
+                  <button className="w-6 h-6 rounded-full border border-outline-variant/40 flex items-center justify-center hover:bg-surface transition-colors cursor-pointer text-xs">
+                    <span className="material-symbols-outlined text-[16px]">chevron_left</span>
+                  </button>
+                  <button className="w-6 h-6 rounded-full border border-outline-variant/40 flex items-center justify-center hover:bg-surface transition-colors cursor-pointer text-xs">
+                    <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile/Tablet Stacked Grid Layout */}
+          <div className="lg:hidden grid grid-cols-2 md:grid-cols-5 gap-3">
             {[
               { title: 'Handpicked & Verified Retreats', icon: 'workspace_premium' },
               { title: 'No Hidden Charges', icon: 'payments' },
-              { title: 'Local India Based Support Team', icon: 'support_agent' },
-              { title: 'English Speaking Assistance', icon: 'forum' },
+              { title: 'Local India-Based Support', icon: 'support_agent' },
+              { title: 'English Assistance', icon: 'forum' },
               { title: 'Safe & Comfortable Stays', icon: 'verified_user' }
             ].map((feat, idx) => (
-              <div key={idx} className="flex flex-col items-center text-center p-4 rounded-xl bg-surface-container-low border border-outline-variant/10">
-                <span className="material-symbols-outlined text-secondary text-2xl mb-2">{feat.icon}</span>
+              <div key={idx} className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-outline-variant/10 shadow-sm">
+                <span className="material-symbols-outlined text-secondary text-xl mb-2">{feat.icon}</span>
                 <span className="font-bold text-[10px] text-primary leading-tight">{feat.title}</span>
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
       {/* 5. WHAT OUR GUESTS SAY */}
       <section className="py-16 bg-surface border-b border-outline-variant/10 text-left">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          
           <div className="flex justify-between items-end mb-8">
             <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold">
               What Our Guests Say
@@ -486,7 +620,7 @@ export default async function HomePage() {
                 className="snap-start shrink-0 w-[80vw] md:w-[400px] bg-white border border-outline-variant/20 rounded-2xl p-5 shadow-sm text-left flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex text-tertiary-fixed-dim mb-3">
+                  <div className="flex text-amber-500 mb-3">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <span key={i} className="material-symbols-outlined text-sm icon-fill">star</span>
                     ))}
@@ -511,7 +645,7 @@ export default async function HomePage() {
             <div className="snap-start shrink-0 w-[80vw] md:w-[320px] h-36 md:h-auto relative rounded-2xl overflow-hidden shadow-sm border border-outline-variant/25 min-h-[140px]">
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb"
-                alt="Guests Practicing Yoga"
+                alt="Guests Practicing Yoga Video Preview"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/30 z-10"></div>
@@ -522,14 +656,53 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
-      {/* 6. BOTTOM VALUE PROPS BAR */}
+      {/* 6. CALL TO ACTION SECTION */}
+      <section className="relative py-20 overflow-hidden bg-[#012d1d] text-white">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-transparent z-10"></div>
+          <img
+            src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1600&q=80"
+            alt="Rishikesh Sunset Ganges"
+            className="object-cover w-full h-full object-center opacity-40 scale-105"
+          />
+        </div>
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-12 text-center lg:text-left flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="max-w-2xl">
+            <span className="inline-block text-tertiary-fixed-dim font-bold text-xs uppercase tracking-widest mb-3">
+              ✦ Start Your Pilgrimage ✦
+            </span>
+            <h2 className="font-display-lg text-3xl md:text-5xl font-bold leading-tight mb-4">
+              Ready to Begin Your Journey?
+            </h2>
+            <p className="text-on-primary-container/90 text-sm md:text-lg max-w-xl leading-relaxed">
+              Book your perfect yoga retreat in Rishikesh today and learn directly from the traditional sages.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full sm:w-auto">
+            <Link href="/packages" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto bg-tertiary-fixed-dim hover:bg-tertiary-fixed text-on-tertiary-fixed font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-lg cursor-pointer text-center text-sm md:text-base">
+                Explore Retreats
+              </button>
+            </Link>
+            <a
+              href="https://wa.me/919999876349"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 border border-white/60 hover:bg-white/10 text-white font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-md cursor-pointer text-center text-sm md:text-base"
+            >
+              <span className="material-symbols-outlined text-lg">chat</span>
+              Talk to Retreat Expert
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. BOTTOM VALUE PROPS BAR */}
       <section className="bg-surface-container-low border-t border-outline-variant/30 py-8 relative z-10 mb-16 md:mb-0">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
-          
           <div className="flex flex-col md:flex-row items-center gap-3">
             <span className="material-symbols-outlined text-secondary text-2xl">event_repeat</span>
             <div>
@@ -561,14 +734,13 @@ export default async function HomePage() {
               <p className="text-[10px] text-on-surface-variant">We are here to guide you</p>
             </div>
           </div>
-
         </div>
       </section>
 
       {/* Mobile Sticky Footer Action Bar (WhatsApp & Call shortcuts) */}
       <div className="md:hidden fixed bottom-4 left-4 right-4 z-40 flex gap-2 items-center">
         <a
-          href="https://wa.me/919999999999"
+          href="https://wa.me/919999876349"
           target="_blank"
           rel="noopener noreferrer"
           className="flex-1 bg-[#1b4332] text-white hover:bg-primary-container px-4 py-3 rounded-full shadow-lg flex items-center gap-2 border border-white/20"
@@ -581,14 +753,13 @@ export default async function HomePage() {
         </a>
 
         <a
-          href="tel:+919999999999"
+          href="tel:+919999876349"
           className="w-12 h-12 rounded-full bg-white border border-outline-variant/30 flex flex-col items-center justify-center text-primary shadow-lg hover:bg-surface shrink-0"
         >
           <span className="material-symbols-outlined text-lg">call</span>
           <span className="text-[7px] font-bold uppercase tracking-wider -mt-0.5">Call Us</span>
         </a>
       </div>
-
     </main>
   )
 }
