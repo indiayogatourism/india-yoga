@@ -1,10 +1,17 @@
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || '',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || '',
-})
+let razorpayInstance: Razorpay | null = null
+
+function getRazorpay() {
+  if (!razorpayInstance) {
+    razorpayInstance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID || '',
+      key_secret: process.env.RAZORPAY_KEY_SECRET || '',
+    })
+  }
+  return razorpayInstance
+}
 
 export async function createRazorpayOrder(amount: number, currency: string, bookingRef: string) {
   const options = {
@@ -12,7 +19,7 @@ export async function createRazorpayOrder(amount: number, currency: string, book
     currency: currency.toUpperCase(),
     receipt: bookingRef,
   }
-  return await razorpay.orders.create(options)
+  return await getRazorpay().orders.create(options)
 }
 
 export function verifyRazorpaySignature(
