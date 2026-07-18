@@ -65,7 +65,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h4 className="font-bold text-primary text-sm">Sanctuary Desk Email</h4>
-                  <p className="text-xs text-on-surface-variant">info@indianyogatourism.com</p>
+                  <p className="text-xs text-on-surface-variant">info@indiayogatourism.com</p>
                 </div>
               </div>
 

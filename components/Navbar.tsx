@@ -75,7 +75,7 @@ export default function Navbar() {
           </div>
           <div className="flex flex-col">
             <span className="font-display-lg text-primary text-xl md:text-2xl font-bold tracking-tight leading-none group-hover:text-primary transition-colors">
-              Indian Yoga Tourism
+              India Yoga Tourism
             </span>
             <span className="text-[9px] font-label-price text-secondary uppercase tracking-widest mt-1">
               Himalayan Wellness &amp; Wisdom

@@ -122,7 +122,7 @@ export default function CheckoutWizard({ pkg, initialGuests, initialRoomType }: 
         key: gatewayData.key,
         amount: gatewayData.amount,
         currency: gatewayData.currency,
-        name: 'Indian Yoga Tourism',
+        name: 'India Yoga Tourism',
         description: `Booking ref: ${bookingRef}`,
         order_id: gatewayData.orderId,
         handler: async function (response: any) {

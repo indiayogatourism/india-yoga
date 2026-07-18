@@ -46,7 +46,7 @@ export default async function GuestDashboardPage() {
       <aside className="w-64 bg-primary text-on-primary flex flex-col justify-between hidden md:flex fixed h-full z-40">
         <div className="p-8">
           <Link href="/" className="font-display-lg text-[28px] mb-12 block tracking-tight hover:opacity-85">
-            Indian Yoga Tourism
+            India Yoga Tourism
           </Link>
           <nav className="space-y-4">
             <Link

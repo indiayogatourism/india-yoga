@@ -15,16 +15,16 @@ async function main() {
   console.log('Seeding settings...')
   await prisma.setting.createMany({
     data: [
-      { key: 'siteName', value: 'Indian Yoga Tourism' },
+      { key: 'siteName', value: 'India Yoga Tourism' },
       { key: 'siteTagline', value: 'Ancient Wisdom. Modern Journey.' },
       { key: 'contactPhone', value: '+91 99998 76349' },
-      { key: 'contactEmail', value: 'info@indianyogatourism.com' },
+      { key: 'contactEmail', value: 'info@indiayogatourism.com' },
       { key: 'contactWhatsapp', value: '+91 99998 76349' },
       { key: 'contactAddress', value: 'Cloud 9 Tower, Vaishali Sec-1, Ghaziabad, UP 201010' },
-      { key: 'instagramUrl', value: 'https://instagram.com/indianyogatourism' },
-      { key: 'facebookUrl', value: 'https://facebook.com/indianyogatourism' },
-      { key: 'youtubeUrl', value: 'https://youtube.com/indianyogatourism' },
-      { key: 'twitterUrl', value: 'https://twitter.com/indianyogatourism' },
+      { key: 'instagramUrl', value: 'https://instagram.com/indiayogatourism' },
+      { key: 'facebookUrl', value: 'https://facebook.com/indiayogatourism' },
+      { key: 'youtubeUrl', value: 'https://youtube.com/indiayogatourism' },
+      { key: 'twitterUrl', value: 'https://twitter.com/indiayogatourism' },
     ]
   })
 
@@ -33,47 +33,47 @@ async function main() {
     data: [
       {
         pageKey: 'home',
-        title: 'Indian Yoga Tourism - Find Your Inner Peace in the Himalayas',
+        title: 'India Yoga Tourism - Find Your Inner Peace in the Himalayas',
         description: 'Elevating the spiritual journey with authentic, high-end experiences across India\'s most sacred destinations. Yoga, Meditation, and Ayurveda in Rishikesh and beyond.',
         keywords: 'yoga, tourism, india, himalayas, rishikesh, meditation, ayurveda, retreat',
         ogImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSQ4PkqcD83cx3q9NfEA2D4D0dACa2KEUrl3ocyJqQEj8MsZiKp7yVUjfsz1PhCLoRpbOpTPCoSruI3zUdpAXV495u5Nx2wyRvMXsbWoFsC8TpG2X0Rq4esc3tdBCS7oprShHV2A_7yXUHsa8M_BcP9MXTc2RSEM0uCMoKYPbsZe5DZsZM13f-jaDBBnIrbBe6i7bndREoFQiDr5xm7JKp_iXQ2Z8BSeyFbYuAFCn22z3Nhf5-im3Iko54LI1Rq4pmjJJZPzbrJGjh'
       },
       {
         pageKey: 'packages',
-        title: 'Our Packages - Premium Yoga & Meditation Retreats | Indian Yoga Tourism',
+        title: 'Our Packages - Premium Yoga & Meditation Retreats | India Yoga Tourism',
         description: 'Discover transformative journeys curated to restore balance, deepen your practice, and reconnect you with nature in the heart of the Himalayas.',
         keywords: 'yoga packages, retreats booking, rishikesh retreat, himalayan yoga',
         ogImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAIFA6hknquQPohifChXu_cQ63MM264jx5ZJaji4EqSJimKAiI2UTy-fXnigoCyl0LO2AtqvL-iFAD6lDgujcAgTGaN3KJ97hMds5bufumdDA3qCkl2omLQTke0vGWvWv0rPXOALro0Ddz1v58CFzvNxWEj76buYsv2fwXpcDbCj12thTTljBR9GM99ax6Gboe__vJCELNZfpSg6q-TFoQDu3g8jxZzg32SlECMJ7rzsOP-qrRypCs-dPLzfmENOPsrysiiZ8k4tKU7'
       },
       {
         pageKey: 'programmes',
-        title: 'Wellness Programmes - Ayurvedic Healing & Detox | Indian Yoga Tourism',
+        title: 'Wellness Programmes - Ayurvedic Healing & Detox | India Yoga Tourism',
         description: 'Immerse in holistic clinical wellness programmes focusing on chronic pain management, ayurvedic detox, and mental balance under expert care.',
         keywords: 'ayurveda, detox, clinical wellness, pain management, hormonal balance',
         ogImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuACbK16cIbE1HnZhwzRdYZd3DaCUYzNasG8Bm0wMbeeSmdF8pAzvVRmWV0GDQTmSLhYIrG4uXxtx4DtfFOIhV0YdbQQfixpRRRf2iCVSm_WFuDTLhQ7cDrDKK0G2eFjJ_KXV8fWuYL3wuNcy865XWfB5tKvzSqUDWJ69b6UmBiU_Zu9CAjm-22SDFPU8RV1YBE7chA3Q3G2cebkitsQWte5moyWhsg_YGsZQTY3VOjSqCu-YgmtAGDo6R5Sia3MMNn9FVkTjrfu3pqQ'
       },
       {
         pageKey: 'online-classes',
-        title: 'Online Yoga & Meditation Classes | Indian Yoga Tourism',
+        title: 'Online Yoga & Meditation Classes | India Yoga Tourism',
         description: 'Access live and recorded traditional yoga sessions, pranayama, and meditation directly from authentic Himalayan teachers from your home.',
         keywords: 'online yoga, live yoga classes, learn pranayama, virtual meditation',
         ogImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuALRKKBd3hI3Mx8pTO4xnsPUXk0DZDRUoXUV1ZFdomGpPfqlktRRKHv1CmsMxM_fuxFCLI76rfJDl-JMjZMg_xTSLsls_ZOYAh-S3MM6NvbvRL_i8yrzUwnyi4of_DUqysdrI0nnWHxG7kmLyNhe-YkAKQCPbIcGjkXPywGJqOV_X2pBLzPk8XveeiG_YZq0i4ocWI45E0kNwWXYTr1F6IrdgP-5zenHyhwo-wAY2VaxJsP4ozkUJpTN8lmOa1P2lBfHtE_appZi1ZT'
       },
       {
         pageKey: 'about',
-        title: 'About Us - Our Mission & Lineage | Indian Yoga Tourism',
-        description: 'Learn about the legacy of Indian Yoga Tourism, our dedication to preserving ancient yogic traditions, and our curated luxury sanctuaries.',
-        keywords: 'about indian yoga, yoga lineage, authentic gurus, spiritual travel'
+        title: 'About Us - Our Mission & Lineage | India Yoga Tourism',
+        description: 'Learn about the legacy of India Yoga Tourism, our dedication to preserving ancient yogic traditions, and our curated luxury sanctuaries.',
+        keywords: 'about india yoga, yoga lineage, authentic gurus, spiritual travel'
       },
       {
         pageKey: 'gallery',
-        title: 'Photo & Video Gallery - Himalayan Serenity | Indian Yoga Tourism',
+        title: 'Photo & Video Gallery - Himalayan Serenity | India Yoga Tourism',
         description: 'Explore the visual beauty of our retreat centers, sacred locations, and the peaceful environment of the Himalayas.',
         keywords: 'yoga gallery, retreats photos, rishikesh gallery, yoga videos'
       },
       {
         pageKey: 'contact',
-        title: 'Contact Us - Plan Your Spiritual Journey | Indian Yoga Tourism',
+        title: 'Contact Us - Plan Your Spiritual Journey | India Yoga Tourism',
         description: 'Connect with our journey planners to customize your yoga retreat, enquire about wellness programmes, or ask general questions.',
         keywords: 'contact yoga retreat, enquire rishikesh, booking help'
       }
@@ -309,7 +309,7 @@ async function main() {
   const seedUser = await prisma.user.create({
     data: {
       clerkId: "user_seed_test_123",
-      email: "guest@indianyogatourism.com",
+      email: "guest@indiayogatourism.com",
       name: "John Doe",
       role: "guest"
     }

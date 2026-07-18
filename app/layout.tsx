@@ -36,8 +36,8 @@ const ebGaramond = EB_Garamond({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Indian Yoga Tourism',
-    template: '%s | Indian Yoga Tourism'
+    default: 'India Yoga Tourism',
+    template: '%s | India Yoga Tourism'
   },
   description: 'Ancient Wisdom. Modern Journey. Discover premium retreats and clinical wellness programmes in the Himalayas.',
 }

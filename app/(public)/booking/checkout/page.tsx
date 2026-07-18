@@ -32,7 +32,7 @@ export default async function CheckoutPage({ searchParams }: PageProps) {
       <header className="w-full py-6 px-6 md:px-12 border-b border-surface-container-highest bg-surface sticky top-0 z-50">
         <div className="max-w-[1280px] mx-auto flex justify-between items-center">
           <Link href="/" className="font-display-lg text-[24px] text-primary tracking-tight font-bold">
-            Indian Yoga Tourism
+            India Yoga Tourism
           </Link>
           <Link
             href={`/packages/${pkg.slug}`}

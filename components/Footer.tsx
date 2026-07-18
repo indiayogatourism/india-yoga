@@ -79,7 +79,7 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-tertiary-fixed-dim text-3xl">self_improvement</span>
             <span className="font-display-lg text-on-primary text-2xl font-bold tracking-tight">
-              Indian Yoga Tourism
+              India Yoga Tourism
             </span>
           </div>
           <p className="font-body-md text-on-primary-container/70 text-sm leading-relaxed mt-2">
@@ -178,14 +178,14 @@ export default function Footer() {
       <div className="border-t border-on-primary-container/10 bg-black/10 relative z-10">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="font-body-md text-xs text-on-primary-container/60 text-center md:text-left">
-            © {new Date().getFullYear()} Indian Yoga Tourism. Crafted for pilgrims of self-transformation. All rights reserved.
+            © {new Date().getFullYear()} India Yoga Tourism. Crafted for pilgrims of self-transformation. All rights reserved.
           </p>
           
           <div className="flex items-center gap-6">
             <div className="flex gap-4">
               <a
                 aria-label="Instagram"
-                href="https://instagram.com/indianyogatourism"
+                href="https://instagram.com/indiayogatourism"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 rounded-full border border-on-primary-container/30 hover:border-tertiary-fixed-dim hover:text-tertiary-fixed flex items-center justify-center transition-colors text-on-primary-container"
@@ -194,7 +194,7 @@ export default function Footer() {
               </a>
               <a
                 aria-label="Facebook"
-                href="https://facebook.com/indianyogatourism"
+                href="https://facebook.com/indiayogatourism"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 rounded-full border border-on-primary-container/30 hover:border-tertiary-fixed-dim hover:text-tertiary-fixed flex items-center justify-center transition-colors text-on-primary-container"

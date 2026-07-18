@@ -21,7 +21,7 @@ export default function AboutPage() {
         </div>
         <div className="relative z-20 text-center max-w-[1280px] mx-auto px-6 md:px-12 mt-16">
           <span className="text-tertiary-fixed font-label-price text-xs uppercase tracking-widest block mb-3">✦ Our Sanctuary Story ✦</span>
-          <h1 className="font-display-lg text-4xl md:text-6xl text-on-primary font-bold">About Indian Yoga Tourism</h1>
+          <h1 className="font-display-lg text-4xl md:text-6xl text-on-primary font-bold">About India Yoga Tourism</h1>
         </div>
       </section>
 
@@ -31,7 +31,7 @@ export default function AboutPage() {
           <span className="text-secondary font-label-price text-xs uppercase tracking-widest block mb-2">Our Origins</span>
           <h2 className="font-headline-md text-3xl md:text-5xl text-primary font-bold mb-6">Bridging Ancient Wisdom with Modern Paths</h2>
           <p className="font-body-md text-on-surface-variant leading-relaxed text-sm md:text-base mb-6">
-            Indian Yoga Tourism (IYT) was founded under the guidance of traditional Himalayan masters to preserve the integrity of ancient yoga and Ayurvedic clinical science. 
+            India Yoga Tourism (IYT) was founded under the guidance of traditional Himalayan masters to preserve the integrity of ancient yoga and Ayurvedic clinical science. 
           </p>
           <p className="font-body-md text-on-surface-variant leading-relaxed text-sm md:text-base">
             We believe that spiritual practice does not require compromising on comfortable living conditions. Our sanctuaried locations provide peaceful ashram grounds alongside premium hospitality and nutrition, offering the perfect environment for self-study and deep recovery.

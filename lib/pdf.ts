@@ -34,7 +34,7 @@ export async function generateBookingVoucher(data: VoucherData): Promise<{ buffe
   const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
   // Header Title
-  page.drawText('INDIAN YOGA TOURISM', {
+  page.drawText('INDIA YOGA TOURISM', {
     x: 50,
     y: height - 60,
     size: 24,
@@ -125,7 +125,7 @@ export async function generateBookingVoucher(data: VoucherData): Promise<{ buffe
     color: rgb(0.004, 0.176, 0.114),
   })
 
-  page.drawText('Cloud 9 Tower, Vaishali Sec-1, Ghaziabad, UP 201010 | info@indianyogatourism.com', {
+  page.drawText('Cloud 9 Tower, Vaishali Sec-1, Ghaziabad, UP 201010 | info@indiayogatourism.com', {
     x: 50,
     y: 60,
     size: 9,
@@ -151,7 +151,7 @@ export async function generatePaymentReceipt(data: ReceiptData): Promise<{ buffe
   const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
   // Header Title
-  page.drawText('INDIAN YOGA TOURISM', {
+  page.drawText('INDIA YOGA TOURISM', {
     x: 50,
     y: height - 60,
     size: 24,
@@ -230,7 +230,7 @@ export async function generatePaymentReceipt(data: ReceiptData): Promise<{ buffe
 
   // Note
   tableY -= 60
-  page.drawText('Thank you for choosing Indian Yoga Tourism 🙏', {
+  page.drawText('Thank you for choosing India Yoga Tourism 🙏', {
     x: 50,
     y: tableY,
     size: 12,

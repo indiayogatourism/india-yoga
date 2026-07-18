@@ -20,8 +20,8 @@ interface SendEmailParams {
 }
 
 export async function sendEmail({ to, subject, html, attachments }: SendEmailParams) {
-  const fromEmail = process.env.AWS_SES_FROM_EMAIL || 'info@indianyogatourism.com'
-  const fromName = process.env.AWS_SES_FROM_NAME || 'Indian Yoga Tourism'
+  const fromEmail = process.env.AWS_SES_FROM_EMAIL || 'info@indiayogatourism.com'
+  const fromName = process.env.AWS_SES_FROM_NAME || 'India Yoga Tourism'
 
   if (attachments && attachments.length > 0) {
     // Construct raw MIME email

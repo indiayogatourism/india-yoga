@@ -155,7 +155,7 @@ export async function POST(req: Request) {
       payment.booking.package.title
     )
     await sendEmail({
-      to: process.env.AWS_SES_FROM_EMAIL || 'info@indianyogatourism.com',
+      to: process.env.AWS_SES_FROM_EMAIL || 'info@indiayogatourism.com',
       subject: `🚨 Alert: New Booking Confirmed — ${booking.bookingRef}`,
       html: adminAlertHtml
     })

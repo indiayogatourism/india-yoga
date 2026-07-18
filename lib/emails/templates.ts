@@ -14,7 +14,7 @@ export function getBookingConfirmedTemplate(data: BookingEmailData): string {
   return `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #c1c8c2; border-radius: 8px; background-color: #fcf8ff; color: #1a1a2e;">
       <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #012d1d; padding-bottom: 20px;">
-        <h1 style="color: #012d1d; font-family: 'Playfair Display', serif; margin: 0 0 10px 0;">Indian Yoga Tourism</h1>
+        <h1 style="color: #012d1d; font-family: 'Playfair Display', serif; margin: 0 0 10px 0;">India Yoga Tourism</h1>
         <p style="font-style: italic; color: #2c694e; margin: 0;">"Ancient Wisdom. Modern Journey."</p>
       </div>
       
@@ -63,8 +63,8 @@ export function getBookingConfirmedTemplate(data: BookingEmailData): string {
 
       <div style="margin-top: 40px; border-top: 1px solid #c1c8c2; padding-top: 20px; font-size: 12px; text-align: center; color: #717973;">
         <p>Cloud 9 Tower, Vaishali Sec-1, Ghaziabad, UP 201010</p>
-        <p>Phone: +91 99998 76349 | Email: info@indianyogatourism.com</p>
-        <p>© ${new Date().getFullYear()} Indian Yoga Tourism. All rights reserved.</p>
+        <p>Phone: +91 99998 76349 | Email: info@indiayogatourism.com</p>
+        <p>© ${new Date().getFullYear()} India Yoga Tourism. All rights reserved.</p>
       </div>
     </div>
   `
@@ -74,7 +74,7 @@ export function getBookingPendingTemplate(data: BookingEmailData): string {
   return `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #c1c8c2; border-radius: 8px; background-color: #fcf8ff; color: #1a1a2e;">
       <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #012d1d; padding-bottom: 20px;">
-        <h1 style="color: #012d1d; font-family: 'Playfair Display', serif; margin: 0 0 10px 0;">Indian Yoga Tourism</h1>
+        <h1 style="color: #012d1d; font-family: 'Playfair Display', serif; margin: 0 0 10px 0;">India Yoga Tourism</h1>
       </div>
       
       <div style="padding: 10px 0;">
@@ -111,11 +111,11 @@ export function getPaymentReceiptTemplate(data: BookingEmailData): string {
         
         <p style="font-size: 16px; line-height: 1.6;">You can download your detailed receipt PDF directly from your dashboard or via the link below (if available).</p>
         
-        <p style="font-size: 16px; line-height: 1.6;">Thank you for choosing Indian Yoga Tourism 🙏</p>
+        <p style="font-size: 16px; line-height: 1.6;">Thank you for choosing India Yoga Tourism 🙏</p>
       </div>
 
       <div style="margin-top: 40px; border-top: 1px solid #c1c8c2; padding-top: 20px; font-size: 12px; text-align: center; color: #717973;">
-        <p>© Indian Yoga Tourism. All rights reserved.</p>
+        <p>© India Yoga Tourism. All rights reserved.</p>
       </div>
     </div>
   `
@@ -125,7 +125,7 @@ export function getEnquiryReceivedTemplate(name: string): string {
   return `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #c1c8c2; border-radius: 8px; background-color: #fcf8ff; color: #1a1a2e;">
       <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #012d1d; padding-bottom: 20px;">
-        <h1 style="color: #012d1d; font-family: 'Playfair Display', serif;">Indian Yoga Tourism</h1>
+        <h1 style="color: #012d1d; font-family: 'Playfair Display', serif;">India Yoga Tourism</h1>
       </div>
       
       <div style="padding: 10px 0;">
@@ -135,7 +135,7 @@ export function getEnquiryReceivedTemplate(name: string): string {
       </div>
 
       <div style="margin-top: 40px; border-top: 1px solid #c1c8c2; padding-top: 20px; font-size: 12px; text-align: center; color: #717973;">
-        <p>Phone: +91 99998 76349 | Email: info@indianyogatourism.com</p>
+        <p>Phone: +91 99998 76349 | Email: info@indiayogatourism.com</p>
       </div>
     </div>
   `
