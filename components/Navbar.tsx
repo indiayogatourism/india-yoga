@@ -13,7 +13,8 @@ export default function Navbar() {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const isAdmin = user?.publicMetadata?.role === 'admin'
+  const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase()
+  const isAdmin = userEmail === 'indiayogatourism@gmail.com' || user?.publicMetadata?.role === 'admin'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,6 +42,8 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Retreats', href: '/packages', hasDropdown: true },
     { name: 'Programs', href: '/programmes', hasDropdown: false },
+    { name: 'Blog', href: '/blog', hasDropdown: false },
+    { name: 'Know More', href: '/know-more', hasDropdown: false },
     { name: 'Online Classes', href: '/online-classes', hasDropdown: false },
     { name: 'Gallery', href: '/gallery', hasDropdown: false },
     { name: 'About', href: '/about', hasDropdown: false },

@@ -19,7 +19,7 @@ export default async function GuestDashboardPage() {
   }
 
   // Get user from DB
-  const dbUser = await prisma.user.findUnique({
+  let dbUser = await prisma.user.findUnique({
     where: { clerkId: userId },
     include: {
       bookings: {
@@ -29,9 +29,29 @@ export default async function GuestDashboardPage() {
     }
   })
 
+  const userEmail = clerkUser.emailAddresses?.[0]?.emailAddress?.toLowerCase()
+  const isAdminEmail = userEmail === 'indiayogatourism@gmail.com'
+
   if (!dbUser) {
-    // If not in DB yet, redirect to sync
-    redirect('/booking/checkout')
+    dbUser = await prisma.user.create({
+      data: {
+        clerkId: userId,
+        email: userEmail || clerkUser.emailAddresses[0]?.emailAddress || '',
+        name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'Guest User',
+        role: isAdminEmail ? 'admin' : 'guest'
+      },
+      include: {
+        bookings: {
+          include: { package: true },
+          orderBy: { arrivalDate: 'asc' }
+        }
+      }
+    })
+  }
+
+  // Redirect admin users to admin panel automatically
+  if (dbUser.role === 'admin' || isAdminEmail) {
+    redirect('/admin')
   }
 
   const bookings = dbUser.bookings

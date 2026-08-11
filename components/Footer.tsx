@@ -138,6 +138,11 @@ export default function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/blog" className="hover:text-tertiary-fixed transition-colors">
+                Wellness Journal &amp; Blog
+              </Link>
+            </li>
+            <li>
               <Link href="/about" className="hover:text-tertiary-fixed transition-colors">
                 Our Lineage &amp; Story
               </Link>

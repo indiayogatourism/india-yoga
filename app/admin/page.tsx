@@ -18,12 +18,33 @@ export default async function AdminDashboardPage() {
     redirect('/sign-in')
   }
 
-  // Verify Admin Role in DB
-  const dbUser = await prisma.user.findUnique({
+  // Check clerk user email
+  const userEmail = clerkUser.emailAddresses?.[0]?.emailAddress?.toLowerCase()
+
+  // Verify Admin Role in DB or auto-grant if indiayogatourism@gmail.com
+  let dbUser = await prisma.user.findUnique({
     where: { clerkId: userId }
   })
 
-  if (!dbUser || dbUser.role !== 'admin') {
+  const isAdminEmail = userEmail === 'indiayogatourism@gmail.com'
+
+  if (!dbUser) {
+    dbUser = await prisma.user.create({
+      data: {
+        clerkId: userId,
+        email: userEmail || clerkUser.emailAddresses[0]?.emailAddress || '',
+        name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'Admin User',
+        role: isAdminEmail ? 'admin' : 'guest'
+      }
+    })
+  } else if (isAdminEmail && dbUser.role !== 'admin') {
+    dbUser = await prisma.user.update({
+      where: { id: dbUser.id },
+      data: { role: 'admin' }
+    })
+  }
+
+  if (dbUser.role !== 'admin' && !isAdminEmail) {
     redirect('/dashboard')
   }
 
