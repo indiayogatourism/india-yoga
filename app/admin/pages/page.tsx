@@ -24,6 +24,7 @@ async function createPage(formData: FormData) {
   })
 
   revalidatePath('/admin/pages')
+  revalidatePath(`/${slug}`)
 }
 
 export default async function AdminPagesPage() {
@@ -61,21 +62,12 @@ export default async function AdminPagesPage() {
               className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
             />
           </div>
-          <div className="space-y-1">
-            <label className="font-semibold text-gray-700">Meta Title (SEO)</label>
+          <div className="md:col-span-2 space-y-1">
+            <label className="font-semibold text-gray-700">SEO Meta Title</label>
             <input
               type="text"
               name="metaTitle"
-              placeholder="SEO Title..."
-              className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="font-semibold text-gray-700">Meta Description (SEO)</label>
-            <input
-              type="text"
-              name="metaDescription"
-              placeholder="SEO Description..."
+              placeholder="Title for Google search..."
               className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
             />
           </div>
@@ -84,8 +76,8 @@ export default async function AdminPagesPage() {
             <textarea
               name="content"
               required
-              rows={5}
-              placeholder="Main HTML/Markdown page text..."
+              rows={6}
+              placeholder="Write page content..."
               className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
             />
           </div>
@@ -119,6 +111,13 @@ export default async function AdminPagesPage() {
                   <span className="text-[10px] px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold">
                     Active
                   </span>
+                  <Link
+                    href={`/${p.slug}`}
+                    target="_blank"
+                    className="text-xs font-bold text-[#1C2E26] hover:underline"
+                  >
+                    View Page
+                  </Link>
                 </div>
               </div>
             ))

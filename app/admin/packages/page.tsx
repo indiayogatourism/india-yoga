@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { LiveCatalogList } from '@/components/admin/LiveCatalogList'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,7 +39,7 @@ async function createProgramme(formData: FormData) {
   })
 
   revalidatePath('/admin/packages')
-  revalidatePath('/programmes')
+  revalidatePath('/packages')
 }
 
 export default async function AdminPackagesPage() {
@@ -135,39 +136,9 @@ export default async function AdminPackagesPage() {
         </form>
       </div>
 
-      {/* Existing Programmes Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-100">
-          <h2 className="text-base font-bold text-[#1C2E26]">Live Catalog ({programmes.length})</h2>
-        </div>
-        <div className="divide-y divide-gray-100">
-          {programmes.map((p) => (
-            <div key={p.id} className="p-6 flex items-center justify-between gap-4 hover:bg-gray-50/50">
-              <div className="flex items-center gap-4">
-                {p.featuredImage && (
-                  <img src={p.featuredImage} alt={p.title} className="w-16 h-12 rounded-lg object-cover" />
-                )}
-                <div>
-                  <h3 className="text-sm font-bold text-[#1C2E26]">{p.title}</h3>
-                  <p className="text-xs text-gray-500">{p.durationDays} Days • ${p.priceShared} USD</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold">
-                  {p.status}
-                </span>
-                <Link
-                  href="/programmes"
-                  target="_blank"
-                  className="text-xs font-bold text-[#1C2E26] hover:underline"
-                >
-                  View
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Interactive Live Catalog Component */}
+      <LiveCatalogList initialPackages={programmes} />
     </div>
   )
 }
+
