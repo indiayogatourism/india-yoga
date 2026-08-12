@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyRazorpaySignature } from '@/lib/razorpay'
 import { generateBookingVoucher, generatePaymentReceipt } from '@/lib/pdf'
-import { sendEmail } from '@/lib/ses'
+import { sendEmail } from '@/lib/email'
 import { getBookingConfirmedTemplate, getPaymentReceiptTemplate, getEnquiryAlertTemplate } from '@/lib/emails/templates'
 
 export async function POST(req: Request) {
@@ -155,7 +155,7 @@ export async function POST(req: Request) {
       payment.booking.package.title
     )
     await sendEmail({
-      to: process.env.AWS_SES_FROM_EMAIL || 'info@indiayogatourism.com',
+      to: process.env.RESEND_FROM_EMAIL || 'info@indiayogatourism.com',
       subject: `🚨 Alert: New Booking Confirmed — ${booking.bookingRef}`,
       html: adminAlertHtml
     })
