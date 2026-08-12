@@ -42,7 +42,7 @@ export default function Footer() {
               Subscribe to receive sacred travel updates, traditional wellness philosophies, and priority access to upcoming retreats.
             </p>
           </div>
-          <div className="w-full lg:w-auto min-w-[320px] md:min-w-[450px]">
+          <div className="w-full max-w-md lg:min-w-[450px]">
             {subscribed ? (
               <div className="p-5 bg-primary border-2 border-tertiary-fixed-dim/30 rounded-2xl text-center shadow-lg transform scale-100 transition-all">
                 <span className="material-symbols-outlined text-tertiary-fixed-dim text-3xl mb-2">verified</span>

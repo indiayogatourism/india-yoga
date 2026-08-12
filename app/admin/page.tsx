@@ -87,231 +87,178 @@ export default async function AdminDashboardPage() {
   })
 
   return (
-    <div className="bg-surface text-on-surface font-body-md antialiased overflow-hidden flex h-screen w-full">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 bg-on-background text-surface flex flex-col h-full flex-shrink-0 z-20 shadow-xl">
-        <div className="p-6 border-b border-surface-variant/20 flex items-center justify-between">
-          <Link href="/" className="font-display-lg text-[24px] font-bold text-tertiary-fixed tracking-tight">
-            IYT Admin
+    <div className="space-y-6 sm:space-y-8">
+      {/* Header Banner */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-black/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="font-display-lg text-2xl font-bold text-[#1C2E26]">Overview</h2>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">Welcome back. Here is your operational summary.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link href="/admin/packages/new">
+            <button className="bg-[#1C2E26] text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl hover:bg-emerald-900 transition-colors flex items-center gap-2 shadow-sm cursor-pointer">
+              <span className="material-symbols-outlined text-base">add_circle</span>
+              New Retreat
+            </button>
           </Link>
         </div>
-        <nav className="flex-1 py-6 overflow-y-auto">
-          <ul className="space-y-2 px-4">
-            <li>
-              <Link
-                href="/admin"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-container text-on-primary-container font-medium transition-colors"
-              >
-                <span className="material-symbols-outlined">dashboard</span>
-                Dashboard
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/packages/new"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant hover:bg-surface-variant/10 hover:text-surface transition-colors"
-              >
-                <span className="material-symbols-outlined">add_circle</span>
-                Create Package
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/packages"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-surface-variant hover:bg-surface-variant/10 hover:text-surface transition-colors"
-              >
-                <span className="material-symbols-outlined">explore</span>
-                View Live Site
-              </Link>
-            </li>
-          </ul>
-        </nav>
-        <div className="p-4 border-t border-surface-variant/20">
-          <div className="flex items-center gap-3 px-4 py-2">
-            <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-secondary-container font-bold border border-secondary/30">
-              AD
-            </div>
-            <div>
-              <p className="text-sm font-medium text-surface">{dbUser.name}</p>
-              <p className="text-xs text-surface-variant/70">Administrator</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content Canvas */}
-      <main className="flex-grow bg-[#F8F3E3] flex flex-col h-full overflow-hidden relative">
-        <header className="h-20 bg-surface/85 backdrop-blur-md flex items-center justify-between px-8 border-b border-outline-variant/30 flex-shrink-0">
+      </div>
+      
+      {/* Stats Grid */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-black/5 flex items-center justify-between hover:shadow-md transition-shadow">
           <div>
-            <h2 className="font-headline-md text-primary text-2xl">Overview</h2>
-            <p className="text-on-surface-variant text-sm">Welcome back. Here is today's summary.</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Total Revenue</p>
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#1C2E26]">{formatPrice(totalRevenue)}</h3>
+            <p className="text-emerald-700 text-xs font-bold flex items-center gap-1 mt-2">
+              <span className="material-symbols-outlined text-sm">trending_up</span>
+              Live transactions
+            </p>
           </div>
-        </header>
-
-        {/* Scrollable Content */}
-        <div className="flex-grow overflow-y-auto p-8 space-y-8">
-          
-          {/* Stats Grid */}
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-surface rounded-xl p-6 soft-shadow border border-outline-variant/30 flex items-start justify-between group hover:-translate-y-1 transition-transform duration-300">
-              <div>
-                <p className="text-on-surface-variant text-sm font-medium mb-1">Total Revenue</p>
-                <h3 className="font-label-price text-primary text-3xl">{formatPrice(totalRevenue)}</h3>
-                <p className="text-secondary text-sm flex items-center gap-1 mt-2">
-                  <span className="material-symbols-outlined text-[16px]">trending_up</span>
-                  Live transactions
-                </p>
-              </div>
-              <div className="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
-                <span className="material-symbols-outlined">account_balance_wallet</span>
-              </div>
-            </div>
-
-            <div className="bg-surface rounded-xl p-6 soft-shadow border border-outline-variant/30 flex items-start justify-between group hover:-translate-y-1 transition-transform duration-300">
-              <div>
-                <p className="text-on-surface-variant text-sm font-medium mb-1">Active Bookings</p>
-                <h3 className="font-label-price text-primary text-3xl">{activeBookings}</h3>
-                <p className="text-secondary text-sm flex items-center gap-1 mt-2">
-                  <span className="material-symbols-outlined text-[16px]">trending_up</span>
-                  Confirmed retreats
-                </p>
-              </div>
-              <div className="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
-                <span className="material-symbols-outlined">calendar_month</span>
-              </div>
-            </div>
-
-            <div className="bg-surface rounded-xl p-6 soft-shadow border border-outline-variant/30 flex items-start justify-between group hover:-translate-y-1 transition-transform duration-300">
-              <div>
-                <p className="text-on-surface-variant text-sm font-medium mb-1">Total Guests</p>
-                <h3 className="font-label-price text-primary text-3xl">{totalGuests}</h3>
-                <p className="text-on-surface-variant text-sm flex items-center gap-1 mt-2">
-                  <span className="material-symbols-outlined text-[16px]">diversity_3</span>
-                  Registered pilgrims
-                </p>
-              </div>
-              <div className="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
-                <span className="material-symbols-outlined">diversity_3</span>
-              </div>
-            </div>
-          </section>
-
-          {/* Charts Section */}
-          <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 bg-surface rounded-xl p-6 soft-shadow border border-outline-variant/30">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="font-headline-md text-primary text-xl">Bookings by Month</h3>
-              </div>
-              <AdminCharts data={monthlyData} />
-            </div>
-
-            <div className="lg:col-span-1 bg-surface rounded-xl p-6 soft-shadow border border-outline-variant/30 flex flex-col justify-between">
-              <h3 className="font-headline-md text-primary text-xl mb-4">Quick Actions</h3>
-              <div className="space-y-4">
-                <Link href="/admin/packages/new">
-                  <button className="w-full bg-primary text-on-primary font-bold py-3.5 px-6 rounded-lg text-sm flex items-center justify-center gap-2 hover:bg-primary-container transition-colors cursor-pointer">
-                    <span className="material-symbols-outlined text-[18px]">add_circle</span>
-                    Create Retreat Package
-                  </button>
-                </Link>
-                
-                <Link href="/packages">
-                  <button className="w-full border-2 border-outline text-outline font-bold py-3 px-6 rounded-lg text-sm flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors cursor-pointer">
-                    <span className="material-symbols-outlined text-[18px]">preview</span>
-                    View Live Sanctuary Catalog
-                  </button>
-                </Link>
-              </div>
-              <div className="bg-surface-container-low rounded-lg p-4 border border-outline-variant/20 mt-4">
-                <h4 className="font-bold text-primary text-sm mb-1">AWS & Payment Systems</h4>
-                <p className="text-xs text-on-surface-variant">AWS S3, AWS SES, Razorpay and PayPal systems are operational.</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Recent Bookings Table */}
-          <section className="bg-surface rounded-xl soft-shadow border border-outline-variant/30 overflow-hidden mb-12">
-            <div className="p-6 border-b border-outline-variant/20">
-              <h3 className="font-headline-md text-primary text-xl">Recent Bookings</h3>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-surface-container-low text-on-surface-variant text-sm border-b border-outline-variant/20">
-                    <th className="py-4 px-6 font-medium">Guest Name</th>
-                    <th className="py-4 px-6 font-medium">Package</th>
-                    <th className="py-4 px-6 font-medium">Dates</th>
-                    <th className="py-4 px-6 font-medium">Amount</th>
-                    <th className="py-4 px-6 font-medium">Status</th>
-                    <th className="py-4 px-6 font-medium text-right">Downloads</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {recentBookings.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-8 text-center text-on-surface-variant italic">
-                        No bookings processed yet.
-                      </td>
-                    </tr>
-                  ) : (
-                    recentBookings.map((b) => (
-                      <tr
-                        key={b.id}
-                        className="border-b border-outline-variant/10 hover:bg-surface-container-lowest transition-colors"
-                      >
-                        <td className="py-4 px-6">
-                          <span className="font-medium text-primary">{b.fullName}</span>
-                        </td>
-                        <td className="py-4 px-6 text-on-surface-variant">{b.package.title}</td>
-                        <td className="py-4 px-6 text-on-surface-variant">
-                          {formatDate(b.arrivalDate)}
-                        </td>
-                        <td className="py-4 px-6 font-medium text-primary">
-                          {formatPrice(b.totalAmount)}
-                        </td>
-                        <td className="py-4 px-6">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              b.status === 'CONFIRMED'
-                                ? 'bg-secondary-container text-on-secondary-container'
-                                : 'bg-surface-variant text-on-surface-variant'
-                            }`}
-                          >
-                            {b.status}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-right space-x-2">
-                          {b.status === 'CONFIRMED' && (
-                            <>
-                              <a
-                                href={`/api/download/voucher/${b.bookingRef}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-secondary hover:underline text-xs font-bold"
-                              >
-                                Voucher
-                              </a>
-                              <span className="text-outline-variant">|</span>
-                              <a
-                                href={`/api/download/receipt/${b.bookingRef}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-secondary hover:underline text-xs font-bold"
-                              >
-                                Receipt
-                              </a>
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-[#1C2E26] flex items-center justify-center font-bold">
+            <span className="material-symbols-outlined text-2xl">account_balance_wallet</span>
+          </div>
         </div>
-      </main>
+
+        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-black/5 flex items-center justify-between hover:shadow-md transition-shadow">
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Active Bookings</p>
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#1C2E26]">{activeBookings}</h3>
+            <p className="text-emerald-700 text-xs font-bold flex items-center gap-1 mt-2">
+              <span className="material-symbols-outlined text-sm">calendar_month</span>
+              Confirmed retreats
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#1C2E26] flex items-center justify-center font-bold">
+            <span className="material-symbols-outlined text-2xl">event_available</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-black/5 flex items-center justify-between hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1">
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Total Guests</p>
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#1C2E26]">{totalGuests}</h3>
+            <p className="text-gray-500 text-xs font-medium flex items-center gap-1 mt-2">
+              <span className="material-symbols-outlined text-sm">group</span>
+              Registered guests
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-purple-50 text-[#1C2E26] flex items-center justify-center font-bold">
+            <span className="material-symbols-outlined text-2xl">group</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Charts & Quick Actions Section */}
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-black/5">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-bold text-[#1C2E26]">Bookings Activity</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <AdminCharts data={monthlyData} />
+          </div>
+        </div>
+
+        <div className="lg:col-span-1 bg-white rounded-2xl p-6 shadow-sm border border-black/5 flex flex-col justify-between space-y-4">
+          <div>
+            <h3 className="text-lg font-bold text-[#1C2E26] mb-4">Quick Management</h3>
+            <div className="space-y-3">
+              <Link href="/admin/packages/new">
+                <button className="w-full bg-[#1C2E26] text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-emerald-900 transition-colors shadow-xs cursor-pointer">
+                  <span className="material-symbols-outlined text-base">add_circle</span>
+                  Create Retreat Package
+                </button>
+              </Link>
+              
+              <Link href="/packages" target="_blank">
+                <button className="w-full bg-[#FAF7F2] text-[#1C2E26] border border-black/10 font-bold py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-black/5 transition-colors cursor-pointer">
+                  <span className="material-symbols-outlined text-base">open_in_new</span>
+                  View Live Public Site
+                </button>
+              </Link>
+            </div>
+          </div>
+          <div className="bg-[#FAF7F2] rounded-xl p-4 border border-black/5">
+            <h4 className="font-bold text-[#1C2E26] text-xs mb-1">System Health</h4>
+            <p className="text-[11px] text-gray-600">Database, Storage, & Payment Gateways are fully operational.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Recent Bookings Table */}
+      <section className="bg-white rounded-2xl shadow-sm border border-black/5 overflow-hidden">
+        <div className="p-6 border-b border-black/5 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-[#1C2E26]">Recent Bookings</h3>
+          <span className="text-xs text-gray-500 font-medium">{recentBookings.length} total</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[650px]">
+            <thead>
+              <tr className="bg-[#FAF7F2] text-gray-500 text-xs uppercase tracking-wider border-b border-black/5">
+                <th className="py-3.5 px-6 font-bold">Guest Name</th>
+                <th className="py-3.5 px-6 font-bold">Package</th>
+                <th className="py-3.5 px-6 font-bold">Dates</th>
+                <th className="py-3.5 px-6 font-bold">Amount</th>
+                <th className="py-3.5 px-6 font-bold">Status</th>
+                <th className="py-3.5 px-6 font-bold text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="text-xs sm:text-sm divide-y divide-black/5">
+              {recentBookings.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-gray-400 italic">
+                    No bookings processed yet.
+                  </td>
+                </tr>
+              ) : (
+                recentBookings.map((b) => (
+                  <tr key={b.id} className="hover:bg-[#FAF7F2]/50 transition-colors">
+                    <td className="py-4 px-6 font-bold text-[#1C2E26]">{b.fullName}</td>
+                    <td className="py-4 px-6 text-gray-600 truncate max-w-[200px]">{b.package.title}</td>
+                    <td className="py-4 px-6 text-gray-500 whitespace-nowrap">{formatDate(b.arrivalDate)}</td>
+                    <td className="py-4 px-6 font-bold text-[#1C2E26]">{formatPrice(b.totalAmount)}</td>
+                    <td className="py-4 px-6">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                          b.status === 'CONFIRMED'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : 'bg-amber-100 text-amber-800'
+                        }`}
+                      >
+                        {b.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-right whitespace-nowrap space-x-2">
+                      {b.status === 'CONFIRMED' && (
+                        <>
+                          <a
+                            href={`/api/download/voucher/${b.bookingRef}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-emerald-800 hover:underline font-bold text-xs"
+                          >
+                            Voucher
+                          </a>
+                          <span className="text-gray-300">|</span>
+                          <a
+                            href={`/api/download/receipt/${b.bookingRef}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-emerald-800 hover:underline font-bold text-xs"
+                          >
+                            Receipt
+                          </a>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   )
 }

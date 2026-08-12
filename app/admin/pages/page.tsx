@@ -102,21 +102,21 @@ export default async function AdminPagesPage() {
             <p className="p-8 text-center text-xs text-gray-400 italic">No custom pages created yet.</p>
           ) : (
             pages.map((p: any) => (
-              <div key={p.id} className="p-6 flex items-center justify-between gap-4 hover:bg-gray-50/50">
+              <div key={p.id} className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/50 transition-colors">
                 <div>
                   <h3 className="text-sm font-bold text-[#1C2E26]">{p.title}</h3>
-                  <p className="text-xs text-gray-400">/{p.slug}</p>
+                  <p className="text-xs text-gray-500 font-mono mt-0.5">/{p.slug}</p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-[10px] px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold">
+                <div className="flex items-center gap-3 self-end sm:self-center">
+                  <span className="text-[10px] px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold">
                     Active
                   </span>
                   <Link
                     href={`/${p.slug}`}
                     target="_blank"
-                    className="text-xs font-bold text-[#1C2E26] hover:underline"
+                    className="text-xs font-bold text-[#1C2E26] hover:underline bg-gray-100 px-3 py-1.5 rounded-lg flex items-center gap-1"
                   >
-                    View Page
+                    View Page <span className="material-symbols-outlined text-xs">open_in_new</span>
                   </Link>
                 </div>
               </div>
