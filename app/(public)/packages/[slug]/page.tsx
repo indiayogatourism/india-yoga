@@ -10,19 +10,26 @@ interface PageProps {
   }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function PackageDetailPage({ params }: PageProps) {
   const { slug } = await params
 
-  const pkg = await prisma.package.findUnique({
-    where: { slug },
-    include: {
-      reviews: {
-        where: { isPublished: true },
-        include: { user: true },
-        orderBy: { createdAt: 'desc' }
+  let pkg: any = null
+  try {
+    pkg = await prisma.package.findUnique({
+      where: { slug },
+      include: {
+        reviews: {
+          where: { isPublished: true },
+          include: { user: true },
+          orderBy: { createdAt: 'desc' }
+        }
       }
-    }
-  })
+    })
+  } catch (error) {
+    console.error('Error fetching package detail:', error)
+  }
 
   if (!pkg) {
     notFound()
@@ -122,7 +129,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
               
               <h3 className="font-headline-md text-primary mb-4 mt-8">Retreat Highlights</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {pkg.highlights.map((highlight, idx) => (
+                {(pkg.highlights || []).map((highlight: string, idx: number) => (
                   <div key={idx} className="flex items-start gap-2 bg-surface-container-low p-4 rounded-lg">
                     <span className="material-symbols-outlined text-secondary">check_circle</span>
                     <span className="text-sm font-body-md text-on-surface">{highlight}</span>
@@ -174,7 +181,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
               <div>
                 <h3 className="font-headline-md text-primary mb-4">What's Included</h3>
                 <ul className="space-y-3">
-                  {pkg.inclusions.map((item, idx) => (
+                  {(pkg.inclusions || []).map((item: string, idx: number) => (
                     <li key={idx} className="flex items-center gap-2 text-on-surface-variant">
                       <span className="material-symbols-outlined text-secondary text-lg">done</span>
                       <span>{item}</span>
@@ -185,7 +192,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
               <div>
                 <h3 className="font-headline-md text-primary mb-4">What's Excluded</h3>
                 <ul className="space-y-3">
-                  {pkg.exclusions.map((item, idx) => (
+                  {(pkg.exclusions || []).map((item: string, idx: number) => (
                     <li key={idx} className="flex items-center gap-2 text-on-surface-variant">
                       <span className="material-symbols-outlined text-error text-lg font-bold">close</span>
                       <span>{item}</span>
@@ -198,13 +205,13 @@ export default async function PackageDetailPage({ params }: PageProps) {
             {/* Reviews Section */}
             <section id="reviews" className="scroll-mt-32">
               <h2 className="font-headline-md text-primary mb-6">Guest Reviews</h2>
-              {pkg.reviews.length === 0 ? (
+              {(!pkg.reviews || pkg.reviews.length === 0) ? (
                 <p className="text-on-surface-variant italic bg-surface-container-low p-6 rounded-lg border border-outline-variant/20">
                   No reviews yet for this retreat. Be one of the first to share your experience!
                 </p>
               ) : (
                 <div className="space-y-6">
-                  {pkg.reviews.map((review) => (
+                  {pkg.reviews.map((review: any) => (
                     <div key={review.id} className="border-b border-outline-variant/30 pb-6">
                       <div className="flex justify-between items-start mb-2">
                         <div>

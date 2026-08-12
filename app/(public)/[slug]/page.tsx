@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export default async function PublicDynamicPage({
   params,
@@ -9,9 +9,14 @@ export default async function PublicDynamicPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const page = await (prisma as any).page.findUnique({
-    where: { slug },
-  })
+  let page: any = null
+  try {
+    page = await (prisma as any).page.findUnique({
+      where: { slug },
+    })
+  } catch (error) {
+    console.error('Error fetching page by slug:', error)
+  }
 
   if (!page || !page.published) {
     notFound()

@@ -52,12 +52,17 @@ export default async function PackagesPage({ searchParams }: PageProps) {
     }
   }
 
-  const packages = await prisma.package.findMany({
-    where: whereClause,
-    orderBy: {
-      createdAt: 'desc'
-    }
-  })
+  let packages: any[] = []
+  try {
+    packages = await prisma.package.findMany({
+      where: whereClause,
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching packages:', error)
+  }
 
   // List of active filters to generate queries easily
   const getFilterUrl = (type: 'category' | 'duration', value: string) => {

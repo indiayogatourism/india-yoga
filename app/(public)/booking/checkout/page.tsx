@@ -10,6 +10,8 @@ interface PageProps {
   }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function CheckoutPage({ searchParams }: PageProps) {
   const params = await searchParams
   const { packageId, guests = '1', roomType = 'shared' } = params
@@ -18,9 +20,14 @@ export default async function CheckoutPage({ searchParams }: PageProps) {
     redirect('/packages')
   }
 
-  const pkg = await prisma.package.findUnique({
-    where: { id: packageId }
-  })
+  let pkg: any = null
+  try {
+    pkg = await prisma.package.findUnique({
+      where: { id: packageId }
+    })
+  } catch (error) {
+    console.error('Error fetching package for checkout:', error)
+  }
 
   if (!pkg) {
     notFound()

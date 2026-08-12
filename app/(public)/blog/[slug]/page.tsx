@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export default async function PublicBlogDetailPage({
   params,
@@ -10,9 +10,14 @@ export default async function PublicBlogDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const blog = await (prisma as any).blogPost.findUnique({
-    where: { slug },
-  })
+  let blog: any = null
+  try {
+    blog = await (prisma as any).blogPost.findUnique({
+      where: { slug },
+    })
+  } catch (error) {
+    console.error('Error fetching blog detail:', error)
+  }
 
   if (!blog || !blog.published) {
     notFound()

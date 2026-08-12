@@ -9,6 +9,8 @@ interface PageProps {
   }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function BookingConfirmationPage({ searchParams }: PageProps) {
   const params = await searchParams
   const { ref } = params
@@ -17,13 +19,18 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
     redirect('/packages')
   }
 
-  const booking = await prisma.booking.findUnique({
-    where: { bookingRef: ref },
-    include: {
-      package: true,
-      payment: true
-    }
-  })
+  let booking: any = null
+  try {
+    booking = await prisma.booking.findUnique({
+      where: { bookingRef: ref },
+      include: {
+        package: true,
+        payment: true
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching booking confirmation:', error)
+  }
 
   if (!booking) {
     notFound()

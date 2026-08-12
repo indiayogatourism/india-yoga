@@ -1,13 +1,18 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export default async function PublicBlogListPage() {
-  const blogs = await (prisma as any).blogPost.findMany({
-    where: { published: true },
-    orderBy: { createdAt: 'desc' },
-  })
+  let blogs: any[] = []
+  try {
+    blogs = await (prisma as any).blogPost.findMany({
+      where: { published: true },
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch (error) {
+    console.error('Error fetching blog posts:', error)
+  }
 
   return (
     <main className="bg-[#FAF7F2] min-h-screen pb-20">

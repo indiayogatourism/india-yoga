@@ -4,6 +4,8 @@ import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import CreatePackageForm from '@/components/CreatePackageForm'
 
+export const dynamic = 'force-dynamic'
+
 export default async function NewPackagePage() {
   const { userId } = await auth()
   if (!userId) {

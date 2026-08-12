@@ -1,13 +1,18 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export default async function KnowMorePage() {
-  const pages = await (prisma as any).page.findMany({
-    where: { published: true },
-    orderBy: { title: 'asc' },
-  })
+  let pages: any[] = []
+  try {
+    pages = await (prisma as any).page.findMany({
+      where: { published: true },
+      orderBy: { title: 'asc' },
+    })
+  } catch (error) {
+    console.error('Error fetching know-more pages:', error)
+  }
 
   return (
     <main className="bg-[#FAF7F2] min-h-screen pb-20">
