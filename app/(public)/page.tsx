@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
+import WhyChooseUsInteractive from '@/components/WhyChooseUsInteractive'
 
 export const revalidate = 3600 // Revalidate home page every hour
 
@@ -107,15 +108,27 @@ export default async function HomePage() {
 
   const defaultTestimonials = [
     {
-      name: 'Emily Johnson',
-      country: 'USA',
-      content: 'The most peaceful 4 days of my life. Perfect guidance, beautiful place and amazing people.',
+      name: 'Sophia Laurent',
+      country: 'France',
+      content: 'Attending the 3-Day Rishikesh Spiritual Retreat was deeply grounding. Practicing Hatha flows at sunrise by the Ganges with authentic masters restored my inner peace.',
       rating: 5
     },
     {
-      name: 'Michael',
+      name: 'Marcus Vance',
       country: 'United Kingdom',
-      content: 'Unbelievable attention to detail. High-end comfort and authentic Himalayan lineage training in one package.',
+      content: 'Unbelievable attention to detail and depth of wisdom. High-end comfort and authentic Himalayan lineage training in one seamless package.',
+      rating: 5
+    },
+    {
+      name: 'Elena Rostova',
+      country: 'Germany',
+      content: 'The 7-Day Immersive Ashram retreat completely transformed my perspective. Traditional Pranayama techniques paired with clean, comfortable stays. Highly recommend for solo travellers!',
+      rating: 5
+    },
+    {
+      name: 'Aarav & Maya Sharma',
+      country: 'United States',
+      content: 'From Dehradun airport pickup to the Ayurvedic doctor consultations and daily Ganga Aarti tours, every detail was thoughtfully curated. Truly authentic Indian yoga.',
       rating: 5
     }
   ]
@@ -241,7 +254,7 @@ export default async function HomePage() {
                   Explore Retreats
                 </button>
               </Link>
-              <a href="https://wa.me/919999876349" target="_blank" rel="noopener noreferrer" className="w-1/2">
+              <a href="https://wa.me/918800919486" target="_blank" rel="noopener noreferrer" className="w-1/2">
                 <button className="w-full bg-white hover:bg-surface border border-outline-variant/60 text-secondary font-bold text-xs py-3.5 rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5 text-center">
                   <span className="material-symbols-outlined text-sm">chat</span>
                   WhatsApp Us
@@ -496,120 +509,18 @@ export default async function HomePage() {
             We make your journey simple, safe, and deeply transformative. By bridging traditional guru-disciple lineages with high-end comforts, we deliver verified retreats.
           </p>
 
-          {/* Desktop 3-Column Premium Layout */}
-          <div className="hidden lg:grid grid-cols-12 gap-8 items-center">
-            {/* Value props vertical list */}
-            <div className="col-span-4 flex flex-col gap-4">
-              {[
-                { title: 'Handpicked & Verified Retreats', icon: 'workspace_premium' },
-                { title: 'No Hidden Charges & Transparent Rates', icon: 'payments' },
-                { title: 'Local India-Based Support Team', icon: 'support_agent' },
-                { title: 'English-Speaking Guides & Teachers', icon: 'forum' },
-                { title: 'Safe & Comfortable Ashram Stays', icon: 'verified_user' },
-                { title: 'Best Price Assistance Guarantee', icon: 'local_offer' }
-              ].map((feat, idx) => (
-                <div key={idx} className="flex items-start gap-3 bg-surface/50 p-3.5 rounded-xl border border-outline-variant/10 shadow-sm">
-                  <span className="material-symbols-outlined text-secondary text-lg mt-0.5">{feat.icon}</span>
-                  <span className="font-bold text-xs text-primary leading-tight">{feat.title}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Video Player center card */}
-            <div className="col-span-5 relative rounded-2xl overflow-hidden shadow-lg border border-outline-variant/20 aspect-video w-full h-[280px] bg-black">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb"
-                alt="Experience the Real India Video Cover"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/20 z-0"></div>
-              <div className="absolute inset-0 flex items-center justify-center bg-black/10 hover:bg-black/35 transition-colors cursor-pointer group z-10">
-                <div className="w-14 h-14 rounded-full bg-white/95 text-secondary flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
-                  <span className="material-symbols-outlined text-2xl icon-fill ml-0.5">play_arrow</span>
-                </div>
-              </div>
-              <div className="absolute bottom-4 left-4 right-4 text-center text-white font-bold text-xs bg-primary/80 backdrop-blur-sm py-2.5 rounded-xl border border-white/10 z-20">
-                Experience the Real India
-              </div>
-            </div>
-
-            {/* Google Reviews right card */}
-            <div className="col-span-3 bg-white border border-outline-variant/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-[280px]">
-              <div>
-                <div className="flex justify-between items-start">
-                  <span className="font-display-lg text-lg font-bold tracking-tight text-on-surface">Google</span>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm font-bold text-on-surface">4.9</span>
-                    <div className="flex text-amber-500">
-                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
-                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
-                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
-                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
-                      <span className="material-symbols-outlined text-[12px] icon-fill">star</span>
-                    </div>
-                  </div>
-                </div>
-                <span className="text-[9px] text-outline uppercase tracking-wider block -mt-1 mb-4 font-bold">
-                  Based on 600+ Reviews
-                </span>
-                <p className="font-body-md text-xs text-on-surface-variant italic leading-relaxed line-clamp-3">
-                  "Unbelievable attention to detail. High-end comfort and authentic Himalayan lineage training in one package."
-                </p>
-                <p className="text-[10px] font-bold text-primary mt-2">— Sarah, USA</p>
-              </div>
-
-              <div className="flex justify-between items-center mt-auto pt-2">
-                <div className="flex -space-x-1.5">
-                  {['E', 'M', 'S', 'J'].map((initial, i) => (
-                    <div key={i} className="w-6 h-6 rounded-full border border-white bg-secondary/15 flex items-center justify-center text-[8px] font-bold text-secondary">
-                      {initial}
-                    </div>
-                  ))}
-                </div>
-                <div className="flex gap-1">
-                  <button className="w-6 h-6 rounded-full border border-outline-variant/40 flex items-center justify-center hover:bg-surface transition-colors cursor-pointer text-xs">
-                    <span className="material-symbols-outlined text-[16px]">chevron_left</span>
-                  </button>
-                  <button className="w-6 h-6 rounded-full border border-outline-variant/40 flex items-center justify-center hover:bg-surface transition-colors cursor-pointer text-xs">
-                    <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile/Tablet Stacked Grid Layout */}
-          <div className="lg:hidden grid grid-cols-2 md:grid-cols-5 gap-3">
-            {[
-              { title: 'Handpicked & Verified Retreats', icon: 'workspace_premium' },
-              { title: 'No Hidden Charges', icon: 'payments' },
-              { title: 'Local India-Based Support', icon: 'support_agent' },
-              { title: 'English Assistance', icon: 'forum' },
-              { title: 'Safe & Comfortable Stays', icon: 'verified_user' }
-            ].map((feat, idx) => (
-              <div key={idx} className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-outline-variant/10 shadow-sm">
-                <span className="material-symbols-outlined text-secondary text-xl mb-2">{feat.icon}</span>
-                <span className="font-bold text-[10px] text-primary leading-tight">{feat.title}</span>
-              </div>
-            ))}
-          </div>
+          {/* Interactive Why Choose Us Component (Tabs on left, dynamic info cards on right) */}
+          <WhyChooseUsInteractive />
         </div>
       </section>
 
       {/* 5. WHAT OUR GUESTS SAY */}
       <section className="py-16 bg-surface border-b border-outline-variant/10 text-left">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <div className="flex justify-between items-end mb-8">
+          <div className="mb-8">
             <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold">
               What Our Guests Say
             </h2>
-            <Link
-              href="/about"
-              className="flex items-center gap-1 text-primary hover:text-secondary font-bold transition-colors border-b border-primary hover:border-secondary pb-0.5 text-xs whitespace-nowrap"
-            >
-              View All Reviews
-              <span className="material-symbols-outlined text-xs">arrow_forward</span>
-            </Link>
           </div>
 
           {/* Horizontal Snap Scroll row for reviews & video play preview */}
@@ -641,20 +552,7 @@ export default async function HomePage() {
               </div>
             ))}
 
-            {/* Guest Video Preview Card */}
-            <div className="snap-start shrink-0 w-[80vw] md:w-[320px] h-36 md:h-auto relative rounded-2xl overflow-hidden shadow-sm border border-outline-variant/25 min-h-[140px]">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb"
-                alt="Guests Practicing Yoga Video Preview"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/30 z-10"></div>
-              <div className="absolute inset-0 z-20 flex items-center justify-center">
-                <button className="w-10 h-10 rounded-full bg-white/90 text-primary flex items-center justify-center shadow-md cursor-pointer">
-                  <span className="material-symbols-outlined text-xl text-secondary icon-fill ml-0.5">play_arrow</span>
-                </button>
-              </div>
-            </div>
+
           </div>
         </div>
       </section>
@@ -688,7 +586,7 @@ export default async function HomePage() {
               </button>
             </Link>
             <a
-              href="https://wa.me/919999876349"
+              href="https://wa.me/918800919486"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto flex items-center justify-center gap-2 border border-white/60 hover:bg-white/10 text-white font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-md cursor-pointer text-center text-sm md:text-base"
@@ -738,9 +636,9 @@ export default async function HomePage() {
       </section>
 
       {/* Mobile Sticky Footer Action Bar (WhatsApp & Call shortcuts) */}
-      <div className="md:hidden fixed bottom-4 left-4 right-4 z-40 flex gap-2 items-center">
+      <div className="md:hidden fixed bottom-4 left-4 right-20 z-40 flex gap-2 items-center">
         <a
-          href="https://wa.me/919999876349"
+          href="https://wa.me/918800919486"
           target="_blank"
           rel="noopener noreferrer"
           className="flex-1 bg-[#1b4332] text-white hover:bg-primary-container px-4 py-3 rounded-full shadow-lg flex items-center gap-2 border border-white/20"
@@ -753,7 +651,7 @@ export default async function HomePage() {
         </a>
 
         <a
-          href="tel:+919999876349"
+          href="tel:+918800919486"
           className="w-12 h-12 rounded-full bg-white border border-outline-variant/30 flex flex-col items-center justify-center text-primary shadow-lg hover:bg-surface shrink-0"
         >
           <span className="material-symbols-outlined text-lg">call</span>

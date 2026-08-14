@@ -17,9 +17,9 @@ async function main() {
     data: [
       { key: 'siteName', value: 'India Yoga Tourism' },
       { key: 'siteTagline', value: 'Ancient Wisdom. Modern Journey.' },
-      { key: 'contactPhone', value: '+91 99998 76349' },
+      { key: 'contactPhone', value: '+91 88009 19486' },
       { key: 'contactEmail', value: 'info@indiayogatourism.com' },
-      { key: 'contactWhatsapp', value: '+91 99998 76349' },
+      { key: 'contactWhatsapp', value: '+91 88009 19486' },
       { key: 'contactAddress', value: 'Cloud 9 Tower, Vaishali Sec-1, Ghaziabad, UP 201010' },
       { key: 'instagramUrl', value: 'https://instagram.com/indiayogatourism' },
       { key: 'facebookUrl', value: 'https://facebook.com/indiayogatourism' },
@@ -305,27 +305,69 @@ async function main() {
   }
 
   console.log('Seeding Testimonials...')
-  // Create a placeholder user to associate reviews with
-  const seedUser = await prisma.user.create({
-    data: {
-      clerkId: "user_seed_test_123",
-      email: "guest@indiayogatourism.com",
-      name: "John Doe",
-      role: "guest"
-    }
-  })
+  const seedUsersData = [
+    { clerkId: "user_seed_1", email: "sophia.laurent@example.com", name: "Sophia Laurent", role: "guest" },
+    { clerkId: "user_seed_2", email: "marcus.vance@example.com", name: "Marcus Vance", role: "guest" },
+    { clerkId: "user_seed_3", email: "elena.rostova@example.com", name: "Elena Rostova", role: "guest" },
+    { clerkId: "user_seed_4", email: "aarav.sharma@example.com", name: "Aarav & Maya Sharma", role: "guest" },
+    { clerkId: "user_seed_5", email: "chloe.dubois@example.com", name: "Chloe Dubois", role: "guest" }
+  ]
 
-  // We can add some reviews for packages
+  const createdUsers = []
+  for (const u of seedUsersData) {
+    const user = await prisma.user.create({ data: u })
+    createdUsers.push(user)
+  }
+
+  const genuineReviews = [
+    {
+      title: "Deeply grounding and spiritual reset",
+      content: "Attending the 3-Day Rishikesh Spiritual Retreat was deeply grounding. Practicing Hatha flows at sunrise overlooking the holy Ganges with authentic master teachers restored my inner peace. The sattvic meals were delicious!",
+      country: "France",
+      rating: 5,
+      userIndex: 0
+    },
+    {
+      title: "Unbelievable depth of wisdom & comfort",
+      content: "The 4-Day Yoga & River Retreat was the highlight of my trip to India. The breathwork guidance, sound healing sessions, and pristine riverside setting made it an unforgettable spiritual journey. Truly authentic lineage training.",
+      country: "United Kingdom",
+      rating: 5,
+      userIndex: 1
+    },
+    {
+      title: "Transformative week in the Himalayas",
+      content: "The 7-Day Immersive Ashram Experience in Auli was beyond my expectations. Crisp mountain air, silent meditation, and personalized Ayurvedic guidance. As a solo female traveler, I felt completely safe, supported, and welcomed.",
+      country: "Germany",
+      rating: 5,
+      userIndex: 2
+    },
+    {
+      title: "Seamless booking and authentic teachings",
+      content: "We booked the 10-Day Himalayan Wellness Retreat for our anniversary. From Dehradun airport transfer to daily doctor consultations and high-altitude pranayama, every single detail was handled with care and excellence.",
+      country: "United States",
+      rating: 5,
+      userIndex: 3
+    },
+    {
+      title: "Life-changing pilgrimage across Uttarakhand",
+      content: "The 22-Day Grand Circuit was truly a sacred pilgrimage. Learning under traditional gurus in Rishikesh, Haridwar, and Almora gave me a home practice blueprint I will use for the rest of my life. Namaste!",
+      country: "Canada",
+      rating: 5,
+      userIndex: 4
+    }
+  ]
+
   const packages = await prisma.package.findMany()
-  for (const pkg of packages) {
+  for (let i = 0; i < packages.length; i++) {
+    const reviewData = genuineReviews[i % genuineReviews.length]
     await prisma.review.create({
       data: {
-        userId: seedUser.id,
-        packageId: pkg.id,
-        rating: 5,
-        title: "Life changing experience",
-        content: `My time at the ${pkg.title} was absolutely transformative. The instructors are master teachers with decades of experience, and the location is stunning. Highly recommended!`,
-        country: "United States",
+        userId: createdUsers[reviewData.userIndex].id,
+        packageId: packages[i].id,
+        rating: reviewData.rating,
+        title: reviewData.title,
+        content: reviewData.content,
+        country: reviewData.country,
         isVerified: true,
         isPublished: true
       }
