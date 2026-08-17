@@ -136,16 +136,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       {/* Main Content Viewport */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header Bar */}
-        <header className="bg-surface border-b border-outline-variant/30 px-4 md:px-8 py-3.5 flex items-center justify-between shrink-0 shadow-xs">
-          <div className="flex items-center gap-3">
+        <header className="bg-surface border-b border-outline-variant/30 px-4 md:px-8 py-3 flex items-center justify-between shrink-0 shadow-xs">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden p-2 rounded-lg text-primary hover:bg-surface-container-high transition-colors"
+              className="md:hidden w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg text-primary hover:bg-surface-container-high active:scale-95 transition-all flex items-center justify-center shrink-0"
               aria-label="Open sidebar"
             >
               <Menu className="w-6 h-6" />
             </button>
-            <h1 className="font-headline-md font-bold text-primary text-lg md:text-xl">
+            <h1 className="font-headline-md font-bold text-primary text-base sm:text-xl truncate">
               {activeTabLabel}
             </h1>
           </div>

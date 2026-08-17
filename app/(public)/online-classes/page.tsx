@@ -1,7 +1,19 @@
 import Link from 'next/link'
+import { prisma } from '@/lib/prisma'
+import { formatPrice } from '@/lib/utils'
+import { PackageCategory } from '@prisma/client'
 
-export default function OnlineClassesPage() {
-  const classes = [
+export const dynamic = 'force-dynamic'
+
+export default async function OnlineClassesPage() {
+  const onlinePackages = await prisma.package.findMany({
+    where: {
+      category: PackageCategory.ONLINE_CLASS,
+      status: 'PUBLISHED',
+    },
+  })
+
+  const schedules = [
     { name: 'Hatha Flow & Alignment', time: '07:00 AM - 08:15 AM IST', level: 'Beginner to Intermediate', instructor: 'Yogini Arundhati', desc: 'Focuses on holding classical postures combined with deep conscious breathing.' },
     { name: 'Vinyasa Flow Dynamics', time: '09:30 AM - 10:45 AM IST', level: 'Intermediate to Advanced', instructor: 'Yogini Arundhati', desc: 'A fluid sequence linking breath to movement for agility and strength.' },
     { name: 'Pranayama & Himalayan Meditation', time: '05:00 PM - 06:00 PM IST', level: 'All Levels', instructor: 'Swami Yogananda', desc: 'Sacred breathing exercises and silent meditation to calm the neural system.' }
@@ -34,24 +46,32 @@ export default function OnlineClassesPage() {
             <p className="font-body-md text-on-surface-variant text-sm leading-relaxed mb-6">
               Connect via live stream with our certified yoga masters in Rishikesh. We maintain small class sizes to offer feedback and alignment checks.
             </p>
-            <div className="p-5 rounded-2xl bg-[#F8F3E3] border border-outline-variant/10">
-              <h4 className="font-headline-md text-primary font-bold text-base mb-2">✦ Weekly Membership Pass</h4>
-              <p className="text-xs text-on-surface-variant leading-relaxed">
-                Unlock daily live classes, recorded playback archives, and monthly masterclasses. Starting at **$29 USD/week** with no contract.
-              </p>
-              <Link href="/contact" className="mt-4 inline-block">
-                <button className="bg-primary text-on-primary font-bold px-6 py-2.5 rounded-full hover:bg-primary-container transition-colors text-xs cursor-pointer">
-                  Start Free Trial Pass
-                </button>
-              </Link>
-            </div>
+            {onlinePackages.length > 0 && (
+              <div className="space-y-4 mb-6">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-outline">Available Online Passes:</h4>
+                {onlinePackages.map((pkg) => (
+                  <div key={pkg.id} className="p-4 rounded-xl bg-[#F8F3E3] border border-outline-variant/10 flex justify-between items-center">
+                    <div>
+                      <h5 className="font-bold text-primary text-sm">{pkg.title}</h5>
+                      <p className="text-xs text-on-surface-variant">{pkg.durationDays} Days Access</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-primary text-sm block">{formatPrice(pkg.priceShared)}</span>
+                      <Link href={`/packages/${pkg.slug}`} className="text-xs font-bold text-secondary hover:underline">
+                        Book Pass →
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Schedule grid */}
         <div className="lg:col-span-7 space-y-6">
           <h3 className="font-headline-md text-2xl text-primary font-bold text-left mb-6">Live Stream Daily Schedule</h3>
-          {classes.map((cls, idx) => (
+          {schedules.map((cls, idx) => (
             <div key={idx} className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-left hover:border-secondary transition-all">
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-2 items-center">
@@ -74,7 +94,7 @@ export default function OnlineClassesPage() {
               </div>
               <Link href="/contact" className="shrink-0 w-full md:w-auto">
                 <button className="w-full md:w-auto border border-primary text-primary hover:bg-primary hover:text-on-primary font-bold text-xs px-5 py-3 rounded-xl transition-all cursor-pointer">
-                  Book Class
+                  Inquire Class
                 </button>
               </Link>
             </div>

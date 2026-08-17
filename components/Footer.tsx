@@ -186,31 +186,31 @@ export default function Footer() {
             © {new Date().getFullYear()} India Yoga Tourism. Crafted for pilgrims of self-transformation. All rights reserved.
           </p>
           
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-6">
             <div className="flex gap-4">
               <a
                 aria-label="Instagram"
                 href="https://instagram.com/indiayogatourism"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full border border-on-primary-container/30 hover:border-tertiary-fixed-dim hover:text-tertiary-fixed flex items-center justify-center transition-colors text-on-primary-container"
+                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full border border-on-primary-container/30 hover:border-tertiary-fixed-dim hover:text-tertiary-fixed flex items-center justify-center transition-colors text-on-primary-container"
               >
-                <span className="material-symbols-outlined text-sm">photo_camera</span>
+                <span className="material-symbols-outlined text-base">photo_camera</span>
               </a>
               <a
                 aria-label="Facebook"
                 href="https://facebook.com/indiayogatourism"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full border border-on-primary-container/30 hover:border-tertiary-fixed-dim hover:text-tertiary-fixed flex items-center justify-center transition-colors text-on-primary-container"
+                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full border border-on-primary-container/30 hover:border-tertiary-fixed-dim hover:text-tertiary-fixed flex items-center justify-center transition-colors text-on-primary-container"
               >
-                <span className="material-symbols-outlined text-sm">public</span>
+                <span className="material-symbols-outlined text-base">public</span>
               </a>
             </div>
             
             <button
               onClick={scrollToTop}
-              className="bg-white/5 hover:bg-white/10 text-on-primary hover:text-tertiary-fixed px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-all border border-on-primary-container/10 cursor-pointer"
+              className="bg-white/5 hover:bg-white/10 text-on-primary hover:text-tertiary-fixed px-4 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all border border-on-primary-container/10 cursor-pointer min-h-[40px]"
             >
               Back to Top
               <span className="material-symbols-outlined text-xs">arrow_upward</span>

@@ -87,10 +87,10 @@ export function AdminLayoutClient({ dbUser, children }: AdminLayoutClientProps) 
               </Link>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20"
+                className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all"
                 aria-label="Close admin menu"
               >
-                <span className="material-symbols-outlined text-lg">close</span>
+                <span className="material-symbols-outlined text-xl">close</span>
               </button>
             </div>
 
@@ -140,15 +140,15 @@ export function AdminLayoutClient({ dbUser, children }: AdminLayoutClientProps) 
       <main className="flex-grow flex flex-col h-full overflow-hidden relative">
         {/* Header Bar */}
         <header className="h-16 bg-white/90 backdrop-blur-md border-b border-black/5 flex items-center justify-between px-4 sm:px-8 flex-shrink-0 z-10">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="md:hidden p-2 rounded-lg text-[#1C2E26] hover:bg-black/5 transition-colors focus:outline-none"
+              className="md:hidden w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg text-[#1C2E26] hover:bg-black/5 active:scale-95 transition-all flex items-center justify-center focus:outline-none shrink-0"
               aria-label="Toggle admin menu"
             >
               <span className="material-symbols-outlined text-2xl">menu</span>
             </button>
-            <h1 className="text-base sm:text-lg font-bold text-[#1C2E26] truncate">{pageTitle}</h1>
+            <h1 className="text-sm sm:text-lg font-bold text-[#1C2E26] truncate">{pageTitle}</h1>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">

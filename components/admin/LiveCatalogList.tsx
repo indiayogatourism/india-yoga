@@ -189,7 +189,7 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5 self-end sm:self-center">
+              <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
                 <span
                   className={`text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider ${
                     p.status === "PUBLISHED"
@@ -202,39 +202,41 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
                   {p.status}
                 </span>
 
-                {/* Edit Button */}
-                <button
-                  onClick={() => openEditModal(p)}
-                  className="px-3 py-1.5 bg-gray-100 hover:bg-[#1C2E26] text-gray-700 hover:text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
-                >
-                  <Pencil className="w-3 h-3" />
-                  <span>Edit</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Edit Button */}
+                  <button
+                    onClick={() => openEditModal(p)}
+                    className="px-3 py-1.5 bg-gray-100 hover:bg-[#1C2E26] text-gray-700 hover:text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
+                  >
+                    <Pencil className="w-3 h-3" />
+                    <span>Edit</span>
+                  </button>
 
-                {/* View on Main Site Link */}
-                <Link
-                  href={`/packages/${p.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-1.5 border border-gray-200 hover:border-[#1C2E26] text-[#1C2E26] rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
-                >
-                  <span>View</span>
-                  <ExternalLink className="w-3 h-3" />
-                </Link>
+                  {/* View on Main Site Link */}
+                  <Link
+                    href={`/packages/${p.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 border border-gray-200 hover:border-[#1C2E26] text-[#1C2E26] rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
+                  >
+                    <span>View</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
 
-                {/* Delete Button */}
-                <button
-                  onClick={() => handleDelete(p.id)}
-                  disabled={deletingId === p.id}
-                  className="p-1.5 text-gray-400 hover:text-rose-600 rounded-lg transition-colors"
-                  title="Delete catalogue item"
-                >
-                  {deletingId === p.id ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
-                  ) : (
-                    <Trash2 className="w-4 h-4" />
-                  )}
-                </button>
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => handleDelete(p.id)}
+                    disabled={deletingId === p.id}
+                    className="p-2 text-gray-400 hover:text-rose-600 rounded-lg transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
+                    title="Delete catalogue item"
+                  >
+                    {deletingId === p.id ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           ))
@@ -243,8 +245,8 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
 
       {/* Edit Modal Overlay */}
       {editingPkg && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <div>
                 <h3 className="font-bold text-lg text-[#1C2E26]">

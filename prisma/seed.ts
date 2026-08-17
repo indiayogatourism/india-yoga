@@ -11,6 +11,8 @@ async function main() {
   await prisma.enquiry.deleteMany({})
   await prisma.seoMeta.deleteMany({})
   await prisma.setting.deleteMany({})
+  await prisma.blogPost.deleteMany({})
+  await prisma.page.deleteMany({})
 
   console.log('Seeding settings...')
   await prisma.setting.createMany({
@@ -270,7 +272,7 @@ async function main() {
     })
   }
 
-  // Create Programmes
+    // Create Programmes
   for (const prog of programmesData) {
     const slug = prog.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
     await prisma.package.create({
@@ -300,6 +302,41 @@ async function main() {
         status: PackageStatus.PUBLISHED,
         avgRating: 4.8,
         totalReviews: 15
+      }
+    })
+  }
+
+  const onlineClassesData = [
+    { title: "Hatha Flow & Alignment Pass", priceShared: 29, durationDays: 7, location: "Online Stream" },
+    { title: "Pranayama & Himalayan Meditation Pass", priceShared: 39, durationDays: 30, location: "Online Stream" }
+  ]
+
+  for (const o of onlineClassesData) {
+    const slug = o.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    await prisma.package.create({
+      data: {
+        title: o.title,
+        slug,
+        shortDescription: `Live streaming authentic Himalayan Yoga and Meditation directly to your home.`,
+        description: `Join master teachers from Rishikesh in live interactive video sessions. Includes alignment feedback, breathing practices, and recordings.`,
+        category: PackageCategory.ONLINE_CLASS,
+        location: o.location,
+        locationTag: "Online",
+        durationDays: o.durationDays,
+        durationNights: 0,
+        priceShared: o.priceShared,
+        pricePrivate: o.priceShared,
+        highlights: ["Live video interaction", "Recorded class access", "Master teacher Q&A"],
+        inclusions: ["All live stream sessions", "PDF class notes"],
+        exclusions: ["In-person equipment"],
+        itinerary: [
+          { day: 1, title: "Live Session", activities: ["70 min practice", "10 min Q&A"] }
+        ],
+        featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuDGhb-UANOYh1QNZEkGZqKHsOehwvG2xg-wHpSZhbDbT9JXEhuNwdnSM0-DnoEU-RBPKjpsVk8xlkrGyDUrUqrQ2-sU6pLXWHofqkdUJxcJVGd1VxIUV2-FZ_wqIUL04b7h1WvDd18dgAsWc_c48NvJWzmRhRZUZLGuzQLq-S3xL5904yF5OqXhg3IUIKMZwHMGjPK1QeIvd9JvNT6pjuWGtrLdhGf_XR_bylxmku8OoomMj7vVMDvd0kCFba6QpGZG0A_-_8nrGPnA",
+        gallery: [],
+        status: PackageStatus.PUBLISHED,
+        avgRating: 4.9,
+        totalReviews: 28
       }
     })
   }
@@ -373,6 +410,87 @@ async function main() {
       }
     })
   }
+
+  console.log('Seeding Blog Posts...')
+  await prisma.blogPost.createMany({
+    data: [
+      {
+        slug: '10-benefits-of-daily-panchakarma-therapy',
+        title: '10 Transformative Benefits of Daily Panchakarma Therapy',
+        excerpt: 'Discover how ancient Ayurvedic bio-purification protocols remove cellular toxicity, restore metabolic fire (Agni), and calm the nervous system.',
+        content: `Panchakarma is the ultimate mind-body detoxifying protocol described in ancient Ayurvedic texts. Literally translating to "Five Actions", Panchakarma is not merely a relaxation massage—it is a deeply clinical, diagnostic, and restorative procedure designed to eliminate deep-seated metabolic toxins (Ama) from the cellular tissue (Dhatus).
+
+1. Removal of Cellular Toxins (Ama)
+Over time, poor digestion, stress, and environmental pollution create Ama—undigested toxic waste that circulates throughout bodily channels. Panchakarma utilizes specialized warm medicated oils (Snehana) and herbal steam (Swedana) to liquefy these toxins and gently guide them to the digestive tract for total elimination.
+
+2. Restoration of Metabolic Fire (Agni)
+Central to Ayurvedic health is Agni—the biological fire responsible for digestion, absorption, and transformation. Panchakarma resets sluggish Agni, allowing the body to absorb nutrients efficiently and generate vital energy (Ojas).
+
+3. Deep Nervous System Calming
+Therapies like Shirodhara—where a continuous stream of warm herbal oil is poured onto the third eye chakra—induce an alpha-brainwave state. This dramatically lowers cortisol levels, cures chronic insomnia, and reduces anxiety.
+
+Experience authentic Panchakarma guided by certified Ayurvedic Vaidyas at our Himalayan sanctuaries in Rishikesh and Kerala.`,
+        category: 'Ayurveda & Wellness',
+        coverImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSQ4PkqcD83cx3q9NfEA2D4D0dACa2KEUrl3ocyJqQEj8MsZiKp7yVUjfsz1PhCLoRpbOpTPCoSruI3zUdpAXV495u5Nx2wyRvMXsbWoFsC8TpG2X0Rq4esc3tdBCS7oprShHV2A_7yXUHsa8M_BcP9MXTc2RSEM0uCMoKYPbsZe5DZsZM13f-jaDBBnIrbBe6i7bndREoFQiDr5xm7JKp_iXQ2Z8BSeyFbYuAFCn22z3Nhf5-im3Iko54LI1Rq4pmjJJZPzbrJGjh',
+        published: true,
+      },
+      {
+        slug: 'pranayama-the-science-of-himalayan-breathwork',
+        title: 'Pranayama: The Ancient Himalayan Science of Breathwork',
+        excerpt: 'Learn how mastering the breath regulates the autonomic nervous system, enhances prana flow, and prepares the mind for deep meditation.',
+        content: `In the Himalayan tradition, breath is considered the bridge between the physical body and pure consciousness. "Prana" represents the vital life force, while "Ayama" means extension or control.
+
+When we regulate the breath through classical Pranayama techniques like Nadi Shodhana (Alternate Nostril Breathing), Kapalabhati (Skull Shining Breath), and Bhramari (Humming Bee Breath), we directly influence the vagus nerve and balance the sympathetic and parasympathetic nervous systems.
+
+Key Benefits of Himalayan Pranayama Practice:
+- Oxygenates cellular tissue and improves lung capacity
+- Purifies the 72,000 Nadis (energy channels)
+- Calms mental chatter and emotional turbulence
+- Enhances mental clarity and focus before meditation
+
+Join our daily online stream or in-person Rishikesh retreats to receive direct transmission from master teachers of the Himalayan lineage.`,
+        category: 'Yoga & Meditation',
+        coverImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDGhb-UANOYh1QNZEkGZqKHsOehwvG2xg-wHpSZhbDbT9JXEhuNwdnSM0-DnoEU-RBPKjpsVk8xlkrGyDUrUqrQ2-sU6pLXWHofqkdUJxcJVGd1VxIUV2-FZ_wqIUL04b7h1WvDd18dgAsWc_c48NvJWzmRhRZUZLGuzQLq-S3xL5904yF5OqXhg3IUIKMZwHMGjPK1QeIvd9JvNT6pjuWGtrLdhGf_XR_bylxmku8OoomMj7vVMDvd0kCFba6QpGZG0A_-_8nrGPnA',
+        published: true,
+      },
+    ],
+  })
+
+  console.log('Seeding Dynamic Pages...')
+  await prisma.page.createMany({
+    data: [
+      {
+        slug: 'terms-and-conditions',
+        title: 'Terms & Conditions',
+        content: `Welcome to India Yoga Tourism. By accessing our services, booking a retreat, or utilizing our website, you agree to comply with the following terms and conditions.
+
+1. Booking & Payments
+All retreat and package bookings require a deposit to confirm registration. Final balance payments must be cleared prior to arrival or as stated in your booking voucher.
+
+2. Cancellation & Refunds
+Cancellations made 30 days prior to start date receive a 90% refund or full credit transfer to a future retreat date. Cancellations within 14 days of start date are subject to customized cancellation fees.
+
+3. Health & Safety
+Guests are required to disclose pre-existing medical conditions or dietary requirements during booking. India Yoga Tourism ensures all sanctuary facilities adhere to high standards of hygiene and clinical safety.`,
+        published: true,
+      },
+      {
+        slug: 'privacy-policy',
+        title: 'Privacy Policy',
+        content: `India Yoga Tourism respects your privacy and is committed to protecting your personal data.
+
+1. Information We Collect
+We collect personal details such as full name, email address, phone number, passport details for international bookings, and payment transaction details.
+
+2. How We Use Information
+Your information is strictly used to confirm bookings, generate travel vouchers and tax receipts, send journey itineraries, and process secure payments via Razorpay or PayPal.
+
+3. Data Protection
+We do not sell, rent, or trade guest personal data to third parties. All online payments are encrypted using industry-standard SSL technology.`,
+        published: true,
+      },
+    ],
+  })
 
   console.log('Seeding Completed successfully! 🙏')
 }

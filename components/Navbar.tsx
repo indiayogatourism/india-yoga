@@ -69,18 +69,18 @@ export default function Navbar() {
       <div className="flex justify-between items-center px-6 md:px-12 max-w-[1280px] mx-auto relative">
         
         {/* Brand Logo with Premium Styling */}
-        <Link href="/" className="flex items-center gap-2 group cursor-pointer">
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-all-300 duration-500">
-            <span className="material-symbols-outlined text-primary text-2xl group-hover:rotate-12 transition-transform duration-500">
+        <Link href="/" className="flex items-center gap-2 group cursor-pointer shrink-0">
+          <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-all-300 duration-500 shrink-0">
+            <span className="material-symbols-outlined text-primary text-xl sm:text-2xl group-hover:rotate-12 transition-transform duration-500">
               self_improvement
             </span>
             <div className="absolute inset-0 rounded-full border border-tertiary-fixed-dim/30 group-hover:scale-110 transition-transform duration-500"></div>
           </div>
-          <div className="flex flex-col">
-            <span className="font-display-lg text-primary text-xl md:text-2xl font-bold tracking-tight leading-none group-hover:text-primary transition-colors">
+          <div className="flex flex-col min-w-0">
+            <span className="font-display-lg text-primary text-base sm:text-xl md:text-2xl font-bold tracking-tight leading-none group-hover:text-primary transition-colors truncate">
               India Yoga Tourism
             </span>
-            <span className="text-[9px] font-label-price text-secondary uppercase tracking-widest mt-1">
+            <span className="text-[8px] sm:text-[9px] font-label-price text-secondary uppercase tracking-widest mt-1 truncate">
               Himalayan Wellness &amp; Wisdom
             </span>
           </div>
@@ -208,7 +208,7 @@ export default function Navbar() {
         <button
           aria-label="Toggle menu"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden text-primary p-2 cursor-pointer focus:outline-none w-10 h-10 rounded-full hover:bg-primary/5 flex items-center justify-center transition-colors"
+          className="md:hidden text-primary p-2 cursor-pointer focus:outline-none w-11 h-11 min-w-[44px] min-h-[44px] rounded-full hover:bg-primary/5 active:scale-95 flex items-center justify-center transition-all"
         >
           <span className="material-symbols-outlined text-2xl">
             {mobileMenuOpen ? 'close' : 'menu'}
@@ -218,14 +218,14 @@ export default function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-surface/95 backdrop-blur-lg absolute top-full left-0 w-full shadow-lg border-t border-outline-variant/20 py-6 px-6 animate-fade-in">
-          <div className="flex flex-col gap-5">
+        <div className="md:hidden bg-surface/95 backdrop-blur-lg absolute top-full left-0 w-full shadow-xl border-t border-outline-variant/20 py-6 px-6 max-h-[calc(100vh-80px)] overflow-y-auto animate-fade-in">
+          <div className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`font-body-md text-base py-1 border-b border-outline-variant/10 flex justify-between items-center ${
+                className={`font-body-md text-base py-2.5 px-1 border-b border-outline-variant/10 flex justify-between items-center ${
                   isActive(link.href)
                     ? 'text-primary font-bold'
                     : 'text-on-surface-variant'
@@ -238,14 +238,14 @@ export default function Navbar() {
               </Link>
             ))}
             
-            <hr className="border-outline-variant/30 my-2" />
+            <hr className="border-outline-variant/30 my-1" />
 
             {isSignedIn ? (
-              <div className="flex items-center justify-between py-2">
+              <div className="flex items-center justify-between py-2.5">
                 <Link
                   href={isAdmin ? '/admin' : '/dashboard'}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="font-body-md font-bold text-primary flex items-center gap-2"
+                  className="font-body-md font-bold text-primary flex items-center gap-2 text-sm"
                 >
                   <span className="material-symbols-outlined">
                     {isAdmin ? 'admin_panel_settings' : 'dashboard'}
@@ -256,7 +256,7 @@ export default function Navbar() {
               </div>
             ) : (
               <SignInButton mode="modal">
-                <button className="w-full text-left font-body-md font-bold text-on-surface-variant py-2 flex items-center gap-2">
+                <button className="w-full text-left font-body-md font-bold text-on-surface-variant py-2.5 flex items-center gap-2 text-sm">
                   <span className="material-symbols-outlined">login</span>
                   Login to Account
                 </button>
@@ -264,7 +264,7 @@ export default function Navbar() {
             )}
 
             <Link href="/packages" onClick={() => setMobileMenuOpen(false)} className="mt-2">
-              <button className="bg-primary text-on-primary w-full py-4 rounded-full font-bold flex items-center justify-center gap-2 shadow-md">
+              <button className="bg-primary text-on-primary w-full py-3.5 rounded-full font-bold flex items-center justify-center gap-2 shadow-md active:scale-95 transition-transform text-sm">
                 Book Sanctuary
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </button>

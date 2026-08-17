@@ -44,103 +44,13 @@ export default async function HomePage() {
   const featuredPackages = await getFeaturedPackages()
   const dbTestimonials = await getTestimonials()
 
-  // Standard high-quality mock retreats if database is empty/seeding
-  const mockPackages = [
-    {
-      id: '1',
-      slug: '4-days-yoga-meditation-retreat',
-      title: '4 Days Yoga & Meditation Retreat',
-      location: 'Rishikesh, India',
-      durationDays: 4,
-      durationNights: 3,
-      priceShared: 149,
-      featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb',
-      isBestseller: true,
-      inclusions: ['Daily Yoga', 'Meditation', 'Meals'],
-      avgRating: 4.9,
-      totalReviews: 125
-    },
-    {
-      id: '2',
-      slug: '5-days-detox-yoga-retreat',
-      title: '5 Days Detox & Yoga Retreat',
-      location: 'Rishikesh, India',
-      durationDays: 5,
-      durationNights: 4,
-      priceShared: 199,
-      featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDk30QEObl2k8oh7fcQBueTF65N9BWmaV3ZkFEx-IwV9X8AbWEGvDjdZsVeKDa6UjgtvTWYRkKdjnkPVJtV_3Nw8OPt-i6-1QwTChz_JIbN5Ajhbnk2Iiaa-OsDxXuHkjd2sEGQZieRNh469JeWf3tdoxY0lRn-r-qpLXngXofLaYSYrEE-fV_ga7ucnNT3Gme80JOeBQYFv0cPjN8Ysq3Nqh-SRqn8Y7DrMXS4hhXKsWN1m3KaUNhvQIohglA5nqLCXdQLDykF_B0o',
-      isBestseller: false,
-      inclusions: ['Yoga', 'Detox', 'Ayurveda', 'Meals'],
-      avgRating: 4.8,
-      totalReviews: 86
-    },
-    {
-      id: '3',
-      slug: '3-days-weekend-yoga-retreat',
-      title: '3 Days Weekend Yoga Retreat',
-      location: 'Rishikesh, India',
-      durationDays: 3,
-      durationNights: 2,
-      priceShared: 109,
-      featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAWCF3FNkFJLbVzL3jqGHa73fPpDI6Eih62gOI6ascq2xyzfCWb_p_tKmSBHMk1_W6r9aRBFx_DeSTW8t9NmWEihpsnAxgC7sKy77fHdsQFJABetSWSc8tuLwzW4Z9rrHY543Dv8KNCdiwnLZU84GDjA0h2USiT4sfOempqu1qZxhRQoBhJAZQRqnUhIHSmEFeQ72J-oJOOZ2v_GjbWy2G16WBKPTkNmy9iwXeV8c2gWGlZ1K_loofjKke13dNcEj1u2Q0R8eeeqQ3_',
-      isBestseller: false,
-      inclusions: ['Yoga', 'Meditation', 'Ganga Aarti'],
-      avgRating: 4.7,
-      totalReviews: 64
-    },
-    {
-      id: '4',
-      slug: '7-days-yoga-wellbeing-retreat',
-      title: '7 Days Yoga & Wellbeing Retreat',
-      location: 'Rishikesh, India',
-      durationDays: 7,
-      durationNights: 6,
-      priceShared: 279,
-      featuredImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBSQ4PkqcD83cx3q9NfEA2D4D0dACa2KEUrl3ocyJqQEj8MsZiKp7yVUjfsz1PhCLoRpbOpTPCoSruI3zUdpAXV495u5Nx2wyRvMXsbWoFsC8TpG2X0Rq4esc3tdBCS7oprShHV2A_7yXUHsa8M_BcP9MXTc2RSEM0uCMoKYPbsZe5DZsZM13f-jaDBBnIrbBe6i7bndREoFQiDr5xm7JKp_iXQ2Z8BSeyFbYuAFCn22z3Nhf5-im3Iko54LI1Rq4pmjJJZPzbrJGjh',
-      isBestseller: true,
-      inclusions: ['Yoga', 'Meditation', 'Nature', 'Meals'],
-      avgRating: 4.9,
-      totalReviews: 98
-    }
-  ]
-
-  const displayPackages = featuredPackages.length > 0 ? featuredPackages : mockPackages
-
-  const defaultTestimonials = [
-    {
-      name: 'Sophia Laurent',
-      country: 'France',
-      content: 'Attending the 3-Day Rishikesh Spiritual Retreat was deeply grounding. Practicing Hatha flows at sunrise by the Ganges with authentic masters restored my inner peace.',
-      rating: 5
-    },
-    {
-      name: 'Marcus Vance',
-      country: 'United Kingdom',
-      content: 'Unbelievable attention to detail and depth of wisdom. High-end comfort and authentic Himalayan lineage training in one seamless package.',
-      rating: 5
-    },
-    {
-      name: 'Elena Rostova',
-      country: 'Germany',
-      content: 'The 7-Day Immersive Ashram retreat completely transformed my perspective. Traditional Pranayama techniques paired with clean, comfortable stays. Highly recommend for solo travellers!',
-      rating: 5
-    },
-    {
-      name: 'Aarav & Maya Sharma',
-      country: 'United States',
-      content: 'From Dehradun airport pickup to the Ayurvedic doctor consultations and daily Ganga Aarti tours, every detail was thoughtfully curated. Truly authentic Indian yoga.',
-      rating: 5
-    }
-  ]
-
-  const displayTestimonials = dbTestimonials.length > 0
-    ? dbTestimonials.map(t => ({
-        name: t.user.name,
-        country: t.country || 'International Guest',
-        content: t.content,
-        rating: t.rating
-      }))
-    : defaultTestimonials
+  const displayPackages = featuredPackages
+  const displayTestimonials = dbTestimonials.map(t => ({
+    name: t.user.name,
+    country: t.country || 'International Guest',
+    content: t.content,
+    rating: t.rating
+  }))
 
   return (
     <main className="bg-surface relative pb-12">
