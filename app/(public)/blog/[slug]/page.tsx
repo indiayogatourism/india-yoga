@@ -26,7 +26,7 @@ export default async function PublicBlogDetailPage({
   return (
     <main className="bg-[#FAF7F2] min-h-screen pb-20">
       {/* Header */}
-      <section className="bg-[#1C2E26] text-white py-16 px-6">
+      <section className="bg-[#1C2E26] text-white pt-28 md:pt-32 pb-16 px-6">
         <div className="max-w-3xl mx-auto space-y-4 text-center">
           <Link href="/blog" className="text-xs text-[#E2C799] hover:underline font-bold inline-flex items-center gap-1">
             <span className="material-symbols-outlined text-xs">arrow_back</span> Back to Journal

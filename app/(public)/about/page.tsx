@@ -10,7 +10,7 @@ export default function AboutPage() {
   return (
     <main className="bg-surface pb-20">
       {/* Hero Banner */}
-      <section className="relative h-[450px] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[420px] pt-28 md:pt-32 pb-16 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
           <div className="absolute inset-0 bg-black/45 z-10"></div>
           <img
@@ -19,7 +19,7 @@ export default function AboutPage() {
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb"
           />
         </div>
-        <div className="relative z-20 text-center max-w-[1280px] mx-auto px-6 md:px-12 mt-16">
+        <div className="relative z-20 text-center max-w-[1280px] mx-auto px-6 md:px-12">
           <span className="text-tertiary-fixed font-label-price text-xs uppercase tracking-widest block mb-3">✦ Our Sanctuary Story ✦</span>
           <h1 className="font-display-lg text-4xl md:text-6xl text-on-primary font-bold">About India Yoga Tourism</h1>
         </div>

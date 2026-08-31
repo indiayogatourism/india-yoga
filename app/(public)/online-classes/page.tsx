@@ -22,7 +22,7 @@ export default async function OnlineClassesPage() {
   return (
     <main className="bg-surface pb-20">
       {/* Hero Banner */}
-      <section className="relative h-[350px] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[360px] pt-28 md:pt-32 pb-16 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
           <div className="absolute inset-0 bg-black/45 z-10"></div>
           <img
@@ -31,7 +31,7 @@ export default async function OnlineClassesPage() {
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGhb-UANOYh1QNZEkGZqKHsOehwvG2xg-wHpSZhbDbT9JXEhuNwdnSM0-DnoEU-RBPKjpsVk8xlkrGyDUrUqrQ2-sU6pLXWHofqkdUJxcJVGd1VxIUV2-FZ_wqIUL04b7h1WvDd18dgAsWc_c48NvJWzmRhRZUZLGuzQLq-S3xL5904yF5OqXhg3IUIKMZwHMGjPK1QeIvd9JvNT6pjuWGtrLdhGf_XR_bylxmku8OoomMj7vVMDvd0kCFba6QpGZG0A_-_8nrGPnA"
           />
         </div>
-        <div className="relative z-20 text-center max-w-[1280px] mx-auto px-6 md:px-12 mt-16">
+        <div className="relative z-20 text-center max-w-[1280px] mx-auto px-6 md:px-12">
           <span className="text-tertiary-fixed font-label-price text-xs uppercase tracking-widest block mb-3">✦ Join from Anywhere in the World ✦</span>
           <h1 className="font-display-lg text-4xl md:text-6xl text-on-primary font-bold">Online Sanctuary Classes</h1>
         </div>

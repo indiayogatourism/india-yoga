@@ -19,7 +19,7 @@ export default async function ProgrammesPage() {
   return (
     <main className="bg-surface pb-20">
       {/* Hero Banner */}
-      <section className="relative h-[450px] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[420px] pt-28 md:pt-32 pb-16 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
           <div className="absolute inset-0 bg-black/45 z-10"></div>
           <img
@@ -28,7 +28,7 @@ export default async function ProgrammesPage() {
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSQ4PkqcD83cx3q9NfEA2D4D0dACa2KEUrl3ocyJqQEj8MsZiKp7yVUjfsz1PhCLoRpbOpTPCoSruI3zUdpAXV495u5Nx2wyRvMXsbWoFsC8TpG2X0Rq4esc3tdBCS7oprShHV2A_7yXUHsa8M_BcP9MXTc2RSEM0uCMoKYPbsZe5DZsZM13f-jaDBBnIrbBe6i7bndREoFQiDr5xm7JKp_iXQ2Z8BSeyFbYuAFCn22z3Nhf5-im3Iko54LI1Rq4pmjJJZPzbrJGjh"
           />
         </div>
-        <div className="relative z-20 text-center max-w-[1280px] mx-auto px-6 md:px-12 mt-16">
+        <div className="relative z-20 text-center max-w-[1280px] mx-auto px-6 md:px-12">
           <span className="text-tertiary-fixed font-label-price text-xs uppercase tracking-widest block mb-3">✦ Clinical Wellness &amp; Healing ✦</span>
           <h1 className="font-display-lg text-4xl md:text-6xl text-on-primary font-bold">Ayurvedic Programmes</h1>
         </div>

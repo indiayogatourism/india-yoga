@@ -17,7 +17,7 @@ export default async function KnowMorePage() {
   return (
     <main className="bg-[#FAF7F2] min-h-screen pb-20">
       {/* Hero Header */}
-      <section className="bg-[#1C2E26] text-white py-20 px-6 text-center">
+      <section className="bg-[#1C2E26] text-white pt-28 md:pt-32 pb-20 px-6 text-center">
         <div className="max-w-4xl mx-auto space-y-4">
           <span className="text-[#E2C799] text-xs font-bold uppercase tracking-widest block">
             ✦ Resource &amp; Information Hub ✦

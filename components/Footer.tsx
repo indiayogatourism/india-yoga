@@ -186,7 +186,15 @@ export default function Footer() {
             © {new Date().getFullYear()} India Yoga Tourism. Crafted for pilgrims of self-transformation. All rights reserved.
           </p>
           
-          <div className="flex flex-wrap items-center justify-center md:justify-end gap-6">
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-6 sm:pr-48 md:pr-56">
+            <button
+              onClick={scrollToTop}
+              className="bg-white/5 hover:bg-white/10 text-on-primary hover:text-tertiary-fixed px-4 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all border border-on-primary-container/10 cursor-pointer min-h-[40px]"
+            >
+              Back to Top
+              <span className="material-symbols-outlined text-xs">arrow_upward</span>
+            </button>
+
             <div className="flex gap-4">
               <a
                 aria-label="Instagram"
@@ -207,14 +215,6 @@ export default function Footer() {
                 <span className="material-symbols-outlined text-base">public</span>
               </a>
             </div>
-            
-            <button
-              onClick={scrollToTop}
-              className="bg-white/5 hover:bg-white/10 text-on-primary hover:text-tertiary-fixed px-4 py-2.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all border border-on-primary-container/10 cursor-pointer min-h-[40px]"
-            >
-              Back to Top
-              <span className="material-symbols-outlined text-xs">arrow_upward</span>
-            </button>
           </div>
         </div>
       </div>

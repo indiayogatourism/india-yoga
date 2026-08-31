@@ -15,7 +15,7 @@ export default function ContactPage() {
   return (
     <main className="bg-surface pb-20">
       {/* Header banner */}
-      <section className="relative h-[350px] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[360px] pt-28 md:pt-32 pb-16 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
           <div className="absolute inset-0 bg-black/45 z-10"></div>
           <img
@@ -24,7 +24,7 @@ export default function ContactPage() {
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDk30QEObl2k8oh7fcQBueTF65N9BWmaV3ZkFEx-IwV9X8AbWEGvDjdZsVeKDa6UjgtvTWYRkKdjnkPVJtV_3Nw8OPt-i6-1QwTChz_JIbN5Ajhbnk2Iiaa-OsDxXuHkjd2sEGQZieRNh469JeWf3tdoxY0lRn-r-qpLXngXofLaYSYrEE-fV_ga7ucnNT3Gme80JOeBQYFv0cPjN8Ysq3Nqh-SRqn8Y7DrMXS4hhXKsWN1m3KaUNhvQIohglA5nqLCXdQLDykF_B0o"
           />
         </div>
-        <div className="relative z-20 text-center max-w-[1280px] mx-auto px-6 md:px-12 mt-16">
+        <div className="relative z-20 text-center max-w-[1280px] mx-auto px-6 md:px-12">
           <span className="text-tertiary-fixed font-label-price text-xs uppercase tracking-widest block mb-3">✦ Connect With Our Sages ✦</span>
           <h1 className="font-display-lg text-4xl md:text-6xl text-on-primary font-bold">Contact Our Sanctuary</h1>
         </div>

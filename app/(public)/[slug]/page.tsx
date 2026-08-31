@@ -25,7 +25,7 @@ export default async function PublicDynamicPage({
   return (
     <main className="bg-[#FAF7F2] min-h-screen pb-20">
       {/* Header */}
-      <section className="bg-[#1C2E26] text-white py-16 px-6">
+      <section className="bg-[#1C2E26] text-white pt-28 md:pt-32 pb-16 px-6">
         <div className="max-w-4xl mx-auto space-y-3 text-center">
           <span className="text-[#E2C799] text-xs font-bold uppercase tracking-widest block">
             ✦ India Yoga Tourism ✦
