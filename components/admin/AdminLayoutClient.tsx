@@ -23,6 +23,7 @@ export function AdminLayoutClient({ dbUser, children }: AdminLayoutClientProps) 
     { label: 'Programs & Retreats', href: '/admin/packages', icon: 'spa' },
     { label: 'Blog Posts', href: '/admin/blogs', icon: 'article' },
     { label: 'CMS Pages', href: '/admin/pages', icon: 'description' },
+    { label: 'Photo Gallery', href: '/admin/gallery', icon: 'photo_library' },
     { label: 'View Public Site', href: '/', icon: 'open_in_new' },
   ]
 
