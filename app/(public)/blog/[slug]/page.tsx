@@ -1,8 +1,56 @@
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  try {
+    const blog: any = await (prisma as any).blogPost.findUnique({
+      where: { slug },
+    })
+    if (!blog) return {}
+
+    const title = blog.metaTitle || blog.title
+    const description = blog.metaDescription || blog.excerpt
+    const keywords = blog.metaKeywords ? blog.metaKeywords.split(',').map((k: string) => k.trim()) : undefined
+    const canonical = blog.canonicalUrl || `https://indiayogatourism.com/blog/${slug}`
+    const ogImage = blog.ogImage || blog.coverImage
+
+    return {
+      title: `${title} | India Yoga Tourism`,
+      description,
+      keywords,
+      alternates: {
+        canonical,
+      },
+      openGraph: {
+        title: blog.ogTitle || title,
+        description: blog.ogDescription || description,
+        url: canonical,
+        siteName: 'India Yoga Tourism',
+        images: ogImage ? [{ url: ogImage }] : [],
+        type: 'article',
+        publishedTime: blog.publishedAt ? new Date(blog.publishedAt).toISOString() : undefined,
+        authors: [blog.authorName || 'India Yoga Tourism Team'],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: blog.ogTitle || title,
+        description: blog.ogDescription || description,
+        images: ogImage ? [ogImage] : [],
+      },
+    }
+  } catch (error) {
+    return {}
+  }
+}
 
 export default async function PublicBlogDetailPage({
   params,
