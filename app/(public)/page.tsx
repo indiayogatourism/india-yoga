@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import WhyChooseUsInteractive from '@/components/WhyChooseUsInteractive'
+import HeroSearchBar from '@/components/home/HeroSearchBar'
 
 export const revalidate = 3600 // Revalidate home page every hour
 
@@ -55,8 +56,8 @@ export default async function HomePage() {
   return (
     <main className="bg-surface relative pb-12">
       {/* 1. HERO SECTION WITH SEARCH WIDGET */}
-      <section className="relative min-h-[600px] lg:h-[95vh] flex items-center justify-center overflow-hidden pt-24 pb-16">
-        <div className="absolute inset-0 w-full h-full">
+      <section className="relative min-h-[600px] lg:h-[95vh] flex items-center justify-center overflow-visible pt-24 pb-20">
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/35 to-primary/30 z-10"></div>
           <img
             className="object-cover w-full h-full absolute inset-0 scale-105"
@@ -79,99 +80,8 @@ export default async function HomePage() {
             Discover handpicked yoga retreats, schools & wellness experiences in the Yoga Capital of the World.
           </p>
 
-          {/* Desktop Search Bento Widget */}
-          <div className="hidden md:flex w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-full shadow-2xl p-3 items-center gap-3 border border-white/40">
-            {/* Destination */}
-            <div className="flex items-center gap-3 px-6 py-2 border-r border-outline-variant/30 w-1/4 text-left">
-              <span className="material-symbols-outlined text-primary text-xl">location_on</span>
-              <div className="flex flex-col">
-                <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Destination</span>
-                <span className="text-xs font-bold text-on-surface">Rishikesh, India</span>
-              </div>
-            </div>
-            {/* Duration */}
-            <div className="flex items-center gap-3 px-6 py-2 border-r border-outline-variant/30 w-1/4 text-left">
-              <span className="material-symbols-outlined text-primary text-xl">schedule</span>
-              <div className="flex flex-col">
-                <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Duration</span>
-                <span className="text-xs font-bold text-on-surface">Any Duration</span>
-              </div>
-            </div>
-            {/* Dates */}
-            <div className="flex items-center gap-3 px-6 py-2 border-r border-outline-variant/30 w-1/4 text-left">
-              <span className="material-symbols-outlined text-primary text-xl">calendar_month</span>
-              <div className="flex flex-col">
-                <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Dates</span>
-                <span className="text-xs font-bold text-on-surface">Select Dates</span>
-              </div>
-            </div>
-            {/* Guests */}
-            <div className="flex items-center gap-3 px-6 py-2 w-1/4 text-left">
-              <span className="material-symbols-outlined text-primary text-xl">group</span>
-              <div className="flex flex-col">
-                <span className="text-[10px] text-outline uppercase font-bold tracking-wider">Guests</span>
-                <span className="text-xs font-bold text-on-surface">1 Guest</span>
-              </div>
-            </div>
-
-            <Link href="/packages" className="shrink-0">
-              <button className="bg-primary hover:bg-primary-container text-on-primary font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer text-sm">
-                Explore Retreats
-              </button>
-            </Link>
-          </div>
-
-          {/* Mobile Search Bento Widget (2x2 Selector grid + side-by-side buttons) */}
-          <div className="md:hidden w-full bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-4 border border-white/40 mt-4 flex flex-col gap-4 text-left">
-            <div className="grid grid-cols-2 gap-3">
-              {/* Destination */}
-              <div className="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
-                <span className="material-symbols-outlined text-primary text-lg mt-0.5">location_on</span>
-                <div className="flex flex-col">
-                  <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Destination</span>
-                  <span className="text-xs font-bold text-on-surface truncate">Rishikesh, India</span>
-                </div>
-              </div>
-              {/* Duration */}
-              <div className="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
-                <span className="material-symbols-outlined text-primary text-lg mt-0.5">schedule</span>
-                <div className="flex flex-col">
-                  <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Duration</span>
-                  <span className="text-xs font-bold text-on-surface truncate">Any Duration</span>
-                </div>
-              </div>
-              {/* Dates */}
-              <div className="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
-                <span className="material-symbols-outlined text-primary text-lg mt-0.5">calendar_month</span>
-                <div className="flex flex-col">
-                  <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Dates</span>
-                  <span className="text-xs font-bold text-on-surface truncate">Select Dates</span>
-                </div>
-              </div>
-              {/* Guests */}
-              <div className="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
-                <span className="material-symbols-outlined text-primary text-lg mt-0.5">group</span>
-                <div className="flex flex-col">
-                  <span className="text-[9px] text-outline uppercase font-bold tracking-wider">Guests</span>
-                  <span className="text-xs font-bold text-on-surface truncate">1 Guest</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-2.5">
-              <Link href="/packages" className="w-1/2">
-                <button className="w-full bg-primary hover:bg-primary-container text-on-primary font-bold text-xs py-3.5 rounded-xl transition-colors cursor-pointer text-center">
-                  Explore Retreats
-                </button>
-              </Link>
-              <a href="https://wa.me/918800919486" target="_blank" rel="noopener noreferrer" className="w-1/2">
-                <button className="w-full bg-white hover:bg-surface border border-outline-variant/60 text-secondary font-bold text-xs py-3.5 rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5 text-center">
-                  <span className="material-symbols-outlined text-sm">chat</span>
-                  WhatsApp Us
-                </button>
-              </a>
-            </div>
-          </div>
+          {/* Interactive Search Bento Widget */}
+          <HeroSearchBar />
 
           {/* Desktop trust badges row */}
           <div className="hidden md:flex mt-12 flex-wrap justify-center gap-6 text-on-primary/95 text-xs font-bold">
