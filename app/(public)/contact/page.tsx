@@ -5,11 +5,33 @@ import { useState } from 'react'
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', category: 'Retreat', message: '' })
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
-    setFormData({ name: '', email: '', phone: '', category: 'Retreat', message: '' })
+    setSubmitting(true)
+    setErrorMsg(null)
+
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      const data = await res.json()
+
+      if (data.success) {
+        setSubmitted(true)
+        setFormData({ name: '', email: '', phone: '', category: 'Retreat', message: '' })
+      } else {
+        setErrorMsg(data.error || 'Failed to send inquiry. Please try again.')
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Error submitting inquiry')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -165,12 +187,28 @@ export default function ContactPage() {
                 />
               </div>
 
+              {errorMsg && (
+                <div className="p-3 rounded-xl bg-red-50 text-red-800 border border-red-200 text-xs font-semibold">
+                  {errorMsg}
+                </div>
+              )}
+
               <button
                 type="submit"
+                disabled={submitting}
                 className="w-full bg-primary hover:bg-primary-container text-on-primary font-bold py-4 rounded-xl transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer text-sm"
               >
-                Submit Inquiry
-                <span className="material-symbols-outlined text-sm">send</span>
+                {submitting ? (
+                  <>
+                    <span className="material-symbols-outlined text-sm animate-spin">sync</span>
+                    Sending Inquiry...
+                  </>
+                ) : (
+                  <>
+                    Submit Inquiry
+                    <span className="material-symbols-outlined text-sm">send</span>
+                  </>
+                )}
               </button>
             </form>
           )}

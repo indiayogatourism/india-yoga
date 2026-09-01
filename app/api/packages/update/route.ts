@@ -3,6 +3,17 @@ import { auth, currentUser } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 
+export async function GET() {
+  try {
+    const packages = await prisma.package.findMany({
+      orderBy: { createdAt: "desc" },
+    })
+    return NextResponse.json({ success: true, packages })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const { userId } = await auth()
