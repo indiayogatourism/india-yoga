@@ -314,5 +314,34 @@ model OnlineClassEnrolment {
   createdAt     DateTime    @default(now())
 }
 
+model SiteConfig {
+  id               String   @id @default("global")
+  siteName         String   @default("India Yoga Tourism")
+  siteTagline      String   @default("Ancient Wisdom. Modern Journey.")
+  announcementText String?  @default("✦ Join Rishikesh Yoga Masters Live Stream ✦")
+  heroTitle        String?  @default("Immerse in Authentic Himalayan Healing")
+  heroSubtitle     String?  @default("Traditional Ashram practice, Panchakarma detoxification, and spiritual retreats in Rishikesh.")
+  
+  // Contact Info
+  contactEmail     String   @default("info@indiayogatourism.com")
+  contactPhone     String   @default("+91 99998 76349")
+  whatsappNumber   String   @default("+91 99998 76349")
+  officeAddress    String   @default("Cloud 9 Tower, Sec-1, Ghaziabad, UP 201010")
+  footerText       String?  @default("© 2026 India Yoga Tourism. All rights reserved.")
+
+  // Global SEO
+  metaTitle        String?  @default("India Yoga Tourism | Authentic Rishikesh Retreats & Online Classes")
+  metaDescription  String?  @db.Text
+  metaKeywords     String?  @default("yoga retreats, panchakarma rishikesh, ayurveda detox, online yoga classes")
+  canonicalUrl     String?  @default("https://indiayogatourism.com")
+  ogTitle          String?
+  ogDescription    String?  @db.Text
+  ogImage          String?
+  customHtmlTags   String?  @db.Text
+
+  updatedAt        DateTime @updatedAt
+}
+
+
 
 
