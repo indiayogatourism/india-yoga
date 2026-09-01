@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import BookingCard from '@/components/BookingCard'
+import type { Metadata } from 'next'
 
 interface PageProps {
   params: Promise<{
@@ -11,6 +12,49 @@ interface PageProps {
 }
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  try {
+    const pkg: any = await prisma.package.findUnique({
+      where: { slug },
+    })
+    if (!pkg) return {}
+
+    const title = pkg.metaTitle || pkg.title
+    const description = pkg.metaDescription || pkg.shortDescription || pkg.title
+    const keywords = pkg.metaKeywords ? pkg.metaKeywords.split(',').map((k: string) => k.trim()) : undefined
+    const canonical = pkg.canonicalUrl || `https://indiayogatourism.com/packages/${slug}`
+    const ogImage = pkg.ogImage || pkg.featuredImage
+
+    return {
+      title: `${title} | India Yoga Tourism`,
+      description,
+      keywords,
+      alternates: {
+        canonical,
+      },
+      openGraph: {
+        title: pkg.ogTitle || title,
+        description: pkg.ogDescription || description,
+        url: canonical,
+        siteName: 'India Yoga Tourism',
+        images: ogImage ? [{ url: ogImage }] : [],
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: pkg.ogTitle || title,
+        description: pkg.ogDescription || description,
+        images: ogImage ? [ogImage] : [],
+      },
+    }
+  } catch (error) {
+    return {}
+  }
+}
 
 export default async function PackageDetailPage({ params }: PageProps) {
   const { slug } = await params
@@ -31,7 +75,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
     console.error('Error fetching package detail:', error)
   }
 
-  if (!pkg) {
+  if (!pkg || pkg.status === 'ARCHIVED') {
     notFound()
   }
 
@@ -44,7 +88,11 @@ export default async function PackageDetailPage({ params }: PageProps) {
   }
 
   return (
-    <main className="pt-28 pb-16 md:pb-24">
+    <>
+      {pkg.customHtmlTags && (
+        <head dangerouslySetInnerHTML={{ __html: pkg.customHtmlTags }} />
+      )}
+      <main className="pt-28 pb-16 md:pb-24">
       {/* Breadcrumbs */}
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 mb-6">
         <nav aria-label="Breadcrumb" className="flex text-sm text-on-surface-variant">
@@ -255,5 +303,6 @@ export default async function PackageDetailPage({ params }: PageProps) {
         </div>
       </div>
     </main>
-  )
+  </>
+)
 }

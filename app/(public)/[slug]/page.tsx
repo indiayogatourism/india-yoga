@@ -69,23 +69,28 @@ export default async function PublicDynamicPage({
   }
 
   return (
-    <main className="bg-[#FAF7F2] min-h-screen pb-20">
-      {/* Header */}
-      <section className="bg-[#1C2E26] text-white pt-28 md:pt-32 pb-16 px-6">
-        <div className="max-w-4xl mx-auto space-y-3 text-center">
-          <span className="text-[#E2C799] text-xs font-bold uppercase tracking-widest block">
-            ✦ India Yoga Tourism ✦
-          </span>
-          <h1 className="text-3xl md:text-5xl font-bold">{page.title}</h1>
-        </div>
-      </section>
+    <>
+      {page.customHtmlTags && (
+        <head dangerouslySetInnerHTML={{ __html: page.customHtmlTags }} />
+      )}
+      <main className="bg-[#FAF7F2] min-h-screen pb-20">
+        {/* Header */}
+        <section className="bg-[#1C2E26] text-white pt-28 md:pt-32 pb-16 px-6">
+          <div className="max-w-4xl mx-auto space-y-3 text-center">
+            <span className="text-[#E2C799] text-xs font-bold uppercase tracking-widest block">
+              ✦ India Yoga Tourism ✦
+            </span>
+            <h1 className="text-3xl md:text-5xl font-bold">{page.title}</h1>
+          </div>
+        </section>
 
-      {/* Content */}
-      <article className="max-w-4xl mx-auto px-6 py-12">
-        <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-black/5 leading-relaxed text-sm md:text-base text-gray-800 whitespace-pre-wrap">
-          {page.content}
-        </div>
-      </article>
-    </main>
+        {/* Content */}
+        <article className="max-w-4xl mx-auto px-6 py-12">
+          <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-black/5 leading-relaxed text-sm md:text-base text-gray-800 whitespace-pre-wrap">
+            {page.content}
+          </div>
+        </article>
+      </main>
+    </>
   )
 }

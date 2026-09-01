@@ -88,7 +88,13 @@ model Package {
 
   // SEO
   metaTitle        String?
-  metaDescription  String?
+  metaDescription  String?  @db.Text
+  metaKeywords     String?
+  canonicalUrl     String?
+  ogTitle          String?
+  ogDescription    String?  @db.Text
+  ogImage          String?
+  customHtmlTags   String?  @db.Text
 
   // Status + Stats
   status           PackageStatus   @default(DRAFT)
@@ -232,6 +238,7 @@ model BlogPost {
   ogTitle         String?
   ogDescription   String?  @db.Text
   ogImage         String?
+  customHtmlTags  String?  @db.Text
   published       Boolean  @default(true)
   publishedAt     DateTime @default(now())
   createdAt       DateTime @default(now())
@@ -250,6 +257,7 @@ model Page {
   ogTitle         String?
   ogDescription   String?  @db.Text
   ogImage         String?
+  customHtmlTags  String?  @db.Text
   published       Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

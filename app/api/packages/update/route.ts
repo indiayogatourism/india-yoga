@@ -35,6 +35,14 @@ export async function POST(req: Request) {
       featuredImage,
       inclusions,
       status,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      canonicalUrl,
+      ogTitle,
+      ogDescription,
+      ogImage,
+      customHtmlTags,
     } = body
 
     if (!id) {
@@ -73,6 +81,14 @@ export async function POST(req: Request) {
             : [],
         }),
         ...(status && { status }),
+        ...(metaTitle !== undefined && { metaTitle }),
+        ...(metaDescription !== undefined && { metaDescription }),
+        ...(metaKeywords !== undefined && { metaKeywords }),
+        ...(canonicalUrl !== undefined && { canonicalUrl }),
+        ...(ogTitle !== undefined && { ogTitle }),
+        ...(ogDescription !== undefined && { ogDescription }),
+        ...(ogImage !== undefined && { ogImage }),
+        ...(customHtmlTags !== undefined && { customHtmlTags }),
       },
     })
 

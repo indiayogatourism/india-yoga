@@ -49,6 +49,7 @@ export async function POST(req: Request) {
       ogTitle,
       ogDescription,
       ogImage,
+      customHtmlTags,
       published,
     } = body
 
@@ -74,6 +75,7 @@ export async function POST(req: Request) {
         ogTitle: ogTitle || metaTitle || title,
         ogDescription: ogDescription || metaDescription || title,
         ogImage: ogImage || null,
+        customHtmlTags: customHtmlTags || null,
         published: published !== undefined ? published : true,
       },
     })

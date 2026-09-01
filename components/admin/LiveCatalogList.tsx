@@ -17,6 +17,14 @@ export interface PackageItem {
   featuredImage: string | null
   inclusions: string[]
   status: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  metaKeywords?: string | null
+  canonicalUrl?: string | null
+  ogTitle?: string | null
+  ogDescription?: string | null
+  ogImage?: string | null
+  customHtmlTags?: string | null
 }
 
 interface LiveCatalogListProps {
@@ -43,8 +51,20 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
   const [editDescription, setEditDescription] = useState("")
   const [editInclusions, setEditInclusions] = useState("")
 
+  // SEO state
+  const [activeTab, setActiveTab] = useState<"details" | "seo">("details")
+  const [editMetaTitle, setEditMetaTitle] = useState("")
+  const [editMetaDescription, setEditMetaDescription] = useState("")
+  const [editMetaKeywords, setEditMetaKeywords] = useState("")
+  const [editCanonicalUrl, setEditCanonicalUrl] = useState("")
+  const [editOgTitle, setEditOgTitle] = useState("")
+  const [editOgDescription, setEditOgDescription] = useState("")
+  const [editOgImage, setEditOgImage] = useState("")
+  const [editCustomHtmlTags, setEditCustomHtmlTags] = useState("")
+
   const openEditModal = (pkg: PackageItem) => {
     setEditingPkg(pkg)
+    setActiveTab("details")
     setEditTitle(pkg.title)
     setEditSlug(pkg.slug)
     setEditDurationDays(pkg.durationDays)
@@ -54,6 +74,16 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
     setEditFeaturedImage(pkg.featuredImage || "")
     setEditDescription(pkg.shortDescription || "")
     setEditInclusions(pkg.inclusions ? pkg.inclusions.join("\n") : "")
+
+    setEditMetaTitle(pkg.metaTitle || "")
+    setEditMetaDescription(pkg.metaDescription || "")
+    setEditMetaKeywords(pkg.metaKeywords || "")
+    setEditCanonicalUrl(pkg.canonicalUrl || "")
+    setEditOgTitle(pkg.ogTitle || "")
+    setEditOgDescription(pkg.ogDescription || "")
+    setEditOgImage(pkg.ogImage || "")
+    setEditCustomHtmlTags(pkg.customHtmlTags || "")
+
     setErrorMsg(null)
   }
 
@@ -80,6 +110,14 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
           featuredImage: editFeaturedImage,
           shortDescription: editDescription,
           inclusions: editInclusions.split("\n").map((s) => s.trim()).filter(Boolean),
+          metaTitle: editMetaTitle,
+          metaDescription: editMetaDescription,
+          metaKeywords: editMetaKeywords,
+          canonicalUrl: editCanonicalUrl,
+          ogTitle: editOgTitle,
+          ogDescription: editOgDescription,
+          ogImage: editOgImage,
+          customHtmlTags: editCustomHtmlTags,
         }),
       })
 
@@ -98,6 +136,28 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
       setErrorMsg(err.message || "Failed to save changes")
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleToggleStatus = async (pkg: PackageItem) => {
+    const newStatus = pkg.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED"
+    try {
+      const res = await fetch("/api/packages/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: pkg.id,
+          status: newStatus,
+        }),
+      })
+      if (res.ok) {
+        setPackages((prev) =>
+          prev.map((p) => (p.id === pkg.id ? { ...p, status: newStatus } : p))
+        )
+        router.refresh()
+      }
+    } catch (err: any) {
+      console.error("Failed to toggle programme status:", err)
     }
   }
 
@@ -203,13 +263,26 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
                 </span>
 
                 <div className="flex items-center gap-2">
+                  {/* Quick Publish / Unpublish toggle */}
+                  <button
+                    onClick={() => handleToggleStatus(p)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                      p.status === "PUBLISHED"
+                        ? "bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
+                        : "bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
+                    }`}
+                    title={p.status === "PUBLISHED" ? "Unpublish programme" : "Publish programme"}
+                  >
+                    {p.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+                  </button>
+
                   {/* Edit Button */}
                   <button
                     onClick={() => openEditModal(p)}
                     className="px-3 py-1.5 bg-gray-100 hover:bg-[#1C2E26] text-gray-700 hover:text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
                   >
                     <Pencil className="w-3 h-3" />
-                    <span>Edit</span>
+                    <span>Edit &amp; SEO</span>
                   </button>
 
                   {/* View on Main Site Link */}
@@ -250,7 +323,7 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <div>
                 <h3 className="font-bold text-lg text-[#1C2E26]">
-                  Edit Programme Catalogue
+                  Edit Programme Catalogue &amp; SEO
                 </h3>
                 <p className="text-xs text-gray-500">ID: {editingPkg.id}</p>
               </div>
@@ -262,6 +335,32 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
               </button>
             </div>
 
+            {/* Modal Tabs */}
+            <div className="flex border-b border-gray-200 bg-gray-50 px-2 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setActiveTab("details")}
+                className={`py-2.5 px-4 text-xs font-bold transition-all cursor-pointer rounded-lg ${
+                  activeTab === "details"
+                    ? "bg-white text-[#1C2E26] shadow-xs"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                1. Programme Details
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("seo")}
+                className={`py-2.5 px-4 text-xs font-bold transition-all cursor-pointer rounded-lg ${
+                  activeTab === "seo"
+                    ? "bg-white text-[#1C2E26] shadow-xs"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                2. SEO &amp; HTML Meta Tags
+              </button>
+            </div>
+
             {errorMsg && (
               <div className="p-3 bg-rose-50 text-rose-800 text-xs font-bold rounded-lg border border-rose-200">
                 {errorMsg}
@@ -269,94 +368,202 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
             )}
 
             <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="font-bold text-gray-700">Programme Title</label>
-                  <input
-                    type="text"
-                    required
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                  />
+              {activeTab === "details" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">Programme Title</label>
+                      <input
+                        type="text"
+                        required
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">URL Slug</label>
+                      <input
+                        type="text"
+                        required
+                        value={editSlug}
+                        onChange={(e) => setEditSlug(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26] font-mono"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">Duration (Days)</label>
+                      <input
+                        type="number"
+                        required
+                        value={editDurationDays}
+                        onChange={(e) => setEditDurationDays(Number(e.target.value))}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">Starting Price (USD)</label>
+                      <input
+                        type="number"
+                        required
+                        value={editPriceShared}
+                        onChange={(e) => setEditPriceShared(Number(e.target.value))}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">Status</label>
+                      <select
+                        value={editStatus}
+                        onChange={(e) => setEditStatus(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      >
+                        <option value="PUBLISHED">PUBLISHED</option>
+                        <option value="DRAFT">DRAFT</option>
+                        <option value="ARCHIVED">ARCHIVED</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">Featured Image URL</label>
+                      <input
+                        type="text"
+                        value={editFeaturedImage}
+                        onChange={(e) => setEditFeaturedImage(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="font-bold text-gray-700">Short Description</label>
+                    <textarea
+                      rows={3}
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="font-bold text-gray-700">Inclusions (One per line)</label>
+                    <textarea
+                      rows={4}
+                      value={editInclusions}
+                      onChange={(e) => setEditInclusions(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                    />
+                  </div>
                 </div>
+              )}
 
-                <div className="space-y-1">
-                  <label className="font-bold text-gray-700">URL Slug</label>
-                  <input
-                    type="text"
-                    required
-                    value={editSlug}
-                    onChange={(e) => setEditSlug(e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26] font-mono"
-                  />
+              {activeTab === "seo" && (
+                <div className="space-y-4">
+                  <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900">
+                    <p className="font-bold">Programme SEO Setup</p>
+                    <p className="text-[11px] text-emerald-800">
+                      Customize search engine titles, descriptions, canonical URLs, and custom HTML meta/script tags for this programme.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="font-bold text-gray-700">Meta Title</label>
+                    <input
+                      type="text"
+                      value={editMetaTitle}
+                      onChange={(e) => setEditMetaTitle(e.target.value)}
+                      placeholder={editTitle}
+                      className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="font-bold text-gray-700">Meta Description</label>
+                    <textarea
+                      rows={2}
+                      value={editMetaDescription}
+                      onChange={(e) => setEditMetaDescription(e.target.value)}
+                      placeholder={editDescription}
+                      className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">Meta Keywords</label>
+                      <input
+                        type="text"
+                        value={editMetaKeywords}
+                        onChange={(e) => setEditMetaKeywords(e.target.value)}
+                        placeholder="panchakarma, retreat, rishikesh"
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">Canonical URL</label>
+                      <input
+                        type="url"
+                        value={editCanonicalUrl}
+                        onChange={(e) => setEditCanonicalUrl(e.target.value)}
+                        placeholder={`https://indiayogatourism.com/packages/${editSlug}`}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">OG Title</label>
+                      <input
+                        type="text"
+                        value={editOgTitle}
+                        onChange={(e) => setEditOgTitle(e.target.value)}
+                        placeholder={editMetaTitle || editTitle}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">OG Image URL</label>
+                      <input
+                        type="url"
+                        value={editOgImage}
+                        onChange={(e) => setEditOgImage(e.target.value)}
+                        placeholder={editFeaturedImage}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="font-bold text-gray-700">OG Description</label>
+                    <textarea
+                      rows={2}
+                      value={editOgDescription}
+                      onChange={(e) => setEditOgDescription(e.target.value)}
+                      placeholder={editMetaDescription || editDescription}
+                      className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="font-bold text-gray-700">Custom HTML SEO Tags (Raw Meta &amp; Script Tags)</label>
+                    <p className="text-[11px] text-gray-500">
+                      Paste raw HTML tags like &lt;meta name="..." content="..." /&gt; or JSON-LD &lt;script type="application/ld+json"&gt;.
+                    </p>
+                    <textarea
+                      rows={4}
+                      value={editCustomHtmlTags}
+                      onChange={(e) => setEditCustomHtmlTags(e.target.value)}
+                      placeholder='<meta name="robots" content="index, follow" />'
+                      className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26] font-mono text-xs"
+                    />
+                  </div>
                 </div>
-
-                <div className="space-y-1">
-                  <label className="font-bold text-gray-700">Duration (Days)</label>
-                  <input
-                    type="number"
-                    required
-                    value={editDurationDays}
-                    onChange={(e) => setEditDurationDays(Number(e.target.value))}
-                    className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="font-bold text-gray-700">Starting Price (USD)</label>
-                  <input
-                    type="number"
-                    required
-                    value={editPriceShared}
-                    onChange={(e) => setEditPriceShared(Number(e.target.value))}
-                    className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="font-bold text-gray-700">Status</label>
-                  <select
-                    value={editStatus}
-                    onChange={(e) => setEditStatus(e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                  >
-                    <option value="PUBLISHED">PUBLISHED</option>
-                    <option value="DRAFT">DRAFT</option>
-                    <option value="ARCHIVED">ARCHIVED</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="font-bold text-gray-700">Featured Image URL</label>
-                  <input
-                    type="text"
-                    value={editFeaturedImage}
-                    onChange={(e) => setEditFeaturedImage(e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-gray-700">Short Description</label>
-                <textarea
-                  rows={3}
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-gray-700">Inclusions (One per line)</label>
-                <textarea
-                  rows={4}
-                  value={editInclusions}
-                  onChange={(e) => setEditInclusions(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                />
-              </div>
+              )}
 
               <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
                 <a

@@ -15,6 +15,7 @@ interface PageItem {
   ogTitle?: string
   ogDescription?: string
   ogImage?: string
+  customHtmlTags?: string
   published: boolean
   createdAt: string
 }
@@ -42,6 +43,7 @@ export default function AdminPagesPage() {
     ogTitle: '',
     ogDescription: '',
     ogImage: '',
+    customHtmlTags: '',
     published: true,
   })
 
@@ -88,6 +90,7 @@ export default function AdminPagesPage() {
       ogTitle: '',
       ogDescription: '',
       ogImage: '',
+      customHtmlTags: '',
       published: true,
     })
     setIsModalOpen(true)
@@ -107,6 +110,7 @@ export default function AdminPagesPage() {
       ogTitle: page.ogTitle || '',
       ogDescription: page.ogDescription || '',
       ogImage: page.ogImage || '',
+      customHtmlTags: page.customHtmlTags || '',
       published: page.published,
     })
     setIsModalOpen(true)
@@ -145,6 +149,24 @@ export default function AdminPagesPage() {
       console.error('Error saving custom page:', err)
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleTogglePublish = async (page: PageItem) => {
+    try {
+      const res = await fetch(`/api/pages/${page.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: !page.published }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setPages((prev) =>
+          prev.map((p) => (p.id === page.id ? { ...p, published: !p.published } : p))
+        )
+      }
+    } catch (err) {
+      console.error('Error toggling page status:', err)
     }
   }
 
@@ -249,6 +271,21 @@ export default function AdminPagesPage() {
               </div>
 
               <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                <button
+                  onClick={() => handleTogglePublish(p)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ${
+                    p.published
+                      ? 'bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100'
+                      : 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
+                  }`}
+                  title={p.published ? 'Unpublish page' : 'Publish page'}
+                >
+                  <span className="material-symbols-outlined text-xs">
+                    {p.published ? 'visibility_off' : 'visibility'}
+                  </span>
+                  {p.published ? 'Unpublish' : 'Publish'}
+                </button>
+
                 <Link
                   href={`/${p.slug}`}
                   target="_blank"
@@ -510,6 +547,24 @@ export default function AdminPagesPage() {
                       placeholder={formData.metaDescription}
                       rows={2}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#1C2E26] focus:outline-none resize-none"
+                    />
+                  </div>
+
+                  <hr className="border-gray-200 my-2" />
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase text-gray-700 mb-1">
+                      Custom HTML SEO Tags (Raw Meta & Script Tags)
+                    </label>
+                    <p className="text-[11px] text-gray-500 mb-1.5">
+                      Paste raw HTML tags like &lt;meta name="..." content="..." /&gt;, JSON-LD &lt;script type="application/ld+json"&gt;, or Google verification meta tags.
+                    </p>
+                    <textarea
+                      value={formData.customHtmlTags}
+                      onChange={(e) => setFormData({ ...formData, customHtmlTags: e.target.value })}
+                      placeholder='<meta name="robots" content="index, follow" />&#10;<script type="application/ld+json">...</script>'
+                      rows={4}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs font-mono focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
                     />
                   </div>
 

@@ -49,10 +49,13 @@ export default async function AdminPackagesPage() {
 
   return (
     <div className="space-y-8 max-w-6xl">
-      <div className="flex justify-between items-center">
+      {/* Header Bar */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-[#1C2E26]">Programmes & Retreats</h1>
-          <p className="text-xs text-gray-500 mt-1">Manage Ayurvedic clinical programs and retreat offerings.</p>
+          <h1 className="text-2xl font-bold text-[#1C2E26]">Programmes &amp; Retreats CMS</h1>
+          <p className="text-xs text-gray-500 mt-1">
+            Manage Ayurvedic clinical programs, retreat offerings, and search engine SEO metadata.
+          </p>
         </div>
       </div>
 

@@ -40,6 +40,7 @@ export async function PUT(
       ogTitle,
       ogDescription,
       ogImage,
+      customHtmlTags,
       published,
     } = body
 
@@ -60,6 +61,7 @@ export async function PUT(
     if (ogTitle !== undefined) updateData.ogTitle = ogTitle
     if (ogDescription !== undefined) updateData.ogDescription = ogDescription
     if (ogImage !== undefined) updateData.ogImage = ogImage
+    if (customHtmlTags !== undefined) updateData.customHtmlTags = customHtmlTags
     if (published !== undefined) updateData.published = published
 
     const updatedPage = await (prisma as any).page.update({
