@@ -20,6 +20,7 @@ export function AdminLayoutClient({ dbUser, children }: AdminLayoutClientProps) 
 
   const navItems = [
     { label: 'Overview', href: '/admin', icon: 'dashboard' },
+    { label: 'Users & Applications', href: '/admin/users', icon: 'group' },
     { label: 'Site Edit', href: '/admin/site-edit', icon: 'tune' },
     { label: 'Programs & Retreats', href: '/admin/packages', icon: 'spa' },
     { label: 'Online Classes', href: '/admin/online-classes', icon: 'videocam' },
