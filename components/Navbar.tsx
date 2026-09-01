@@ -13,6 +13,51 @@ export default function Navbar() {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  const defaultDests = [
+    { id: '1', name: 'Rishikesh', subtitle: 'Yoga Capital of the World', locationQuery: 'Rishikesh', icon: 'landscape' },
+    { id: '2', name: 'Kerala', subtitle: 'Traditional Ayurvedic Sanctuary', locationQuery: 'Kerala', icon: 'spa' },
+    { id: '3', name: 'Dharamshala', subtitle: 'Peace in the Himalayan foothills', locationQuery: 'Dharamshala', icon: 'filter_drama' },
+  ]
+
+  const [siteConfig, setSiteConfig] = useState({
+    siteName: 'India Yoga Tourism',
+    siteTagline: 'Himalayan Wellness & Wisdom',
+    announcementText: '',
+    destinations: defaultDests,
+  })
+
+  useEffect(() => {
+    async function fetchConfig() {
+      try {
+        const res = await fetch('/api/site-config')
+        const data = await res.json()
+        if (data.success && data.config) {
+          let dests = defaultDests
+          if (data.config.destinationsJson) {
+            try {
+              const parsed = JSON.parse(data.config.destinationsJson)
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                dests = parsed
+              }
+            } catch (e) {
+              // fallback
+            }
+          }
+
+          setSiteConfig({
+            siteName: data.config.siteName || 'India Yoga Tourism',
+            siteTagline: data.config.siteTagline || 'Himalayan Wellness & Wisdom',
+            announcementText: data.config.announcementText || '',
+            destinations: dests,
+          })
+        }
+      } catch (err) {
+        // Fallback
+      }
+    }
+    fetchConfig()
+  }, [])
+
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase()
   const isAdmin = userEmail === 'indiayogatourism@gmail.com' || user?.publicMetadata?.role === 'admin'
 
@@ -99,14 +144,14 @@ export default function Navbar() {
                   scrolled ? 'text-[#012d1d]' : 'text-white'
                 }`}
               >
-                India Yoga Tourism
+                {siteConfig.siteName}
               </span>
               <span
                 className={`text-[8px] sm:text-[9px] font-label-price uppercase tracking-widest mt-1 truncate transition-colors ${
                   scrolled ? 'text-[#2c694e] font-bold' : 'text-[#e2c799] font-medium'
                 }`}
               >
-                Himalayan Wellness &amp; Wisdom
+                {siteConfig.siteTagline}
               </span>
             </div>
           </Link>
@@ -176,10 +221,10 @@ export default function Navbar() {
                     </p>
                   </div>
                   <div className="grid grid-cols-1 gap-2">
-                    {featuredDestinations.map((dest) => (
+                    {siteConfig.destinations.map((dest) => (
                       <Link
-                        key={dest.title}
-                        href={dest.href}
+                        key={dest.id || dest.name}
+                        href={`/packages?location=${encodeURIComponent(dest.locationQuery || dest.name)}`}
                         onClick={() => setHoveredLink(null)}
                         className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-300 group/item ${
                           scrolled ? 'hover:bg-[#012d1d]/5' : 'hover:bg-white/10'
@@ -192,7 +237,7 @@ export default function Navbar() {
                               : 'bg-white/10 text-[#f6be39] group-hover/item:bg-[#f6be39] group-hover/item:text-[#012d1d]'
                           }`}
                         >
-                          <span className="material-symbols-outlined">{dest.icon}</span>
+                          <span className="material-symbols-outlined">{dest.icon || 'landscape'}</span>
                         </div>
                         <div>
                           <h5
@@ -202,9 +247,9 @@ export default function Navbar() {
                                 : 'text-white group-hover/item:text-[#f6be39]'
                             }`}
                           >
-                            {dest.title}
+                            {dest.name}
                           </h5>
-                          <p className={`text-xs ${scrolled ? 'text-gray-500' : 'text-white/60'}`}>{dest.desc}</p>
+                          <p className={`text-xs ${scrolled ? 'text-gray-500' : 'text-white/60'}`}>{dest.subtitle}</p>
                         </div>
                       </Link>
                     ))}

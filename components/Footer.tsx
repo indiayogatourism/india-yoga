@@ -1,11 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
 export default function Footer() {
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
+  const defaultDests = [
+    { id: '1', name: 'Rishikesh', locationQuery: 'Rishikesh' },
+    { id: '2', name: 'Kerala', locationQuery: 'Kerala' },
+    { id: '3', name: 'Dharamshala', locationQuery: 'Dharamshala' },
+  ]
+
+  const [siteConfig, setSiteConfig] = useState({
+    siteName: 'India Yoga Tourism',
+    siteTagline: 'Ancient Wisdom. Modern Journey.',
+    footerText: '© 2026 India Yoga Tourism. All rights reserved.',
+    destinations: defaultDests,
+  })
+
+  useEffect(() => {
+    async function fetchConfig() {
+      try {
+        const res = await fetch('/api/site-config')
+        const data = await res.json()
+        if (data.success && data.config) {
+          let dests = defaultDests
+          if (data.config.destinationsJson) {
+            try {
+              const parsed = JSON.parse(data.config.destinationsJson)
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                dests = parsed
+              }
+            } catch (e) {
+              // fallback
+            }
+          }
+
+          setSiteConfig({
+            siteName: data.config.siteName || 'India Yoga Tourism',
+            siteTagline: data.config.siteTagline || 'Ancient Wisdom. Modern Journey.',
+            footerText: data.config.footerText || '© 2026 India Yoga Tourism. All rights reserved.',
+            destinations: dests,
+          })
+        }
+      } catch (err) {
+        // Fallback
+      }
+    }
+    fetchConfig()
+  }, [])
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault()
@@ -79,7 +123,7 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-tertiary-fixed-dim text-3xl">self_improvement</span>
             <span className="font-display-lg text-on-primary text-2xl font-bold tracking-tight">
-              India Yoga Tourism
+              {siteConfig.siteName}
             </span>
           </div>
           <p className="font-body-md text-on-primary-container/70 text-sm leading-relaxed mt-2">
@@ -101,24 +145,17 @@ export default function Footer() {
             Destinations
           </h4>
           <ul className="space-y-3 text-sm text-on-primary-container/80">
-            <li>
-              <Link href="/packages?location=Rishikesh" className="hover:text-tertiary-fixed transition-colors flex items-center gap-1 group">
-                <span className="w-1.5 h-1.5 rounded-full bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                Rishikesh Sanctuary
-              </Link>
-            </li>
-            <li>
-              <Link href="/packages?location=Kerala" className="hover:text-tertiary-fixed transition-colors flex items-center gap-1 group">
-                <span className="w-1.5 h-1.5 rounded-full bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                Kerala Backwaters
-              </Link>
-            </li>
-            <li>
-              <Link href="/packages?location=Dharamshala" className="hover:text-tertiary-fixed transition-colors flex items-center gap-1 group">
-                <span className="w-1.5 h-1.5 rounded-full bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                Dharamshala Hills
-              </Link>
-            </li>
+            {siteConfig.destinations.map((dest) => (
+              <li key={dest.id || dest.name}>
+                <Link
+                  href={`/packages?location=${encodeURIComponent(dest.locationQuery || dest.name)}`}
+                  className="hover:text-tertiary-fixed transition-colors flex items-center gap-1 group"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                  {dest.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 

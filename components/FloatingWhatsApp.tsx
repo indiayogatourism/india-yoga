@@ -1,7 +1,28 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+
 export default function FloatingWhatsApp() {
-  const whatsappNumber = '918800919486'
+  const [whatsappNumber, setWhatsappNumber] = useState('919999876349')
+
+  useEffect(() => {
+    async function fetchConfig() {
+      try {
+        const res = await fetch('/api/site-config')
+        const data = await res.json()
+        if (data.success && data.config?.whatsappNumber) {
+          const cleanNum = data.config.whatsappNumber.replace(/[^0-9]/g, '')
+          if (cleanNum) {
+            setWhatsappNumber(cleanNum)
+          }
+        }
+      } catch (err) {
+        // Fallback to default
+      }
+    }
+    fetchConfig()
+  }, [])
+
   const message = 'Hello! I would like to enquire about India Yoga Tourism retreats.'
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
 
@@ -10,10 +31,10 @@ export default function FloatingWhatsApp() {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Chat with us on WhatsApp +91 88009 19486"
+      aria-label={`Chat with us on WhatsApp +${whatsappNumber}`}
       className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 group cursor-pointer select-none"
     >
-      {/* Tooltip text bubble (visible on desktop hover or mobile) */}
+      {/* Tooltip text bubble */}
       <span className="hidden sm:inline-flex items-center gap-1.5 bg-surface/95 text-on-surface backdrop-blur-md px-3.5 py-2 rounded-full shadow-lg border border-outline-variant/30 text-xs font-bold transition-all duration-300 group-hover:scale-105 group-hover:bg-white">
         <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse"></span>
         Chat on WhatsApp
@@ -21,10 +42,7 @@ export default function FloatingWhatsApp() {
 
       {/* Main WhatsApp Green Button */}
       <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition-all duration-300 group-hover:scale-110 active:scale-95">
-        {/* Subtle Ping Outer Ring */}
         <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-30 animate-ping pointer-events-none"></span>
-
-        {/* WhatsApp Icon SVG */}
         <svg
           className="w-8 h-8 fill-current relative z-10"
           viewBox="0 0 24 24"

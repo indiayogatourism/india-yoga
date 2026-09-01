@@ -25,12 +25,19 @@ export default function AdminPagesPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Modal State
+  // Modal State for Single Page Add/Edit
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'content' | 'seo'>('content')
   const [editingPage, setEditingPage] = useState<PageItem | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+
+  // Bulk Upload Modal State
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false)
+  const [bulkInputText, setBulkInputText] = useState('')
+  const [bulkImporting, setBulkImporting] = useState(false)
+  const [bulkSuccessMsg, setBulkSuccessMsg] = useState<string | null>(null)
+  const [bulkErrorMsg, setBulkErrorMsg] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -185,6 +192,99 @@ export default function AdminPagesPage() {
     }
   }
 
+  // --- Bulk Upload Handlers ---
+  const handleOpenBulkModal = () => {
+    setBulkInputText('')
+    setBulkSuccessMsg(null)
+    setBulkErrorMsg(null)
+    setIsBulkModalOpen(true)
+  }
+
+  const handleDeviceFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const text = event.target?.result as string
+      setBulkInputText(text || '')
+    }
+    reader.readAsText(file)
+  }
+
+  const handleDownloadSampleJson = () => {
+    const sample = [
+      {
+        title: 'Ashram Rules & Conduct',
+        slug: 'ashram-rules',
+        content: '# Ashram Rules & Guidelines\n\nWelcome to India Yoga Tourism. Please maintain silence during morning meditation.',
+        metaTitle: 'Ashram Rules & Conduct | India Yoga Tourism',
+        metaDescription: 'Guidelines and rules for guests staying at our Rishikesh sanctuary.',
+        metaKeywords: 'ashram rules, rishikesh yoga rules',
+        published: true,
+      },
+      {
+        title: 'Ayurveda Clinical Diet Policy',
+        slug: 'ayurveda-diet-policy',
+        content: '# Sattvic Diet Policy\n\nAll meals served are 100% vegetarian, organic, and Sattvic.',
+        metaTitle: 'Ayurveda Clinical Diet Policy',
+        metaDescription: 'Learn about our organic Sattvic nutrition guidelines.',
+        published: true,
+      },
+    ]
+
+    const jsonStr = JSON.stringify(sample, null, 2)
+    const blob = new Blob([jsonStr], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'sample-pages-bulk-import.json'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleBulkImportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setBulkImporting(true)
+    setBulkSuccessMsg(null)
+    setBulkErrorMsg(null)
+
+    try {
+      let parsedData: any[] = []
+      try {
+        parsedData = JSON.parse(bulkInputText)
+      } catch (parseErr) {
+        throw new Error('Invalid JSON format. Please check your syntax or download the sample JSON template.')
+      }
+
+      if (!Array.isArray(parsedData) || parsedData.length === 0) {
+        throw new Error('JSON payload must be a non-empty array of page objects.')
+      }
+
+      const res = await fetch('/api/pages/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(parsedData),
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        setBulkSuccessMsg(`Successfully imported ${data.count} pages!`)
+        fetchPages()
+        setTimeout(() => {
+          setIsBulkModalOpen(false)
+        }, 2000)
+      } else {
+        setBulkErrorMsg(data.error || 'Failed to bulk import pages')
+      }
+    } catch (err: any) {
+      setBulkErrorMsg(err.message || 'Error executing bulk import')
+    } finally {
+      setBulkImporting(false)
+    }
+  }
+
   const filteredPages = pages.filter((p) => {
     return (
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -202,13 +302,22 @@ export default function AdminPagesPage() {
             Manage static landing pages, disclosures, policies, and search engine SEO metadata.
           </p>
         </div>
-        <button
-          onClick={handleOpenAddModal}
-          className="px-5 py-2.5 bg-[#1C2E26] text-[#E2C799] font-bold rounded-xl text-xs hover:bg-[#253e34] transition-colors flex items-center gap-2 shadow-md cursor-pointer shrink-0"
-        >
-          <span className="material-symbols-outlined text-base">add_box</span>
-          Create New Page
-        </button>
+        <div className="flex items-center gap-3 shrink-0 flex-wrap">
+          <button
+            onClick={handleOpenBulkModal}
+            className="px-4 py-2.5 bg-emerald-50 text-emerald-900 border border-emerald-200 font-bold rounded-xl text-xs hover:bg-emerald-100 transition-colors flex items-center gap-2 cursor-pointer shadow-xs"
+          >
+            <span className="material-symbols-outlined text-base">upload_file</span>
+            Bulk Upload Pages
+          </button>
+          <button
+            onClick={handleOpenAddModal}
+            className="px-5 py-2.5 bg-[#1C2E26] text-[#E2C799] font-bold rounded-xl text-xs hover:bg-[#253e34] transition-colors flex items-center gap-2 shadow-md cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-base">add_box</span>
+            Create New Page
+          </button>
+        </div>
       </div>
 
       {/* Search Bar */}
@@ -238,14 +347,22 @@ export default function AdminPagesPage() {
           <span className="material-symbols-outlined text-5xl text-gray-300">description</span>
           <h3 className="text-lg font-bold text-[#1C2E26]">No Custom Pages Found</h3>
           <p className="text-xs text-gray-500">
-            Create pages like Terms of Service, Sanctuary Rules, or custom destination landing pages.
+            Create pages like Terms of Service, Sanctuary Rules, or bulk upload multiple pages via JSON.
           </p>
-          <button
-            onClick={handleOpenAddModal}
-            className="px-5 py-2.5 bg-[#1C2E26] text-[#E2C799] font-bold rounded-xl text-xs hover:bg-[#253e34] transition-colors cursor-pointer"
-          >
-            Create New Page Now
-          </button>
+          <div className="flex items-center justify-center gap-3">
+            <button
+              onClick={handleOpenBulkModal}
+              className="px-4 py-2 bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold rounded-xl text-xs hover:bg-emerald-100 cursor-pointer"
+            >
+              Bulk Upload Pages
+            </button>
+            <button
+              onClick={handleOpenAddModal}
+              className="px-5 py-2 bg-[#1C2E26] text-[#E2C799] font-bold rounded-xl text-xs hover:bg-[#253e34] cursor-pointer"
+            >
+              Create New Page
+            </button>
+          </div>
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-black/5 shadow-sm overflow-hidden divide-y divide-gray-100">
@@ -331,7 +448,7 @@ export default function AdminPagesPage() {
         </div>
       )}
 
-      {/* Add / Edit Modal Drawer */}
+      {/* Single Add / Edit Modal Drawer */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden animate-fade-in border border-black/10 flex flex-col max-h-[90vh]">
@@ -554,7 +671,7 @@ export default function AdminPagesPage() {
 
                   <div>
                     <label className="block text-xs font-bold uppercase text-gray-700 mb-1">
-                      Custom HTML SEO Tags (Raw Meta & Script Tags)
+                      Custom HTML SEO Tags (Raw Meta &amp; Script Tags)
                     </label>
                     <p className="text-[11px] text-gray-500 mb-1.5">
                       Paste raw HTML tags like &lt;meta name="..." content="..." /&gt;, JSON-LD &lt;script type="application/ld+json"&gt;, or Google verification meta tags.
@@ -598,6 +715,113 @@ export default function AdminPagesPage() {
                 >
                   {submitting && <span className="material-symbols-outlined text-xs animate-spin">sync</span>}
                   {editingPage ? 'Save Page & SEO' : 'Publish Page'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Upload Modal Drawer */}
+      {isBulkModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-black/10 flex flex-col max-h-[90vh] text-left">
+            <div className="bg-[#1C2E26] text-white p-6 flex justify-between items-center shrink-0">
+              <div>
+                <h3 className="font-bold text-lg text-[#E2C799] flex items-center gap-2">
+                  <span className="material-symbols-outlined">upload_file</span>
+                  Bulk Upload Pages (JSON / CSV)
+                </h3>
+                <p className="text-xs text-white/60 mt-0.5">
+                  Import multiple CMS pages, disclosures, and landing pages at once.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsBulkModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-base">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleBulkImportSubmit} className="p-6 overflow-y-auto space-y-5 flex-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                <div className="space-y-1">
+                  <h4 className="font-bold text-xs text-emerald-900 uppercase tracking-wider flex items-center gap-1">
+                    <span className="material-symbols-outlined text-base">info</span>
+                    Need sample JSON template?
+                  </h4>
+                  <p className="text-[11px] text-emerald-800">
+                    Download our formatted JSON structure to see exact key requirements (title, slug, content, SEO fields).
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDownloadSampleJson}
+                  className="px-4 py-2 bg-[#1C2E26] text-[#E2C799] font-bold text-xs rounded-xl hover:bg-[#253e34] transition-colors shrink-0 cursor-pointer shadow-xs flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-sm">download</span>
+                  Sample JSON Template
+                </button>
+              </div>
+
+              {/* Upload File Control */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase text-gray-700">
+                  Option 1: Choose File from Device (.json or .csv)
+                </label>
+                <input
+                  type="file"
+                  accept=".json,.csv"
+                  onChange={handleDeviceFileUpload}
+                  className="w-full text-xs text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1C2E26] file:text-[#E2C799] hover:file:bg-[#253e34] cursor-pointer"
+                />
+              </div>
+
+              {/* Raw JSON Paste Area */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase text-gray-700">
+                  Option 2: Paste Raw JSON Array Below
+                </label>
+                <textarea
+                  value={bulkInputText}
+                  onChange={(e) => setBulkInputText(e.target.value)}
+                  placeholder='[&#10;  {&#10;    "title": "Terms of Service",&#10;    "slug": "terms-of-service",&#10;    "content": "Page content here...",&#10;    "metaTitle": "Terms of Service",&#10;    "published": true&#10;  }&#10;]'
+                  rows={8}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
+                  required
+                />
+              </div>
+
+              {bulkSuccessMsg && (
+                <div className="p-3 bg-emerald-100 text-emerald-900 rounded-xl text-xs font-bold flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base">check_circle</span>
+                  {bulkSuccessMsg}
+                </div>
+              )}
+
+              {bulkErrorMsg && (
+                <div className="p-3 bg-red-100 text-red-900 rounded-xl text-xs font-bold flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base">error</span>
+                  {bulkErrorMsg}
+                </div>
+              )}
+
+              <div className="pt-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsBulkModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-bold text-xs hover:bg-gray-100 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={bulkImporting || !bulkInputText.trim()}
+                  className="px-6 py-2.5 rounded-xl bg-[#1C2E26] text-[#E2C799] font-bold text-xs hover:bg-[#253e34] transition-colors shadow-md cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  {bulkImporting && <span className="material-symbols-outlined text-xs animate-spin">sync</span>}
+                  Import Pages Now
                 </button>
               </div>
             </form>

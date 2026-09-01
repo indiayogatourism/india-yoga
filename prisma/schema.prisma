@@ -338,6 +338,7 @@ model SiteConfig {
   ogDescription    String?  @db.Text
   ogImage          String?
   customHtmlTags   String?  @db.Text
+  destinationsJson String?  @db.Text
 
   updatedAt        DateTime @updatedAt
 }

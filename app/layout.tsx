@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Cormorant_Garamond, DM_Sans, Sora, EB_Garamond } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
+import { getSiteConfig } from '@/lib/siteConfig'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -34,19 +35,31 @@ const ebGaramond = EB_Garamond({
   style: ['italic', 'normal'],
 })
 
-export const metadata: Metadata = {
-  title: {
-    default: 'India Yoga Tourism',
-    template: '%s | India Yoga Tourism'
-  },
-  description: 'Ancient Wisdom. Modern Journey. Discover premium retreats and clinical wellness programmes in the Himalayas.',
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getSiteConfig()
+  return {
+    title: {
+      default: config.metaTitle || config.siteName,
+      template: `%s | ${config.siteName}`,
+    },
+    description: config.metaDescription || config.siteTagline,
+    keywords: config.metaKeywords ? config.metaKeywords.split(',').map((k) => k.trim()) : undefined,
+    alternates: config.canonicalUrl ? { canonical: config.canonicalUrl } : undefined,
+    openGraph: {
+      title: config.ogTitle || config.metaTitle || config.siteName,
+      description: config.ogDescription || config.metaDescription || config.siteTagline,
+      images: config.ogImage ? [{ url: config.ogImage }] : undefined,
+    },
+  }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const siteConfig = await getSiteConfig()
+
   return (
     <ClerkProvider>
       <html
@@ -59,6 +72,9 @@ export default function RootLayout({
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
             rel="stylesheet"
           />
+          {siteConfig.customHtmlTags && (
+            <div dangerouslySetInnerHTML={{ __html: siteConfig.customHtmlTags }} />
+          )}
         </head>
         <body className="min-h-full flex flex-col bg-background text-on-background">
           {children}

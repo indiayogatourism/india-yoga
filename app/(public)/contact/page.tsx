@@ -1,12 +1,41 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', category: 'Retreat', message: '' })
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+
+  const [siteConfig, setSiteConfig] = useState({
+    contactEmail: 'info@indiayogatourism.com',
+    contactPhone: '+91 99998 76349',
+    whatsappNumber: '+91 99998 76349',
+    officeAddress: 'Cloud 9 Tower, Sec-1, Ghaziabad, UP 201010',
+  })
+
+  useEffect(() => {
+    async function fetchConfig() {
+      try {
+        const res = await fetch('/api/site-config')
+        const data = await res.json()
+        if (data.success && data.config) {
+          setSiteConfig({
+            contactEmail: data.config.contactEmail || 'info@indiayogatourism.com',
+            contactPhone: data.config.contactPhone || '+91 99998 76349',
+            whatsappNumber: data.config.whatsappNumber || '+91 99998 76349',
+            officeAddress: data.config.officeAddress || 'Cloud 9 Tower, Sec-1, Ghaziabad, UP 201010',
+          })
+        }
+      } catch (err) {
+        // Fallback
+      }
+    }
+    fetchConfig()
+  }, [])
+
+  const cleanWhatsappNumber = siteConfig.whatsappNumber.replace(/[^0-9]/g, '') || '919999876349'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,7 +95,7 @@ export default function ContactPage() {
             <div className="space-y-6">
               {/* WhatsApp */}
               <a
-                href="https://wa.me/919999999999"
+                href={`https://wa.me/${cleanWhatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-4 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors border border-primary/5"
@@ -76,7 +105,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h4 className="font-bold text-primary text-sm">WhatsApp Support</h4>
-                  <p className="text-xs text-on-surface-variant">+91 99999 99999 (Realtime)</p>
+                  <p className="text-xs text-on-surface-variant">{siteConfig.whatsappNumber} (Realtime)</p>
                 </div>
               </a>
 
@@ -87,7 +116,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h4 className="font-bold text-primary text-sm">Sanctuary Desk Email</h4>
-                  <p className="text-xs text-on-surface-variant">info@indiayogatourism.com</p>
+                  <p className="text-xs text-on-surface-variant">{siteConfig.contactEmail}</p>
                 </div>
               </div>
 
@@ -98,7 +127,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h4 className="font-bold text-primary text-sm">Himalayan Retreat Office</h4>
-                  <p className="text-xs text-on-surface-variant">Cloud 9 Tower, Sec-1, Ghaziabad, UP 201010</p>
+                  <p className="text-xs text-on-surface-variant">{siteConfig.officeAddress}</p>
                 </div>
               </div>
             </div>

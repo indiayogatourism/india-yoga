@@ -29,6 +29,11 @@ export async function GET() {
           metaDescription: 'Discover authentic Panchakarma detoxification, Ayurvedic retreats, and live stream online classes with certified masters in Rishikesh.',
           metaKeywords: 'yoga retreats, panchakarma rishikesh, ayurveda detox, online yoga classes',
           canonicalUrl: 'https://indiayogatourism.com',
+          destinationsJson: JSON.stringify([
+            { id: '1', name: 'Rishikesh', subtitle: 'Yoga Capital of the World', locationQuery: 'Rishikesh', icon: 'landscape' },
+            { id: '2', name: 'Kerala', subtitle: 'Traditional Ayurvedic Sanctuary', locationQuery: 'Kerala', icon: 'spa' },
+            { id: '3', name: 'Dharamshala', subtitle: 'Peace in the Himalayan foothills', locationQuery: 'Dharamshala', icon: 'filter_drama' },
+          ]),
         },
       })
     }
@@ -80,6 +85,7 @@ export async function PUT(req: Request) {
       ogDescription,
       ogImage,
       customHtmlTags,
+      destinationsJson,
     } = body
 
     const updatedConfig = await (prisma as any).siteConfig.upsert({
@@ -103,6 +109,7 @@ export async function PUT(req: Request) {
         ogDescription,
         ogImage,
         customHtmlTags,
+        destinationsJson,
       },
       create: {
         id: 'global',
@@ -124,6 +131,7 @@ export async function PUT(req: Request) {
         ogDescription,
         ogImage,
         customHtmlTags,
+        destinationsJson,
       },
     })
 
