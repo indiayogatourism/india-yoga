@@ -21,6 +21,7 @@ export function AdminLayoutClient({ dbUser, children }: AdminLayoutClientProps) 
   const navItems = [
     { label: 'Overview', href: '/admin', icon: 'dashboard' },
     { label: 'Programs & Retreats', href: '/admin/packages', icon: 'spa' },
+    { label: 'Online Classes', href: '/admin/online-classes', icon: 'videocam' },
     { label: 'Blog Posts', href: '/admin/blogs', icon: 'article' },
     { label: 'CMS Pages', href: '/admin/pages', icon: 'description' },
     { label: 'Photo Gallery', href: '/admin/gallery', icon: 'photo_library' },

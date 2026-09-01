@@ -48,6 +48,7 @@ model User {
   updatedAt DateTime  @updatedAt
   bookings  Booking[]
   reviews   Review[]
+  onlineEnrolments OnlineClassEnrolment[]
 }
 
 model Package {
@@ -273,5 +274,45 @@ model GalleryImage {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model OnlineClass {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  description     String   @db.Text
+  timeSlot        String   @default("07:00 AM - 08:15 AM IST")
+  level           String   @default("Beginner to Intermediate")
+  instructor      String   @default("Yogini Arundhati")
+  meetingUrl      String?  // Live stream join link for enrolled users (e.g. Zoom / Meet)
+  price           Float    @default(49)
+  coverImage      String?
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?  @db.Text
+  metaKeywords    String?
+  canonicalUrl    String?
+  ogTitle         String?
+  ogDescription   String?  @db.Text
+  ogImage         String?
+  customHtmlTags  String?  @db.Text
+
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  enrolments      OnlineClassEnrolment[]
+}
+
+model OnlineClassEnrolment {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  classId       String
+  onlineClass   OnlineClass @relation(fields: [classId], references: [id])
+  status        String      @default("ACTIVE") // ACTIVE | EXPIRED | CANCELLED
+  createdAt     DateTime    @default(now())
+}
+
 
 

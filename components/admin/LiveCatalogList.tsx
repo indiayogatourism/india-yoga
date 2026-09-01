@@ -37,6 +37,7 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
   const [search, setSearch] = useState("")
   const [editingPkg, setEditingPkg] = useState<PackageItem | null>(null)
   const [saving, setSaving] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
@@ -61,6 +62,33 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
   const [editOgDescription, setEditOgDescription] = useState("")
   const [editOgImage, setEditOgImage] = useState("")
   const [editCustomHtmlTags, setEditCustomHtmlTags] = useState("")
+
+  const handleDeviceImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingImage(true)
+    try {
+      const body = new FormData()
+      body.append("file", file)
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body,
+      })
+      const data = await res.json()
+
+      if (data.success && data.url) {
+        setEditFeaturedImage(data.url)
+      } else {
+        alert(data.error || "Failed to upload image")
+      }
+    } catch (err: any) {
+      alert(err.message || "Image upload failed")
+    } finally {
+      setUploadingImage(false)
+    }
+  }
 
   const openEditModal = (pkg: PackageItem) => {
     setEditingPkg(pkg)
@@ -428,14 +456,29 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
                       </select>
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="font-bold text-gray-700">Featured Image URL</label>
-                      <input
-                        type="text"
-                        value={editFeaturedImage}
-                        onChange={(e) => setEditFeaturedImage(e.target.value)}
-                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                      />
+                    <div className="space-y-1 md:col-span-2">
+                      <label className="font-bold text-gray-700 block">
+                        Featured Image (Upload from Device or Paste URL)
+                      </label>
+                      <div className="flex flex-col sm:flex-row items-center gap-2">
+                        <input
+                          type="text"
+                          value={editFeaturedImage}
+                          onChange={(e) => setEditFeaturedImage(e.target.value)}
+                          placeholder="https://..."
+                          className="flex-1 w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                        />
+                        <label className="px-4 py-2.5 bg-[#1C2E26] text-white font-bold rounded-lg text-xs hover:bg-black transition-colors cursor-pointer shrink-0 flex items-center gap-1.5 shadow-xs">
+                          <span>{uploadingImage ? "Uploading..." : "Upload from Device"}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleDeviceImageUpload}
+                            className="hidden"
+                            disabled={uploadingImage}
+                          />
+                        </label>
+                      </div>
                     </div>
                   </div>
 

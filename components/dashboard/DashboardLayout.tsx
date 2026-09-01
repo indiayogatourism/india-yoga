@@ -16,12 +16,14 @@ import {
   X,
   Sparkles,
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  Video
 } from "lucide-react"
 
 const navLinks = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/bookings", label: "My Bookings", icon: Calendar },
+  { href: "/dashboard/online-classes", label: "Online Classes", icon: Video },
   { href: "/dashboard/upload", label: "Upload Documents", icon: Upload },
   { href: "/dashboard/download", label: "Download Center", icon: Download },
   { href: "/dashboard/tracking", label: "Track Journey", icon: Compass },
