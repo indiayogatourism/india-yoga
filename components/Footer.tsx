@@ -189,6 +189,11 @@ export default function Footer() {
                 Sacred Photo Gallery
               </Link>
             </li>
+            <li>
+              <Link href="/faqs" className="hover:text-tertiary-fixed transition-colors">
+                Help &amp; FAQs
+              </Link>
+            </li>
           </ul>
         </div>
 

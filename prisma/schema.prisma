@@ -343,6 +343,18 @@ model SiteConfig {
   updatedAt        DateTime @updatedAt
 }
 
+model FaqItem {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String   @db.Text
+  category    String   @default("General") // General | Retreats | Online Classes | Booking & Payments | Visa & Travel
+  orderIndex  Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
 
 
 

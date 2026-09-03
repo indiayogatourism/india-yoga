@@ -25,6 +25,7 @@ export function AdminLayoutClient({ dbUser, children }: AdminLayoutClientProps) 
     { label: 'Programs & Retreats', href: '/admin/packages', icon: 'spa' },
     { label: 'Online Classes', href: '/admin/online-classes', icon: 'videocam' },
     { label: 'Payments', href: '/admin/payments', icon: 'payments' },
+    { label: 'FAQs', href: '/admin/faqs', icon: 'help_outline' },
     { label: 'Blog Posts', href: '/admin/blogs', icon: 'article' },
     { label: 'CMS Pages', href: '/admin/pages', icon: 'description' },
     { label: 'Photo Gallery', href: '/admin/gallery', icon: 'photo_library' },
