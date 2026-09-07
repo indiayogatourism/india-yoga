@@ -126,10 +126,19 @@ export default function Footer() {
               {siteConfig.siteName}
             </span>
           </div>
-          <p className="font-body-md text-on-primary-container/70 text-sm leading-relaxed mt-2">
+          <p className="font-body-md text-on-primary-container/70 text-sm leading-relaxed mt-1">
             Connecting global seekers with the authentic roots of Himalayan yoga, traditional Ayurveda, and sacred heritage. We offer luxury wellness sanctuaries for self-discovery and transformation.
           </p>
-          <div className="bg-[#0c3c29] p-4 rounded-xl border border-on-primary-container/10 w-full mt-4">
+
+          <div className="flex items-start gap-2.5 text-xs text-on-primary-container/80 pt-1">
+            <span className="material-symbols-outlined text-tertiary-fixed-dim text-base mt-0.5 select-none">location_on</span>
+            <div>
+              <p className="font-bold text-on-primary">Globazon Enterprises LLC</p>
+              <p className="text-on-primary-container/70">30 N Gould St Ste R, Sheridan, WY 82801</p>
+            </div>
+          </div>
+
+          <div className="bg-[#0c3c29] p-4 rounded-xl border border-on-primary-container/10 w-full mt-2">
             <span className="text-[10px] font-label-price text-tertiary-fixed-dim uppercase tracking-wider block mb-1">
               Sanctuary Mission
             </span>
@@ -224,9 +233,14 @@ export default function Footer() {
       {/* Footer Bottom bar */}
       <div className="border-t border-on-primary-container/10 bg-black/10 relative z-10">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="font-body-md text-xs text-on-primary-container/60 text-center md:text-left">
-            © {new Date().getFullYear()} India Yoga Tourism. Crafted for pilgrims of self-transformation. All rights reserved.
-          </p>
+          <div className="flex flex-col gap-1 text-center md:text-left">
+            <p className="font-body-md text-xs text-on-primary-container/60">
+              © {new Date().getFullYear()} India Yoga Tourism. Crafted for pilgrims of self-transformation. All rights reserved.
+            </p>
+            <p className="font-body-md text-[11px] text-on-primary-container/50">
+              Globazon Enterprises LLC · 30 N Gould St Ste R, Sheridan, WY 82801
+            </p>
+          </div>
           
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-6 sm:pr-48 md:pr-56">
             <button

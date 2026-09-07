@@ -62,7 +62,7 @@ export function getBookingConfirmedTemplate(data: BookingEmailData): string {
       </div>
 
       <div style="margin-top: 40px; border-top: 1px solid #c1c8c2; padding-top: 20px; font-size: 12px; text-align: center; color: #717973;">
-        <p>Cloud 9 Tower, Vaishali Sec-1, Ghaziabad, UP 201010</p>
+        <p>Globazon Enterprises LLC | 30 N Gould St Ste R, Sheridan, WY 82801</p>
         <p>Phone: +91 99998 76349 | Email: info@indiayogatourism.com</p>
         <p>© ${new Date().getFullYear()} India Yoga Tourism. All rights reserved.</p>
       </div>

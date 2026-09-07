@@ -12,7 +12,7 @@ export default function ContactPage() {
     contactEmail: 'info@indiayogatourism.com',
     contactPhone: '+91 99998 76349',
     whatsappNumber: '+91 99998 76349',
-    officeAddress: 'Cloud 9 Tower, Sec-1, Ghaziabad, UP 201010',
+    officeAddress: '30 N Gould St Ste R, Sheridan, WY 82801',
   })
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function ContactPage() {
             contactEmail: data.config.contactEmail || 'info@indiayogatourism.com',
             contactPhone: data.config.contactPhone || '+91 99998 76349',
             whatsappNumber: data.config.whatsappNumber || '+91 99998 76349',
-            officeAddress: data.config.officeAddress || 'Cloud 9 Tower, Sec-1, Ghaziabad, UP 201010',
+            officeAddress: data.config.officeAddress || '30 N Gould St Ste R, Sheridan, WY 82801',
           })
         }
       } catch (err) {

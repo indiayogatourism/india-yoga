@@ -22,7 +22,7 @@ async function main() {
       { key: 'contactPhone', value: '+91 88009 19486' },
       { key: 'contactEmail', value: 'info@indiayogatourism.com' },
       { key: 'contactWhatsapp', value: '+91 88009 19486' },
-      { key: 'contactAddress', value: 'Cloud 9 Tower, Vaishali Sec-1, Ghaziabad, UP 201010' },
+      { key: 'contactAddress', value: '30 N Gould St Ste R, Sheridan, WY 82801' },
       { key: 'instagramUrl', value: 'https://instagram.com/indiayogatourism' },
       { key: 'facebookUrl', value: 'https://facebook.com/indiayogatourism' },
       { key: 'youtubeUrl', value: 'https://youtube.com/indiayogatourism' },

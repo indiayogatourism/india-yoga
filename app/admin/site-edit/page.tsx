@@ -53,7 +53,7 @@ export default function AdminSiteEditPage() {
     contactEmail: 'info@indiayogatourism.com',
     contactPhone: '+91 99998 76349',
     whatsappNumber: '+91 99998 76349',
-    officeAddress: 'Cloud 9 Tower, Sec-1, Ghaziabad, UP 201010',
+    officeAddress: '30 N Gould St Ste R, Sheridan, WY 82801',
     footerText: '© 2026 India Yoga Tourism. All rights reserved.',
     metaTitle: 'India Yoga Tourism | Authentic Rishikesh Retreats & Online Classes',
     metaDescription: 'Discover authentic Panchakarma detoxification, Ayurvedic retreats, and live stream online classes with certified masters in Rishikesh.',
@@ -460,7 +460,7 @@ export default function AdminSiteEditPage() {
                   type="text"
                   value={formData.officeAddress}
                   onChange={(e) => setFormData({ ...formData, officeAddress: e.target.value })}
-                  placeholder="e.g. Cloud 9 Tower, Sec-1, Ghaziabad, UP 201010"
+                  placeholder="e.g. 30 N Gould St Ste R, Sheridan, WY 82801"
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
                 />
               </div>

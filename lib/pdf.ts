@@ -125,7 +125,7 @@ export async function generateBookingVoucher(data: VoucherData): Promise<{ buffe
     color: rgb(0.004, 0.176, 0.114),
   })
 
-  page.drawText('Cloud 9 Tower, Vaishali Sec-1, Ghaziabad, UP 201010 | info@indiayogatourism.com', {
+  page.drawText('30 N Gould St Ste R, Sheridan, WY 82801 | info@indiayogatourism.com', {
     x: 50,
     y: 60,
     size: 9,

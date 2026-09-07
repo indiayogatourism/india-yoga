@@ -46,7 +46,7 @@ export const defaultSiteConfig: SiteConfigValues = {
   contactEmail: 'info@indiayogatourism.com',
   contactPhone: '+91 99998 76349',
   whatsappNumber: '+91 99998 76349',
-  officeAddress: 'Cloud 9 Tower, Sec-1, Ghaziabad, UP 201010',
+  officeAddress: '30 N Gould St Ste R, Sheridan, WY 82801',
   footerText: '© 2026 India Yoga Tourism. All rights reserved.',
   metaTitle: 'India Yoga Tourism | Authentic Rishikesh Retreats & Online Classes',
   metaDescription: 'Discover authentic Panchakarma detoxification, Ayurvedic retreats, and live stream online classes with certified masters in Rishikesh.',
