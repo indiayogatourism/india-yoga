@@ -214,9 +214,6 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
           customHtmlTags: editCustomHtmlTags,
         }),
       })
-          customHtmlTags: editCustomHtmlTags,
-        }),
-      })
 
       const data = await res.json()
 
