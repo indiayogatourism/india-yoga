@@ -14,6 +14,7 @@ export default function AdminPackagesPage() {
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
+    category: 'PROGRAMME',
     durationDays: 14,
     priceShared: 1499,
     featuredImage: '',
@@ -107,7 +108,7 @@ export default function AdminPackagesPage() {
           description: formData.shortDescription,
           inclusions: formData.inclusions.split('\n').map((s) => s.trim()).filter(Boolean),
           highlights: formData.inclusions.split('\n').map((s) => s.trim()).filter(Boolean),
-          category: 'PROGRAMME',
+          category: formData.category || 'PROGRAMME',
           location: 'Rishikesh, Himalayas',
           locationTag: 'Himalayan Retreat',
           status: 'PUBLISHED',
@@ -127,6 +128,7 @@ export default function AdminPackagesPage() {
         setFormData({
           title: '',
           slug: '',
+          category: 'PROGRAMME',
           durationDays: 14,
           priceShared: 1499,
           featuredImage: '',
@@ -218,6 +220,21 @@ export default function AdminPackagesPage() {
                 placeholder="e.g. panchakarma-clinical-detoxification"
                 className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26] font-mono"
               />
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-gray-700">Category Type *</label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+              >
+                <option value="PROGRAMME">Ayurvedic Clinical Programme (/programmes)</option>
+                <option value="RETREAT">Yoga &amp; Wellness Retreat (/packages)</option>
+                <option value="TEACHER_TRAINING">Yoga Teacher Training (TTC)</option>
+                <option value="TREK">Himalayan Trek &amp; Expedition</option>
+                <option value="ONLINE_CLASS">Online Live Stream Class</option>
+              </select>
             </div>
 
             <div className="space-y-1">

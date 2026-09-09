@@ -6,7 +6,7 @@ import { PackageCategory } from '@prisma/client'
 export const dynamic = 'force-dynamic'
 
 export default async function ProgrammesPage() {
-  const dbProgrammes = await prisma.package.findMany({
+  let dbProgrammes = await prisma.package.findMany({
     where: {
       category: PackageCategory.PROGRAMME,
       status: 'PUBLISHED',
@@ -15,6 +15,18 @@ export default async function ProgrammesPage() {
       createdAt: 'desc',
     },
   })
+
+  // Fallback: If no packages are strictly tagged as PROGRAMME, show all published packages
+  if (dbProgrammes.length === 0) {
+    dbProgrammes = await prisma.package.findMany({
+      where: {
+        status: 'PUBLISHED',
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+  }
 
   return (
     <main className="bg-surface pb-20">
