@@ -39,12 +39,27 @@ export async function POST(req: Request) {
       title,
       slug,
       shortDescription,
+      description,
+      category,
+      location,
+      locationTag,
       durationDays,
       durationNights,
       priceShared,
       pricePrivate,
+      originalPrice,
+      maxGroupSize,
+      difficultyLevel,
       featuredImage,
+      gallery,
+      highlights,
       inclusions,
+      exclusions,
+      isBestseller,
+      isLimitedSpots,
+      isRecommended,
+      isNew,
+      spotsLeft,
       status,
       metaTitle,
       metaDescription,
@@ -78,12 +93,33 @@ export async function POST(req: Request) {
       data: {
         ...(title && { title: title.trim() }),
         ...(slug && { slug: slug.trim() }),
-        ...(shortDescription !== undefined && { shortDescription, description: shortDescription }),
-        ...(durationDays && { durationDays: Number(durationDays) }),
-        ...(durationNights && { durationNights: Number(durationNights) }),
-        ...(priceShared && { priceShared: Number(priceShared) }),
-        ...(pricePrivate && { pricePrivate: Number(pricePrivate) }),
+        ...(category && { category }),
+        ...(location !== undefined && { location }),
+        ...(locationTag !== undefined && { locationTag }),
+        ...(shortDescription !== undefined && { shortDescription }),
+        ...(description !== undefined && { description }),
+        ...(durationDays !== undefined && { durationDays: Number(durationDays) }),
+        ...(durationNights !== undefined && { durationNights: Number(durationNights) }),
+        ...(priceShared !== undefined && { priceShared: Number(priceShared) }),
+        ...(pricePrivate !== undefined && { pricePrivate: Number(pricePrivate) }),
+        ...(originalPrice !== undefined && { originalPrice: originalPrice !== null && originalPrice !== "" ? Number(originalPrice) : null }),
+        ...(maxGroupSize !== undefined && { maxGroupSize: Number(maxGroupSize) }),
+        ...(difficultyLevel !== undefined && { difficultyLevel }),
         ...(featuredImage !== undefined && { featuredImage }),
+        ...(gallery !== undefined && {
+          gallery: Array.isArray(gallery)
+            ? gallery
+            : typeof gallery === "string"
+            ? gallery.split("\n").map((s) => s.trim()).filter(Boolean)
+            : [],
+        }),
+        ...(highlights !== undefined && {
+          highlights: Array.isArray(highlights)
+            ? highlights
+            : typeof highlights === "string"
+            ? highlights.split("\n").map((s) => s.trim()).filter(Boolean)
+            : [],
+        }),
         ...(inclusions !== undefined && {
           inclusions: Array.isArray(inclusions)
             ? inclusions
@@ -91,6 +127,18 @@ export async function POST(req: Request) {
             ? inclusions.split("\n").map((s) => s.trim()).filter(Boolean)
             : [],
         }),
+        ...(exclusions !== undefined && {
+          exclusions: Array.isArray(exclusions)
+            ? exclusions
+            : typeof exclusions === "string"
+            ? exclusions.split("\n").map((s) => s.trim()).filter(Boolean)
+            : [],
+        }),
+        ...(isBestseller !== undefined && { isBestseller: Boolean(isBestseller) }),
+        ...(isLimitedSpots !== undefined && { isLimitedSpots: Boolean(isLimitedSpots) }),
+        ...(isRecommended !== undefined && { isRecommended: Boolean(isRecommended) }),
+        ...(isNew !== undefined && { isNew: Boolean(isNew) }),
+        ...(spotsLeft !== undefined && { spotsLeft: spotsLeft !== null && spotsLeft !== "" ? Number(spotsLeft) : null }),
         ...(status && { status }),
         ...(metaTitle !== undefined && { metaTitle }),
         ...(metaDescription !== undefined && { metaDescription }),

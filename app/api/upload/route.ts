@@ -35,10 +35,14 @@ export async function POST(req: Request) {
 
     // Check if AWS S3 credentials exist
     if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-      const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-      const key = `uploads/${Date.now()}_${cleanFileName}`
-      const s3Url = await uploadToS3(key, buffer, file.type || 'image/jpeg')
-      return NextResponse.json({ success: true, url: s3Url })
+      try {
+        const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+        const key = `uploads/${Date.now()}_${cleanFileName}`
+        const s3Url = await uploadToS3(key, buffer, file.type || 'image/jpeg')
+        return NextResponse.json({ success: true, url: s3Url })
+      } catch (s3Err: any) {
+        console.error('AWS S3 Upload Failed (falling back to Base64 Data URL):', s3Err?.message || s3Err)
+      }
     }
 
     // Fallback: Convert to Base64 Data URL for instant display without cloud setup
