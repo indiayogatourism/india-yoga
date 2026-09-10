@@ -56,7 +56,7 @@ export default async function CheckoutPage({ searchParams }: PageProps) {
       <CheckoutWizard
         pkg={pkg}
         initialGuests={parseInt(guests)}
-        initialRoomType={roomType as 'shared' | 'private'}
+        initialRoomType={roomType as 'dormitory' | 'shared' | 'private'}
         initialSelectedBatch={selectedBatch}
       />
     </div>

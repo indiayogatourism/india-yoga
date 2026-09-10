@@ -19,7 +19,12 @@ export default function AdminPackagesPage() {
     startDate: '',
     endDate: '',
     upcomingDates: '',
+    priceDormitory: 999,
     priceShared: 1499,
+    pricePrivate: 2199,
+    enableDormitory: false,
+    enableShared: true,
+    enablePrivate: true,
     featuredImage: '',
     shortDescription: '',
     inclusions: '',
@@ -107,8 +112,12 @@ export default function AdminPackagesPage() {
           startDate: formData.startDate,
           endDate: formData.endDate,
           upcomingDates: formData.upcomingDates.split('\n').map((s) => s.trim()).filter(Boolean),
+          priceDormitory: Number(formData.priceDormitory),
           priceShared: Number(formData.priceShared),
-          pricePrivate: Number(formData.priceShared) * 1.5,
+          pricePrivate: Number(formData.pricePrivate),
+          enableDormitory: formData.enableDormitory,
+          enableShared: formData.enableShared,
+          enablePrivate: formData.enablePrivate,
           featuredImage: formData.featuredImage,
           shortDescription: formData.shortDescription,
           description: formData.shortDescription,
@@ -139,7 +148,12 @@ export default function AdminPackagesPage() {
           startDate: '',
           endDate: '',
           upcomingDates: '',
+          priceDormitory: 999,
           priceShared: 1499,
+          pricePrivate: 2199,
+          enableDormitory: false,
+          enableShared: true,
+          enablePrivate: true,
           featuredImage: '',
           shortDescription: '',
           inclusions: '',
@@ -256,14 +270,91 @@ export default function AdminPackagesPage() {
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="font-bold text-gray-700">Starting Price (USD)</label>
-              <input
-                type="number"
-                value={formData.priceShared}
-                onChange={(e) => setFormData({ ...formData, priceShared: Number(e.target.value) })}
-                className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-              />
+            {/* Available Accommodation Options & Pricing (Tick to Enable) */}
+            <div className="space-y-3 md:col-span-2 p-4 bg-emerald-50/50 rounded-xl border border-emerald-200">
+              <label className="font-bold text-gray-800 block text-xs uppercase tracking-wider">
+                Available Accommodation Options for this Property (Tick to Enable)
+              </label>
+              <p className="text-[11px] text-gray-500">
+                Tick which room options are offered for this retreat. Guests will only be able to book the ticked options.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                {/* 1. Dormitory */}
+                <div className={`p-3 rounded-lg border transition-colors ${formData.enableDormitory ? 'bg-white border-emerald-400 shadow-xs' : 'bg-gray-50 border-gray-200'}`}>
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-gray-800 text-xs mb-2 select-none">
+                    <input
+                      type="checkbox"
+                      checked={formData.enableDormitory}
+                      onChange={(e) => setFormData({ ...formData, enableDormitory: e.target.checked })}
+                      className="w-4 h-4 rounded text-emerald-800 focus:ring-0 cursor-pointer"
+                    />
+                    <span>[✓] Dormitory Room</span>
+                  </label>
+                  {formData.enableDormitory && (
+                    <div className="space-y-1 animate-fade-in">
+                      <span className="text-[10px] text-gray-500 font-semibold">Dormitory Price (USD)</span>
+                      <input
+                        type="number"
+                        value={formData.priceDormitory || ''}
+                        onChange={(e) => setFormData({ ...formData, priceDormitory: Number(e.target.value) })}
+                        placeholder="e.g. 799"
+                        className="w-full border border-gray-200 rounded p-1.5 outline-none focus:border-emerald-700 bg-white"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Shared Twin Room */}
+                <div className={`p-3 rounded-lg border transition-colors ${formData.enableShared ? 'bg-white border-emerald-400 shadow-xs' : 'bg-gray-50 border-gray-200'}`}>
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-gray-800 text-xs mb-2 select-none">
+                    <input
+                      type="checkbox"
+                      checked={formData.enableShared}
+                      onChange={(e) => setFormData({ ...formData, enableShared: e.target.checked })}
+                      className="w-4 h-4 rounded text-emerald-800 focus:ring-0 cursor-pointer"
+                    />
+                    <span>[✓] Shared Twin Room</span>
+                  </label>
+                  {formData.enableShared && (
+                    <div className="space-y-1 animate-fade-in">
+                      <span className="text-[10px] text-gray-500 font-semibold">Shared Room Price (USD)</span>
+                      <input
+                        type="number"
+                        value={formData.priceShared}
+                        onChange={(e) => setFormData({ ...formData, priceShared: Number(e.target.value) })}
+                        placeholder="e.g. 1499"
+                        className="w-full border border-gray-200 rounded p-1.5 outline-none focus:border-emerald-700 bg-white"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* 3. Private Room */}
+                <div className={`p-3 rounded-lg border transition-colors ${formData.enablePrivate ? 'bg-white border-emerald-400 shadow-xs' : 'bg-gray-50 border-gray-200'}`}>
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-gray-800 text-xs mb-2 select-none">
+                    <input
+                      type="checkbox"
+                      checked={formData.enablePrivate}
+                      onChange={(e) => setFormData({ ...formData, enablePrivate: e.target.checked })}
+                      className="w-4 h-4 rounded text-emerald-800 focus:ring-0 cursor-pointer"
+                    />
+                    <span>[✓] Private Room</span>
+                  </label>
+                  {formData.enablePrivate && (
+                    <div className="space-y-1 animate-fade-in">
+                      <span className="text-[10px] text-gray-500 font-semibold">Private Room Price (USD)</span>
+                      <input
+                        type="number"
+                        value={formData.pricePrivate}
+                        onChange={(e) => setFormData({ ...formData, pricePrivate: Number(e.target.value) })}
+                        placeholder="e.g. 2199"
+                        className="w-full border border-gray-200 rounded p-1.5 outline-none focus:border-emerald-700 bg-white"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-1">

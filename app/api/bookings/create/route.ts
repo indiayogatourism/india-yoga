@@ -54,7 +54,12 @@ export async function POST(req: Request) {
     }
 
     // Calculations
-    const pricePerPerson = roomType === 'shared' ? pkg.priceShared : pkg.pricePrivate
+    const pricePerPerson =
+      roomType === 'dormitory' && pkg.priceDormitory != null
+        ? pkg.priceDormitory
+        : roomType === 'private'
+        ? pkg.pricePrivate
+        : pkg.priceShared
     const totalAmount = pricePerPerson * parseInt(guestsCount)
 
     const bookingRef = await generateBookingRef()

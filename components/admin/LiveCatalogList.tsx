@@ -19,8 +19,12 @@ export interface PackageItem {
   startDate?: string | null
   endDate?: string | null
   upcomingDates?: string[]
+  priceDormitory?: number | null
   priceShared: number
   pricePrivate: number
+  enableDormitory?: boolean
+  enableShared?: boolean
+  enablePrivate?: boolean
   originalPrice?: number | null
   maxGroupSize?: number
   difficultyLevel?: string
@@ -72,8 +76,12 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
   const [editStartDate, setEditStartDate] = useState("")
   const [editEndDate, setEditEndDate] = useState("")
   const [editUpcomingDates, setEditUpcomingDates] = useState("")
+  const [editPriceDormitory, setEditPriceDormitory] = useState<number | "">("")
   const [editPriceShared, setEditPriceShared] = useState(1499)
   const [editPricePrivate, setEditPricePrivate] = useState(2199)
+  const [editEnableDormitory, setEditEnableDormitory] = useState(false)
+  const [editEnableShared, setEditEnableShared] = useState(true)
+  const [editEnablePrivate, setEditEnablePrivate] = useState(true)
   const [editOriginalPrice, setEditOriginalPrice] = useState<number | "">("")
   const [editMaxGroupSize, setEditMaxGroupSize] = useState(12)
   const [editDifficultyLevel, setEditDifficultyLevel] = useState("Beginner")
@@ -143,8 +151,12 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
     setEditStartDate(pkg.startDate || "")
     setEditEndDate(pkg.endDate || "")
     setEditUpcomingDates(pkg.upcomingDates ? pkg.upcomingDates.join("\n") : "")
+    setEditPriceDormitory(pkg.priceDormitory ?? "")
     setEditPriceShared(pkg.priceShared)
     setEditPricePrivate(pkg.pricePrivate || pkg.priceShared * 1.5)
+    setEditEnableDormitory(pkg.enableDormitory ?? false)
+    setEditEnableShared(pkg.enableShared ?? true)
+    setEditEnablePrivate(pkg.enablePrivate ?? true)
     setEditOriginalPrice(pkg.originalPrice ?? "")
     setEditMaxGroupSize(pkg.maxGroupSize || 12)
     setEditDifficultyLevel(pkg.difficultyLevel || "Beginner")
@@ -199,8 +211,12 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
           startDate: editStartDate,
           endDate: editEndDate,
           upcomingDates: editUpcomingDates.split("\n").map((s) => s.trim()).filter(Boolean),
+          priceDormitory: editPriceDormitory !== "" ? Number(editPriceDormitory) : null,
           priceShared: Number(editPriceShared),
           pricePrivate: Number(editPricePrivate),
+          enableDormitory: editEnableDormitory,
+          enableShared: editEnableShared,
+          enablePrivate: editEnablePrivate,
           originalPrice: editOriginalPrice !== "" ? Number(editOriginalPrice) : null,
           maxGroupSize: Number(editMaxGroupSize),
           difficultyLevel: editDifficultyLevel,
@@ -617,25 +633,91 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="font-bold text-gray-700">Shared Room Price (USD) *</label>
-                      <input
-                        type="number"
-                        required
-                        value={editPriceShared}
-                        onChange={(e) => setEditPriceShared(Number(e.target.value))}
-                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                      />
-                    </div>
+                    {/* Available Accommodation Options & Pricing (Tick to Enable) */}
+                    <div className="space-y-3 md:col-span-2 p-4 bg-emerald-50/50 rounded-xl border border-emerald-200">
+                      <label className="font-bold text-gray-800 block text-xs uppercase tracking-wider">
+                        Available Accommodation Options for this Property (Tick to Enable)
+                      </label>
+                      <p className="text-[11px] text-gray-500">
+                        Tick which room options are offered for this retreat. Guests will only be able to select ticked options.
+                      </p>
 
-                    <div className="space-y-1">
-                      <label className="font-bold text-gray-700">Private Room Price (USD)</label>
-                      <input
-                        type="number"
-                        value={editPricePrivate}
-                        onChange={(e) => setEditPricePrivate(Number(e.target.value))}
-                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
-                      />
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+                        {/* 1. Dormitory */}
+                        <div className={`p-3 rounded-lg border transition-colors ${editEnableDormitory ? 'bg-white border-emerald-400 shadow-xs' : 'bg-gray-50 border-gray-200'}`}>
+                          <label className="flex items-center gap-2 cursor-pointer font-bold text-gray-800 text-xs mb-2 select-none">
+                            <input
+                              type="checkbox"
+                              checked={editEnableDormitory}
+                              onChange={(e) => setEditEnableDormitory(e.target.checked)}
+                              className="w-4 h-4 rounded text-emerald-800 focus:ring-0 cursor-pointer"
+                            />
+                            <span>[✓] Dormitory Room</span>
+                          </label>
+                          {editEnableDormitory && (
+                            <div className="space-y-1">
+                              <span className="text-[10px] text-gray-500 font-semibold">Dormitory Price (USD)</span>
+                              <input
+                                type="number"
+                                value={editPriceDormitory}
+                                onChange={(e) => setEditPriceDormitory(e.target.value === "" ? "" : Number(e.target.value))}
+                                placeholder="e.g. 799"
+                                className="w-full border border-gray-200 rounded p-1.5 outline-none focus:border-emerald-700 bg-white"
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 2. Shared Twin Room */}
+                        <div className={`p-3 rounded-lg border transition-colors ${editEnableShared ? 'bg-white border-emerald-400 shadow-xs' : 'bg-gray-50 border-gray-200'}`}>
+                          <label className="flex items-center gap-2 cursor-pointer font-bold text-gray-800 text-xs mb-2 select-none">
+                            <input
+                              type="checkbox"
+                              checked={editEnableShared}
+                              onChange={(e) => setEditEnableShared(e.target.checked)}
+                              className="w-4 h-4 rounded text-emerald-800 focus:ring-0 cursor-pointer"
+                            />
+                            <span>[✓] Shared Twin Room</span>
+                          </label>
+                          {editEnableShared && (
+                            <div className="space-y-1">
+                              <span className="text-[10px] text-gray-500 font-semibold">Shared Room Price (USD)</span>
+                              <input
+                                type="number"
+                                value={editPriceShared}
+                                onChange={(e) => setEditPriceShared(Number(e.target.value))}
+                                placeholder="e.g. 1499"
+                                className="w-full border border-gray-200 rounded p-1.5 outline-none focus:border-emerald-700 bg-white"
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 3. Private Room */}
+                        <div className={`p-3 rounded-lg border transition-colors ${editEnablePrivate ? 'bg-white border-emerald-400 shadow-xs' : 'bg-gray-50 border-gray-200'}`}>
+                          <label className="flex items-center gap-2 cursor-pointer font-bold text-gray-800 text-xs mb-2 select-none">
+                            <input
+                              type="checkbox"
+                              checked={editEnablePrivate}
+                              onChange={(e) => setEditEnablePrivate(e.target.checked)}
+                              className="w-4 h-4 rounded text-emerald-800 focus:ring-0 cursor-pointer"
+                            />
+                            <span>[✓] Private Room</span>
+                          </label>
+                          {editEnablePrivate && (
+                            <div className="space-y-1">
+                              <span className="text-[10px] text-gray-500 font-semibold">Private Room Price (USD)</span>
+                              <input
+                                type="number"
+                                value={editPricePrivate}
+                                onChange={(e) => setEditPricePrivate(Number(e.target.value))}
+                                placeholder="e.g. 2199"
+                                className="w-full border border-gray-200 rounded p-1.5 outline-none focus:border-emerald-700 bg-white"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <div className="space-y-1">

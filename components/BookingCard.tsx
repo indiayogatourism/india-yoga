@@ -6,8 +6,12 @@ import { formatPrice } from '@/lib/utils'
 
 interface BookingCardProps {
   packageId: string
+  priceDormitory?: number | null
   priceShared: number
   pricePrivate: number
+  enableDormitory?: boolean
+  enableShared?: boolean
+  enablePrivate?: boolean
   startDate?: string | null
   endDate?: string | null
   upcomingDates?: string[]
@@ -15,15 +19,37 @@ interface BookingCardProps {
 
 export default function BookingCard({
   packageId,
+  priceDormitory,
   priceShared,
   pricePrivate,
+  enableDormitory = false,
+  enableShared = true,
+  enablePrivate = true,
   startDate,
   endDate,
   upcomingDates = [],
 }: BookingCardProps) {
   const router = useRouter()
   const [guests, setGuests] = useState(1)
-  const [roomType, setRoomType] = useState<'shared' | 'private'>('shared')
+
+  // Determine available options
+  const availableOptions: Array<{ type: 'dormitory' | 'shared' | 'private'; label: string; price: number }> = []
+  if (enableDormitory && priceDormitory != null) {
+    availableOptions.push({ type: 'dormitory', label: 'Dormitory Room', price: priceDormitory })
+  }
+  if (enableShared !== false) {
+    availableOptions.push({ type: 'shared', label: 'Shared Twin Room', price: priceShared })
+  }
+  if (enablePrivate !== false) {
+    availableOptions.push({ type: 'private', label: 'Private Room', price: pricePrivate })
+  }
+
+  // Fallback to shared if nothing enabled
+  if (availableOptions.length === 0) {
+    availableOptions.push({ type: 'shared', label: 'Shared Twin Room', price: priceShared })
+  }
+
+  const [roomType, setRoomType] = useState<'dormitory' | 'shared' | 'private'>(availableOptions[0].type)
   const [selectedBatch, setSelectedBatch] = useState<string>(() => {
     if (upcomingDates && upcomingDates.length > 0) return upcomingDates[0]
     if (startDate && endDate) return `${startDate} to ${endDate}`
@@ -31,7 +57,10 @@ export default function BookingCard({
     return ''
   })
 
-  const basePrice = roomType === 'shared' ? priceShared : pricePrivate
+  // Selected base price
+  const selectedOpt = availableOptions.find((o) => o.type === roomType) || availableOptions[0]
+  const basePrice = selectedOpt.price
+  const startingPrice = Math.min(...availableOptions.map((o) => o.price))
   const total = basePrice * guests
 
   const handleBookNow = () => {
@@ -49,7 +78,7 @@ export default function BookingCard({
           <div>
             <span className="text-xs text-on-surface-variant block mb-1">Starting From</span>
             <div className="font-label-price text-3xl text-primary leading-none font-bold">
-              {formatPrice(basePrice)}
+              {formatPrice(startingPrice)}
               <span className="text-xs font-body-md text-on-surface-variant font-normal"> /person</span>
             </div>
           </div>
@@ -109,16 +138,19 @@ export default function BookingCard({
             </div>
           </div>
 
-          {/* Accommodation Selection */}
+          {/* Accommodation Selection (Dynamically Ticked Options) */}
           <div>
             <label className="block text-xs font-bold text-primary mb-1.5 uppercase tracking-wider">Accommodation</label>
             <select
               value={roomType}
-              onChange={(e) => setRoomType(e.target.value as 'shared' | 'private')}
+              onChange={(e) => setRoomType(e.target.value as 'dormitory' | 'shared' | 'private')}
               className="w-full p-3.5 bg-surface-container-lowest border border-outline-variant/50 rounded-xl text-primary text-xs sm:text-sm font-semibold focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary cursor-pointer"
             >
-              <option value="shared">Shared Twin Room (Standard)</option>
-              <option value="private">Private Standard Room (+{formatPrice(pricePrivate - priceShared)})</option>
+              {availableOptions.map((opt) => (
+                <option key={opt.type} value={opt.type}>
+                  {opt.label} ({formatPrice(opt.price)}/person)
+                </option>
+              ))}
             </select>
           </div>
 

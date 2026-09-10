@@ -344,8 +344,12 @@ export default async function PackageDetailPage({ params }: PageProps) {
           <div className="lg:col-span-4 relative mt-8 lg:mt-0">
             <BookingCard
               packageId={pkg.id}
+              priceDormitory={pkg.priceDormitory}
               priceShared={pkg.priceShared}
               pricePrivate={pkg.pricePrivate}
+              enableDormitory={pkg.enableDormitory}
+              enableShared={pkg.enableShared}
+              enablePrivate={pkg.enablePrivate}
               startDate={pkg.startDate}
               endDate={pkg.endDate}
               upcomingDates={pkg.upcomingDates}

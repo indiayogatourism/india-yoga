@@ -69,9 +69,13 @@ model Package {
   difficultyLevel  String          @default("Beginner")
 
   // Pricing (USD)
+  priceDormitory   Float?
   priceShared      Float
   pricePrivate     Float
   originalPrice    Float?
+  enableDormitory  Boolean         @default(false)
+  enableShared     Boolean         @default(true)
+  enablePrivate    Boolean         @default(true)
 
   // Content
   highlights       String[]

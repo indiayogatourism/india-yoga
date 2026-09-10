@@ -11,6 +11,7 @@ interface PackageData {
   title: string
   location: string
   durationDays: number
+  priceDormitory?: number | null
   priceShared: number
   pricePrivate: number
   featuredImage: string | null
@@ -19,7 +20,7 @@ interface PackageData {
 interface CheckoutWizardProps {
   pkg: PackageData
   initialGuests: number
-  initialRoomType: 'shared' | 'private'
+  initialRoomType: 'dormitory' | 'shared' | 'private'
   initialSelectedBatch?: string
 }
 
@@ -36,7 +37,7 @@ export default function CheckoutWizard({
 
   // Step 1: Details state
   const [guests, setGuests] = useState(initialGuests)
-  const [roomType, setRoomType] = useState<'shared' | 'private'>(initialRoomType)
+  const [roomType, setRoomType] = useState<'dormitory' | 'shared' | 'private'>(initialRoomType)
   const [selectedBatch, setSelectedBatch] = useState(initialSelectedBatch)
   const [arrivalDate, setArrivalDate] = useState(() => {
     // Default to a date 30 days from now
@@ -62,7 +63,12 @@ export default function CheckoutWizard({
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'paypal'>('razorpay')
 
   // Calculate pricing
-  const basePrice = roomType === 'shared' ? pkg.priceShared : pkg.pricePrivate
+  const basePrice =
+    roomType === 'dormitory' && pkg.priceDormitory != null
+      ? pkg.priceDormitory
+      : roomType === 'private'
+      ? pkg.pricePrivate
+      : pkg.priceShared
   const subtotal = basePrice * guests
   const discount = promoDiscount
   const total = subtotal - discount
