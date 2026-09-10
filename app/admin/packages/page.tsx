@@ -16,6 +16,9 @@ export default function AdminPackagesPage() {
     slug: '',
     category: 'PROGRAMME',
     durationDays: 14,
+    startDate: '',
+    endDate: '',
+    upcomingDates: '',
     priceShared: 1499,
     featuredImage: '',
     shortDescription: '',
@@ -101,6 +104,9 @@ export default function AdminPackagesPage() {
           slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
           durationDays: Number(formData.durationDays),
           durationNights: Number(formData.durationDays),
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          upcomingDates: formData.upcomingDates.split('\n').map((s) => s.trim()).filter(Boolean),
           priceShared: Number(formData.priceShared),
           pricePrivate: Number(formData.priceShared) * 1.5,
           featuredImage: formData.featuredImage,
@@ -130,6 +136,9 @@ export default function AdminPackagesPage() {
           slug: '',
           category: 'PROGRAMME',
           durationDays: 14,
+          startDate: '',
+          endDate: '',
+          upcomingDates: '',
           priceShared: 1499,
           featuredImage: '',
           shortDescription: '',
@@ -254,6 +263,40 @@ export default function AdminPackagesPage() {
                 value={formData.priceShared}
                 onChange={(e) => setFormData({ ...formData, priceShared: Number(e.target.value) })}
                 className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-gray-700">Retreat Start Date</label>
+              <input
+                type="date"
+                value={formData.startDate}
+                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-gray-700">Retreat End Date</label>
+              <input
+                type="date"
+                value={formData.endDate}
+                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+              />
+            </div>
+
+            <div className="space-y-1 md:col-span-2">
+              <label className="font-bold text-gray-700">Upcoming Retreat Batches / Available Dates (One per line)</label>
+              <p className="text-[11px] text-gray-500 mb-1">
+                Enter fixed batch dates or date ranges available for this retreat (e.g. 01 Oct 2026 - 14 Oct 2026).
+              </p>
+              <textarea
+                rows={2}
+                value={formData.upcomingDates}
+                onChange={(e) => setFormData({ ...formData, upcomingDates: e.target.value })}
+                placeholder="01 Oct 2026 - 14 Oct 2026&#10;15 Oct 2026 - 28 Oct 2026&#10;01 Nov 2026 - 14 Nov 2026"
+                className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26] font-mono text-xs"
               />
             </div>
 

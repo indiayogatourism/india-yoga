@@ -45,6 +45,9 @@ export async function POST(req: Request) {
       locationTag,
       durationDays,
       durationNights,
+      startDate,
+      endDate,
+      upcomingDates,
       priceShared,
       pricePrivate,
       originalPrice,
@@ -100,6 +103,15 @@ export async function POST(req: Request) {
         ...(description !== undefined && { description }),
         ...(durationDays !== undefined && { durationDays: Number(durationDays) }),
         ...(durationNights !== undefined && { durationNights: Number(durationNights) }),
+        ...(startDate !== undefined && { startDate }),
+        ...(endDate !== undefined && { endDate }),
+        ...(upcomingDates !== undefined && {
+          upcomingDates: Array.isArray(upcomingDates)
+            ? upcomingDates
+            : typeof upcomingDates === "string"
+            ? upcomingDates.split("\n").map((s) => s.trim()).filter(Boolean)
+            : [],
+        }),
         ...(priceShared !== undefined && { priceShared: Number(priceShared) }),
         ...(pricePrivate !== undefined && { pricePrivate: Number(pricePrivate) }),
         ...(originalPrice !== undefined && { originalPrice: originalPrice !== null && originalPrice !== "" ? Number(originalPrice) : null }),

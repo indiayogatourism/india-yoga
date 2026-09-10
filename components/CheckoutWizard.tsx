@@ -20,9 +20,15 @@ interface CheckoutWizardProps {
   pkg: PackageData
   initialGuests: number
   initialRoomType: 'shared' | 'private'
+  initialSelectedBatch?: string
 }
 
-export default function CheckoutWizard({ pkg, initialGuests, initialRoomType }: CheckoutWizardProps) {
+export default function CheckoutWizard({
+  pkg,
+  initialGuests,
+  initialRoomType,
+  initialSelectedBatch = '',
+}: CheckoutWizardProps) {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
@@ -31,6 +37,7 @@ export default function CheckoutWizard({ pkg, initialGuests, initialRoomType }: 
   // Step 1: Details state
   const [guests, setGuests] = useState(initialGuests)
   const [roomType, setRoomType] = useState<'shared' | 'private'>(initialRoomType)
+  const [selectedBatch, setSelectedBatch] = useState(initialSelectedBatch)
   const [arrivalDate, setArrivalDate] = useState(() => {
     // Default to a date 30 days from now
     const d = new Date()
@@ -275,6 +282,12 @@ export default function CheckoutWizard({ pkg, initialGuests, initialRoomType }: 
               {pkg.location}
             </p>
             <div className="space-y-4 mb-8">
+              {selectedBatch && (
+                <div className="flex justify-between text-sm gap-2">
+                  <span className="text-on-surface-variant shrink-0">Retreat Batch</span>
+                  <span className="font-bold text-secondary text-right text-xs">{selectedBatch}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
                 <span className="text-on-surface-variant">Arrival Date</span>
                 <span className="font-bold text-on-surface">{arrivalDate ? new Date(arrivalDate).toLocaleDateString() : 'Not chosen'}</span>

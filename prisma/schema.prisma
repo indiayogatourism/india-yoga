@@ -62,6 +62,9 @@ model Package {
   locationTag      String
   durationDays     Int
   durationNights   Int
+  startDate        String?
+  endDate          String?
+  upcomingDates    String[]
   maxGroupSize     Int             @default(12)
   difficultyLevel  String          @default("Beginner")
 

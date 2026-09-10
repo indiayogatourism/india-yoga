@@ -16,6 +16,9 @@ export interface PackageItem {
   locationTag?: string
   durationDays: number
   durationNights: number
+  startDate?: string | null
+  endDate?: string | null
+  upcomingDates?: string[]
   priceShared: number
   pricePrivate: number
   originalPrice?: number | null
@@ -66,6 +69,9 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
   const [editLocationTag, setEditLocationTag] = useState("Himalayan Retreat")
   const [editDurationDays, setEditDurationDays] = useState(14)
   const [editDurationNights, setEditDurationNights] = useState(14)
+  const [editStartDate, setEditStartDate] = useState("")
+  const [editEndDate, setEditEndDate] = useState("")
+  const [editUpcomingDates, setEditUpcomingDates] = useState("")
   const [editPriceShared, setEditPriceShared] = useState(1499)
   const [editPricePrivate, setEditPricePrivate] = useState(2199)
   const [editOriginalPrice, setEditOriginalPrice] = useState<number | "">("")
@@ -134,6 +140,9 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
     setEditLocationTag(pkg.locationTag || "Himalayan Retreat")
     setEditDurationDays(pkg.durationDays)
     setEditDurationNights(pkg.durationNights || pkg.durationDays)
+    setEditStartDate(pkg.startDate || "")
+    setEditEndDate(pkg.endDate || "")
+    setEditUpcomingDates(pkg.upcomingDates ? pkg.upcomingDates.join("\n") : "")
     setEditPriceShared(pkg.priceShared)
     setEditPricePrivate(pkg.pricePrivate || pkg.priceShared * 1.5)
     setEditOriginalPrice(pkg.originalPrice ?? "")
@@ -187,6 +196,9 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
           locationTag: editLocationTag,
           durationDays: Number(editDurationDays),
           durationNights: Number(editDurationNights),
+          startDate: editStartDate,
+          endDate: editEndDate,
+          upcomingDates: editUpcomingDates.split("\n").map((s) => s.trim()).filter(Boolean),
           priceShared: Number(editPriceShared),
           pricePrivate: Number(editPricePrivate),
           originalPrice: editOriginalPrice !== "" ? Number(editOriginalPrice) : null,
@@ -339,6 +351,10 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
                   <h3 className="text-sm font-bold text-[#1C2E26]">{p.title}</h3>
                   <p className="text-xs text-gray-500 mt-0.5">
                     {p.durationDays} Days • ${p.priceShared} USD
+                    {p.startDate && <span className="ml-2 px-2 py-0.5 bg-emerald-50 text-emerald-700 font-semibold rounded text-[10px]">Start: {p.startDate}</span>}
+                    {p.upcomingDates && p.upcomingDates.length > 0 && (
+                      <span className="ml-1.5 text-gray-400 font-medium">({p.upcomingDates.length} batch dates)</span>
+                    )}
                   </p>
                 </div>
               </div>
@@ -567,6 +583,37 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
                         value={editDurationNights}
                         onChange={(e) => setEditDurationNights(Number(e.target.value))}
                         className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">Retreat Start Date</label>
+                      <input
+                        type="date"
+                        value={editStartDate}
+                        onChange={(e) => setEditStartDate(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="font-bold text-gray-700">Retreat End Date</label>
+                      <input
+                        type="date"
+                        value={editEndDate}
+                        onChange={(e) => setEditEndDate(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                      />
+                    </div>
+
+                    <div className="space-y-1 md:col-span-2">
+                      <label className="font-bold text-gray-700">Upcoming Retreat Batches / Available Dates (One per line)</label>
+                      <textarea
+                        rows={3}
+                        value={editUpcomingDates}
+                        onChange={(e) => setEditUpcomingDates(e.target.value)}
+                        placeholder="01 Oct 2026 - 14 Oct 2026&#10;15 Oct 2026 - 28 Oct 2026&#10;01 Nov 2026 - 14 Nov 2026"
+                        className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26] font-mono text-xs"
                       />
                     </div>
 

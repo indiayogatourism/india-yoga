@@ -132,6 +132,12 @@ export default async function PackageDetailPage({ params }: PageProps) {
               <span className="material-symbols-outlined text-[18px]">group</span>
               Max {pkg.maxGroupSize} People
             </span>
+            {pkg.startDate && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-sm">
+                <span className="material-symbols-outlined text-[18px]">calendar_month</span>
+                Starts {pkg.startDate}
+              </span>
+            )}
             <div className="flex items-center gap-1 ml-auto">
               <div className="flex text-tertiary-fixed-dim">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -185,6 +191,48 @@ export default async function PackageDetailPage({ params }: PageProps) {
                 ))}
               </div>
             </section>
+
+            {/* Upcoming Retreat Dates & Batches */}
+            {( (pkg.upcomingDates && pkg.upcomingDates.length > 0) || pkg.startDate ) && (
+              <section id="dates" className="scroll-mt-32 p-6 bg-surface-container-low/60 rounded-2xl border border-outline-variant/30">
+                <h3 className="font-headline-md text-primary mb-2 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-secondary">calendar_month</span>
+                  Upcoming Retreat Batches &amp; Schedule
+                </h3>
+                <p className="text-sm text-on-surface-variant mb-4">
+                  Select your preferred dates below to reserve your spot for this retreat duration:
+                </p>
+
+                {pkg.upcomingDates && pkg.upcomingDates.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {pkg.upcomingDates.map((batch: string, idx: number) => (
+                      <div
+                        key={idx}
+                        className="p-4 bg-surface-container-lowest rounded-xl border border-secondary/20 flex items-center justify-between shadow-xs hover:border-secondary transition-colors"
+                      >
+                        <div>
+                          <span className="text-[10px] font-bold text-secondary uppercase tracking-wider block">Batch {idx + 1}</span>
+                          <span className="font-bold text-primary text-sm">{batch}</span>
+                        </div>
+                        <span className="text-xs px-2.5 py-1 rounded-full bg-secondary-container/30 text-secondary font-bold">
+                          {pkg.durationDays} Days
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 bg-surface-container-lowest rounded-xl border border-secondary/20 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold text-secondary uppercase tracking-wider block">Primary Retreat Date</span>
+                      <span className="font-bold text-primary text-sm">{pkg.startDate} {pkg.endDate ? `to ${pkg.endDate}` : ''}</span>
+                    </div>
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-secondary-container/30 text-secondary font-bold">
+                      {pkg.durationDays} Days
+                    </span>
+                  </div>
+                )}
+              </section>
+            )}
 
             {/* Itinerary */}
             {itineraryList.length > 0 && (
@@ -298,6 +346,9 @@ export default async function PackageDetailPage({ params }: PageProps) {
               packageId={pkg.id}
               priceShared={pkg.priceShared}
               pricePrivate={pkg.pricePrivate}
+              startDate={pkg.startDate}
+              endDate={pkg.endDate}
+              upcomingDates={pkg.upcomingDates}
             />
           </div>
         </div>

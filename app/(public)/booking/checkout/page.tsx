@@ -7,6 +7,7 @@ interface PageProps {
     packageId?: string
     guests?: string
     roomType?: string
+    selectedBatch?: string
   }>
 }
 
@@ -14,7 +15,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function CheckoutPage({ searchParams }: PageProps) {
   const params = await searchParams
-  const { packageId, guests = '1', roomType = 'shared' } = params
+  const { packageId, guests = '1', roomType = 'shared', selectedBatch = '' } = params
 
   if (!packageId) {
     redirect('/packages')
@@ -56,6 +57,7 @@ export default async function CheckoutPage({ searchParams }: PageProps) {
         pkg={pkg}
         initialGuests={parseInt(guests)}
         initialRoomType={roomType as 'shared' | 'private'}
+        initialSelectedBatch={selectedBatch}
       />
     </div>
   )

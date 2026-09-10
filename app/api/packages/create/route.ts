@@ -27,6 +27,9 @@ export async function POST(req: Request) {
       locationTag,
       durationDays,
       durationNights,
+      startDate,
+      endDate,
+      upcomingDates,
       priceShared,
       pricePrivate,
       maxGroupSize,
@@ -67,6 +70,13 @@ export async function POST(req: Request) {
         locationTag: locationTag || 'Himalayan Retreat',
         durationDays: Number(durationDays) || 14,
         durationNights: Number(durationNights) || 14,
+        startDate: startDate || null,
+        endDate: endDate || null,
+        upcomingDates: Array.isArray(upcomingDates)
+          ? upcomingDates
+          : typeof upcomingDates === 'string'
+          ? upcomingDates.split('\n').map((s: string) => s.trim()).filter(Boolean)
+          : [],
         priceShared: Number(priceShared) || 1499,
         pricePrivate: Number(pricePrivate) || 2199,
         maxGroupSize: Number(maxGroupSize) || 12,

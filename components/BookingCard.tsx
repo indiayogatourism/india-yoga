@@ -8,18 +8,38 @@ interface BookingCardProps {
   packageId: string
   priceShared: number
   pricePrivate: number
+  startDate?: string | null
+  endDate?: string | null
+  upcomingDates?: string[]
 }
 
-export default function BookingCard({ packageId, priceShared, pricePrivate }: BookingCardProps) {
+export default function BookingCard({
+  packageId,
+  priceShared,
+  pricePrivate,
+  startDate,
+  endDate,
+  upcomingDates = [],
+}: BookingCardProps) {
   const router = useRouter()
   const [guests, setGuests] = useState(1)
   const [roomType, setRoomType] = useState<'shared' | 'private'>('shared')
+  const [selectedBatch, setSelectedBatch] = useState<string>(() => {
+    if (upcomingDates && upcomingDates.length > 0) return upcomingDates[0]
+    if (startDate && endDate) return `${startDate} to ${endDate}`
+    if (startDate) return startDate
+    return ''
+  })
 
   const basePrice = roomType === 'shared' ? priceShared : pricePrivate
   const total = basePrice * guests
 
   const handleBookNow = () => {
-    router.push(`/booking/checkout?packageId=${packageId}&guests=${guests}&roomType=${roomType}`)
+    let url = `/booking/checkout?packageId=${packageId}&guests=${guests}&roomType=${roomType}`
+    if (selectedBatch) {
+      url += `&selectedBatch=${encodeURIComponent(selectedBatch)}`
+    }
+    router.push(url)
   }
 
   return (
@@ -39,6 +59,34 @@ export default function BookingCard({ packageId, priceShared, pricePrivate }: Bo
         </div>
 
         <div className="space-y-5">
+          {/* Retreat Date Batch Selection */}
+          {(upcomingDates.length > 0 || startDate) && (
+            <div>
+              <label className="block text-xs font-bold text-primary mb-1.5 uppercase tracking-wider flex items-center gap-1">
+                <span className="material-symbols-outlined text-[16px] text-secondary">calendar_month</span>
+                Retreat Batch / Dates
+              </label>
+              {upcomingDates.length > 0 ? (
+                <select
+                  value={selectedBatch}
+                  onChange={(e) => setSelectedBatch(e.target.value)}
+                  className="w-full p-3 bg-surface-container-lowest border border-secondary/40 rounded-xl text-primary text-xs sm:text-sm font-bold focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary cursor-pointer shadow-xs"
+                >
+                  {upcomingDates.map((batch, idx) => (
+                    <option key={idx} value={batch}>
+                      📅 Batch {idx + 1}: {batch}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div className="p-3 bg-secondary-container/20 border border-secondary/30 rounded-xl text-xs font-bold text-primary flex items-center justify-between">
+                  <span>{startDate} {endDate ? `to ${endDate}` : ''}</span>
+                  <span className="text-[10px] text-secondary font-semibold uppercase tracking-wider">Fixed Dates</span>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Guest Counter */}
           <div>
             <label className="block text-xs font-bold text-primary mb-1.5 uppercase tracking-wider">Guests</label>
