@@ -55,7 +55,7 @@ export default async function OnlineClassesPage() {
   return (
     <>
       {customHtmlTagsCombined && (
-        <head dangerouslySetInnerHTML={{ __html: customHtmlTagsCombined }} />
+        <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: customHtmlTagsCombined }} />
       )}
       <main className="bg-surface pb-20">
         {/* Hero Banner */}

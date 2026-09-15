@@ -406,7 +406,7 @@ export default async function HomePage() {
               </button>
             </Link>
             <a
-              href="https://wa.me/918800919486"
+              href="https://wa.me/919999876349"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto flex items-center justify-center gap-2 border border-white/60 hover:bg-white/10 text-white font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-md cursor-pointer text-center text-sm md:text-base"
@@ -458,7 +458,7 @@ export default async function HomePage() {
       {/* Mobile Sticky Footer Action Bar (WhatsApp & Call shortcuts) */}
       <div className="md:hidden fixed bottom-4 left-4 right-20 z-40 flex gap-2 items-center">
         <a
-          href="https://wa.me/918800919486"
+          href="https://wa.me/919999876349"
           target="_blank"
           rel="noopener noreferrer"
           className="flex-1 bg-[#1b4332] text-white hover:bg-primary-container px-4 py-3 rounded-full shadow-lg flex items-center gap-2 border border-white/20"
@@ -471,7 +471,7 @@ export default async function HomePage() {
         </a>
 
         <a
-          href="tel:+918800919486"
+          href="tel:+919999876349"
           className="w-12 h-12 rounded-full bg-white border border-outline-variant/30 flex flex-col items-center justify-center text-primary shadow-lg hover:bg-surface shrink-0"
         >
           <span className="material-symbols-outlined text-lg">call</span>

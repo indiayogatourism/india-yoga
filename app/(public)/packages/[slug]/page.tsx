@@ -90,7 +90,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
   return (
     <>
       {pkg.customHtmlTags && (
-        <head dangerouslySetInnerHTML={{ __html: pkg.customHtmlTags }} />
+        <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: pkg.customHtmlTags }} />
       )}
       <main className="pt-28 pb-16 md:pb-24">
       {/* Breadcrumbs */}

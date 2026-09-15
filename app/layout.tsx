@@ -75,7 +75,7 @@ export default async function RootLayout({
         </head>
         <body className="min-h-full flex flex-col bg-background text-on-background">
           {siteConfig.customHtmlTags && (
-            <div dangerouslySetInnerHTML={{ __html: siteConfig.customHtmlTags }} />
+            <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: siteConfig.customHtmlTags }} />
           )}
           {children}
         </body>

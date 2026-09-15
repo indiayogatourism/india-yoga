@@ -71,7 +71,7 @@ export default async function PublicDynamicPage({
   return (
     <>
       {page.customHtmlTags && (
-        <head dangerouslySetInnerHTML={{ __html: page.customHtmlTags }} />
+        <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: page.customHtmlTags }} />
       )}
       <main className="bg-[#FAF7F2] min-h-screen pb-20">
         {/* Header */}

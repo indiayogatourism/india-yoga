@@ -74,7 +74,7 @@ export default async function PublicBlogDetailPage({
   return (
     <>
       {blog.customHtmlTags && (
-        <head dangerouslySetInnerHTML={{ __html: blog.customHtmlTags }} />
+        <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: blog.customHtmlTags }} />
       )}
       <main className="bg-[#FAF7F2] min-h-screen pb-20">
         {/* Header */}

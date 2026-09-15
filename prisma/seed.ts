@@ -19,9 +19,9 @@ async function main() {
     data: [
       { key: 'siteName', value: 'India Yoga Tourism' },
       { key: 'siteTagline', value: 'Ancient Wisdom. Modern Journey.' },
-      { key: 'contactPhone', value: '+91 88009 19486' },
+      { key: 'contactPhone', value: '+91 99998 76349' },
       { key: 'contactEmail', value: 'info@indiayogatourism.com' },
-      { key: 'contactWhatsapp', value: '+91 88009 19486' },
+      { key: 'contactWhatsapp', value: '+91 99998 76349' },
       { key: 'contactAddress', value: '30 N Gould St Ste R, Sheridan, WY 82801' },
       { key: 'instagramUrl', value: 'https://instagram.com/indiayogatourism' },
       { key: 'facebookUrl', value: 'https://facebook.com/indiayogatourism' },

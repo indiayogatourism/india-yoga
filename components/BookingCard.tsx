@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { formatPrice } from '@/lib/utils'
 
@@ -31,6 +31,23 @@ export default function BookingCard({
 }: BookingCardProps) {
   const router = useRouter()
   const [guests, setGuests] = useState(1)
+  const [whatsappNumber, setWhatsappNumber] = useState('919999876349')
+
+  useEffect(() => {
+    async function fetchConfig() {
+      try {
+        const res = await fetch('/api/site-config')
+        const data = await res.json()
+        if (data.success && data.config?.whatsappNumber) {
+          const cleanNum = data.config.whatsappNumber.replace(/[^0-9]/g, '')
+          if (cleanNum) setWhatsappNumber(cleanNum)
+        }
+      } catch (err) {
+        // use default fallback
+      }
+    }
+    fetchConfig()
+  }, [])
 
   // Determine available options
   const availableOptions: Array<{ type: 'dormitory' | 'shared' | 'private'; label: string; price: number }> = []
@@ -172,7 +189,7 @@ export default function BookingCard({
             </button>
             
             <a
-              href="https://wa.me/919999876349"
+              href={`https://wa.me/${whatsappNumber}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full border border-secondary text-secondary py-3 rounded-full font-body-md font-bold text-xs sm:text-sm text-center flex justify-center items-center gap-2 hover:bg-secondary/5 transition-colors"
