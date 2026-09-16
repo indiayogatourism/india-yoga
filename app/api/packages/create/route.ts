@@ -41,6 +41,7 @@ export async function POST(req: Request) {
       shortDescription,
       description,
       featuredImage,
+      gallery,
       highlights,
       inclusions,
       exclusions,
@@ -92,6 +93,11 @@ export async function POST(req: Request) {
         shortDescription: shortDescription || '',
         description: description || shortDescription || '',
         featuredImage: featuredImage || null,
+        gallery: Array.isArray(gallery)
+          ? gallery
+          : typeof gallery === 'string'
+          ? gallery.split('\n').map((s: string) => s.trim()).filter(Boolean)
+          : [],
         highlights: Array.isArray(highlights) ? highlights : [],
         inclusions: Array.isArray(inclusions) ? inclusions : [],
         exclusions: Array.isArray(exclusions) ? exclusions : [],

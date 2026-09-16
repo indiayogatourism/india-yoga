@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import BookingCard from '@/components/BookingCard'
+import PackageGalleryViewer from '@/components/PackageGalleryViewer'
 import type { Metadata } from 'next'
 
 interface PageProps {
@@ -160,15 +161,11 @@ export default async function PackageDetailPage({ params }: PageProps) {
         </div>
 
         {/* Gallery Section */}
-        <div className="mb-12">
-          <div className="w-full h-[300px] md:h-[500px] rounded-xl overflow-hidden mb-4 bg-surface-variant">
-            <img
-              alt={pkg.title}
-              className="w-full h-full object-cover"
-              src={pkg.featuredImage || 'https://lh3.googleusercontent.com/aida-public/AB6AXuC6P5RumoAovjaxcJxXzx8MtypuRV478k897UkJqQx406a4AZq7-3gEtK2C1RWtcaZW16EuLRW_twBg15rgGUXPviSzeyZdRbUJpWs7ug29FehnvTo6oumLOySd768TTviKJc0MPnaHHR8Y6H2OoPe2Mg19zbsM_xvlxoQyKcZOLsQ9xrhaVpPwlEHUnekmX4rsKtDycSuW919JHTGvrAoRE3saDMZU4slyLM1CPS_vVpnw-jF9QrlYt27zhV7-IJWHbvPH_D4nfTpN'}
-            />
-          </div>
-        </div>
+        <PackageGalleryViewer
+          featuredImage={pkg.featuredImage}
+          gallery={pkg.gallery}
+          title={pkg.title}
+        />
 
         {/* Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 relative items-start">

@@ -24,33 +24,46 @@ export async function POST(req: Request) {
     }
 
     const formData = await req.formData()
-    const file = formData.get('file') as File | null
+    const rawFiles = formData.getAll('files').concat(formData.getAll('file'))
+    const files = rawFiles.filter((f): f is File => f instanceof File && f.size > 0)
 
-    if (!file) {
+    if (files.length === 0) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
+    const uploadedUrls: string[] = []
 
-    // Check if AWS S3 credentials exist
-    if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-      try {
-        const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-        const key = `uploads/${Date.now()}_${cleanFileName}`
-        const s3Url = await uploadToS3(key, buffer, file.type || 'image/jpeg')
-        return NextResponse.json({ success: true, url: s3Url })
-      } catch (s3Err: any) {
-        console.error('AWS S3 Upload Failed (falling back to Base64 Data URL):', s3Err?.message || s3Err)
+    for (const file of files) {
+      const bytes = await file.arrayBuffer()
+      const buffer = Buffer.from(bytes)
+
+      let fileUrl = ''
+      // Check if AWS S3 credentials exist
+      if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+        try {
+          const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+          const key = `uploads/${Date.now()}_${cleanFileName}`
+          fileUrl = await uploadToS3(key, buffer, file.type || 'image/jpeg')
+        } catch (s3Err: any) {
+          console.error('AWS S3 Upload Failed (falling back to Base64 Data URL):', s3Err?.message || s3Err)
+        }
       }
+
+      if (!fileUrl) {
+        // Fallback: Convert to Base64 Data URL for instant display without cloud setup
+        const mimeType = file.type || 'image/jpeg'
+        const base64Data = buffer.toString('base64')
+        fileUrl = `data:${mimeType};base64,${base64Data}`
+      }
+
+      uploadedUrls.push(fileUrl)
     }
 
-    // Fallback: Convert to Base64 Data URL for instant display without cloud setup
-    const mimeType = file.type || 'image/jpeg'
-    const base64Data = buffer.toString('base64')
-    const dataUrl = `data:${mimeType};base64,${base64Data}`
-
-    return NextResponse.json({ success: true, url: dataUrl })
+    return NextResponse.json({
+      success: true,
+      url: uploadedUrls[0] || '',
+      urls: uploadedUrls,
+    })
   } catch (error: any) {
     console.error('Image upload error:', error)
     return NextResponse.json({ error: error.message || 'Failed to upload image' }, { status: 500 })

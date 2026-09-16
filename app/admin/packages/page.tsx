@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { LiveCatalogList, PackageItem } from '@/components/admin/LiveCatalogList'
-import { Upload, Search, PlusCircle, Check, Loader2 } from 'lucide-react'
+import { Upload, Search, PlusCircle, Check, Loader2, Trash2 } from 'lucide-react'
 
 export default function AdminPackagesPage() {
   const [programmes, setProgrammes] = useState<PackageItem[]>([])
@@ -26,6 +26,7 @@ export default function AdminPackagesPage() {
     enableShared: true,
     enablePrivate: true,
     featuredImage: '',
+    gallery: '',
     shortDescription: '',
     inclusions: '',
     metaTitle: '',
@@ -95,6 +96,78 @@ export default function AdminPackagesPage() {
     }
   }
 
+  const [uploadingGallery, setUploadingGallery] = useState(false)
+  const [newGalleryUrlInput, setNewGalleryUrlInput] = useState('')
+  const [showRawGalleryText, setShowRawGalleryText] = useState(false)
+
+  const galleryList = formData.gallery
+    ? formData.gallery.split('\n').map((s) => s.trim()).filter(Boolean)
+    : []
+
+  const updateGalleryList = (newList: string[]) => {
+    setFormData((prev) => ({ ...prev, gallery: newList.join('\n') }))
+  }
+
+  const handleGalleryMultiUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploadingGallery(true)
+    try {
+      const body = new FormData()
+      for (let i = 0; i < files.length; i++) {
+        body.append('files', files[i])
+      }
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body,
+      })
+      const data = await res.json()
+
+      if (data.success && (data.urls || data.url)) {
+        const newUrls: string[] = data.urls || [data.url]
+        updateGalleryList([...galleryList, ...newUrls])
+      } else {
+        alert(data.error || 'Failed to upload gallery images')
+      }
+    } catch (err: any) {
+      alert(err.message || 'Gallery images upload failed')
+    } finally {
+      setUploadingGallery(false)
+      e.target.value = ''
+    }
+  }
+
+  const handleAddSingleUrl = () => {
+    if (!newGalleryUrlInput.trim()) return
+    const urlsToAdd = newGalleryUrlInput
+      .split(/[\n,]+/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+    updateGalleryList([...galleryList, ...urlsToAdd])
+    setNewGalleryUrlInput('')
+  }
+
+  const handleRemoveGalleryImage = (index: number) => {
+    const updated = galleryList.filter((_, i) => i !== index)
+    updateGalleryList(updated)
+  }
+
+  const handleMoveGalleryImage = (index: number, direction: 'left' | 'right') => {
+    const newIdx = direction === 'left' ? index - 1 : index + 1
+    if (newIdx < 0 || newIdx >= galleryList.length) return
+    const updated = [...galleryList]
+    const temp = updated[index]
+    updated[index] = updated[newIdx]
+    updated[newIdx] = temp
+    updateGalleryList(updated)
+  }
+
+  const handleSetAsCover = (url: string) => {
+    setFormData((prev) => ({ ...prev, featuredImage: url }))
+  }
+
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.title || !formData.shortDescription) return
@@ -119,6 +192,7 @@ export default function AdminPackagesPage() {
           enableShared: formData.enableShared,
           enablePrivate: formData.enablePrivate,
           featuredImage: formData.featuredImage,
+          gallery: formData.gallery.split('\n').map((s) => s.trim()).filter(Boolean),
           shortDescription: formData.shortDescription,
           description: formData.shortDescription,
           inclusions: formData.inclusions.split('\n').map((s) => s.trim()).filter(Boolean),
@@ -155,6 +229,7 @@ export default function AdminPackagesPage() {
           enableShared: true,
           enablePrivate: true,
           featuredImage: '',
+          gallery: '',
           shortDescription: '',
           inclusions: '',
           metaTitle: '',
@@ -420,6 +495,151 @@ export default function AdminPackagesPage() {
                 <div className="flex items-center gap-2 pt-1">
                   <img src={formData.featuredImage} alt="Preview" className="w-10 h-10 rounded object-cover border border-gray-200" />
                   <span className="text-[11px] text-emerald-800 font-bold">Cover image attached</span>
+                </div>
+              )}
+            </div>
+
+            {/* Retreat Multiple Gallery Images Manager */}
+            <div className="space-y-3 p-4 bg-gray-50/80 rounded-xl border border-gray-200 md:col-span-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <label className="font-bold text-gray-800 block text-xs uppercase tracking-wider">
+                    Retreat Multiple Gallery Photos ({galleryList.length})
+                  </label>
+                  <p className="text-[11px] text-gray-500">
+                    Upload multiple retreat photos or paste image URLs to showcase the location, ashram &amp; activities.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <label className="px-3 py-2 bg-[#1C2E26] text-[#E2C799] font-bold rounded-lg text-xs hover:bg-[#253e34] transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{uploadingGallery ? 'Uploading...' : 'Upload Multiple Photos'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleGalleryMultiUpload}
+                      className="hidden"
+                      disabled={uploadingGallery}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowRawGalleryText(!showRawGalleryText)}
+                    className="text-[11px] text-gray-600 underline hover:text-gray-900 font-semibold"
+                  >
+                    {showRawGalleryText ? 'Hide Raw Text' : 'Bulk Edit URLs'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Quick Add URL input */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={newGalleryUrlInput}
+                  onChange={(e) => setNewGalleryUrlInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleAddSingleUrl()
+                    }
+                  }}
+                  placeholder="Paste photo URL here and click Add..."
+                  className="flex-1 border border-gray-200 rounded-lg p-2 text-xs outline-none focus:border-[#1C2E26] bg-white"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddSingleUrl}
+                  className="px-3 py-2 bg-emerald-800 text-white font-bold rounded-lg text-xs hover:bg-emerald-900 transition-colors shrink-0"
+                >
+                  Add Image
+                </button>
+              </div>
+
+              {/* Visual Thumbnail Grid */}
+              {galleryList.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2">
+                  {galleryList.map((url, idx) => {
+                    const isCover = formData.featuredImage === url
+                    return (
+                      <div key={idx} className="relative group rounded-lg overflow-hidden border border-gray-200 bg-white shadow-xs flex flex-col justify-between">
+                        <div className="aspect-4/3 w-full relative bg-gray-100">
+                          <img src={url} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
+                          <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-black/60 text-white font-bold text-[10px] rounded">
+                            #{idx + 1}
+                          </span>
+                          {isCover && (
+                            <span className="absolute top-1 right-1 px-1.5 py-0.5 bg-emerald-600 text-white font-bold text-[10px] rounded shadow-xs flex items-center gap-1">
+                              ★ Cover
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="p-1.5 flex items-center justify-between gap-1 bg-gray-50 border-t border-gray-100 text-[10px]">
+                          {!isCover ? (
+                            <button
+                              type="button"
+                              onClick={() => handleSetAsCover(url)}
+                              className="text-emerald-700 hover:text-emerald-900 font-bold hover:underline"
+                              title="Set as Cover Image"
+                            >
+                              Make Cover
+                            </button>
+                          ) : (
+                            <span className="text-emerald-800 font-bold">Cover</span>
+                          )}
+                          <div className="flex items-center gap-1 ml-auto">
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={() => handleMoveGalleryImage(idx, 'left')}
+                              className="p-1 text-gray-500 hover:text-black disabled:opacity-30"
+                              title="Move left"
+                            >
+                              ←
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === galleryList.length - 1}
+                              onClick={() => handleMoveGalleryImage(idx, 'right')}
+                              className="p-1 text-gray-500 hover:text-black disabled:opacity-30"
+                              title="Move right"
+                            >
+                              →
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveGalleryImage(idx)}
+                              className="p-1 text-red-600 hover:text-red-800 font-bold"
+                              title="Delete image"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="p-6 text-center border-2 border-dashed border-gray-200 rounded-lg bg-white/50">
+                  <p className="text-xs text-gray-500 font-semibold">No gallery images added yet.</p>
+                  <p className="text-[11px] text-gray-400 mt-0.5">Click "Upload Multiple Photos" above to select multiple retreat photos from your device.</p>
+                </div>
+              )}
+
+              {/* Raw Textarea Bulk Editor */}
+              {showRawGalleryText && (
+                <div className="pt-2">
+                  <label className="font-bold text-gray-700 text-xs block mb-1">Raw Image URLs (One per line)</label>
+                  <textarea
+                    rows={4}
+                    value={formData.gallery}
+                    onChange={(e) => setFormData({ ...formData, gallery: e.target.value })}
+                    placeholder="https://.../photo1.jpg&#10;https://.../photo2.jpg"
+                    className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26] font-mono text-xs bg-white"
+                  />
                 </div>
               )}
             </div>
