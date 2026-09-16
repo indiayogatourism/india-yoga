@@ -28,6 +28,7 @@ export function AdminLayoutClient({ dbUser, children }: AdminLayoutClientProps) 
     { label: 'FAQs', href: '/admin/faqs', icon: 'help_outline' },
     { label: 'Blog Posts', href: '/admin/blogs', icon: 'article' },
     { label: 'CMS Pages', href: '/admin/pages', icon: 'description' },
+    { label: 'Sitemap Manager', href: '/admin/sitemap', icon: 'account_tree' },
     { label: 'Photo Gallery', href: '/admin/gallery', icon: 'photo_library' },
     { label: 'View Public Site', href: '/', icon: 'open_in_new' },
   ]
