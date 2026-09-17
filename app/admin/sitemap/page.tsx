@@ -1,8 +1,7 @@
-'use client'
-
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { SitemapConfig, SitemapCustomItem } from '@/lib/sitemap-helper'
+import { HtmlCodeEditor } from '@/components/admin/HtmlCodeEditor'
 import {
   Network,
   Check,
@@ -17,6 +16,7 @@ import {
   Sliders,
   Globe,
   CheckCircle,
+  FileCode,
 } from 'lucide-react'
 
 export default function AdminSitemapPage() {
@@ -488,14 +488,14 @@ export default function AdminSitemapPage() {
         </div>
       )}
 
-      {/* TAB 3: Live Strict XML Inspector */}
+      {/* TAB 3: Interactive XML & HTML Code Editor */}
       {activeTab === 'xml' && (
-        <div className="bg-white p-6 md:p-8 rounded-2xl border border-black/5 shadow-xs space-y-4">
+        <div className="bg-white p-6 md:p-8 rounded-2xl border border-black/5 shadow-xs space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold text-[#1C2E26]">Live Strict XML Sitemap Output</h2>
+              <h2 className="text-lg font-bold text-[#1C2E26]">Interactive Strict XML &amp; Custom HTML Editor</h2>
               <p className="text-xs text-gray-500">
-                This exact XML standard payload is dynamically returned at <code className="bg-gray-100 px-1 py-0.5 rounded text-emerald-800">/sitemap.xml</code> with header <code className="bg-gray-100 px-1 py-0.5 rounded text-emerald-800">Content-Type: application/xml</code>.
+                Directly view, edit, format, or insert custom raw XML/HTML markup into your sitemap payload.
               </p>
             </div>
 
@@ -520,8 +520,37 @@ export default function AdminSitemapPage() {
             </div>
           </div>
 
-          <div className="relative rounded-xl overflow-hidden border border-gray-800 bg-[#1e1e1e] p-4 text-xs font-mono text-emerald-400 max-h-[500px] overflow-y-auto leading-relaxed shadow-inner">
-            <pre className="whitespace-pre-wrap">{xmlPreview}</pre>
+          {/* Interactive Code Editor for Custom XML Override */}
+          <div className="space-y-3">
+            <label className="font-bold text-xs text-gray-800 uppercase tracking-wider block">
+              Custom Raw XML / HTML Snippet Override
+            </label>
+            <p className="text-xs text-gray-500">
+              Type or paste extra raw XML <code className="bg-gray-100 px-1 py-0.5 rounded text-emerald-800">&lt;url&gt;...&lt;/url&gt;</code> nodes or custom HTML comments to inject directly into the strict XML output.
+            </p>
+            <HtmlCodeEditor
+              value={config.customXml || ''}
+              onChange={(val) => setConfig({ ...config, customXml: val })}
+              label="Custom Raw Sitemap XML Editor"
+              placeholder="<!-- Add custom sitemap XML nodes here -->&#10;<url>&#10;  <loc>https://indiayogatourism.com/custom-page</loc>&#10;  <lastmod>2026-09-17T00:00:00Z</lastmod>&#10;  <changefreq>daily</changefreq>&#10;  <priority>1.0</priority>&#10;</url>"
+              height="250px"
+              mode="xml"
+            />
+          </div>
+
+          {/* Live Compiled Strict XML Output */}
+          <div className="space-y-3 pt-4 border-t border-gray-200">
+            <label className="font-bold text-xs text-gray-800 uppercase tracking-wider block">
+              Live Compiled Strict XML Output Preview
+            </label>
+            <HtmlCodeEditor
+              value={xmlPreview}
+              onChange={() => {}}
+              label="Live /sitemap.xml Output Inspector"
+              height="350px"
+              readOnly={true}
+              mode="xml"
+            />
           </div>
         </div>
       )}

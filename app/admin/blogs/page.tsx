@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { HtmlCodeEditor } from '@/components/admin/HtmlCodeEditor'
+import { Upload, Image as ImageIcon, Trash2 } from 'lucide-react'
 
 interface BlogPostItem {
   id: string
@@ -64,6 +66,68 @@ export default function AdminBlogsPage() {
     customHtmlTags: '',
     published: true,
   })
+
+  const [uploadingCoverImage, setUploadingCoverImage] = useState(false)
+  const [uploadingContentImage, setUploadingContentImage] = useState(false)
+
+  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingCoverImage(true)
+    try {
+      const body = new FormData()
+      body.append('file', file)
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body,
+      })
+      const data = await res.json()
+
+      if (data.success && (data.url || data.urls?.[0])) {
+        const uploadedUrl = data.url || data.urls[0]
+        setFormData((prev) => ({ ...prev, coverImage: uploadedUrl }))
+      } else {
+        alert(data.error || 'Failed to upload cover image')
+      }
+    } catch (err: any) {
+      alert(err.message || 'Image upload failed')
+    } finally {
+      setUploadingCoverImage(false)
+      e.target.value = ''
+    }
+  }
+
+  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingContentImage(true)
+    try {
+      const body = new FormData()
+      body.append('file', file)
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body,
+      })
+      const data = await res.json()
+
+      if (data.success && (data.url || data.urls?.[0])) {
+        const uploadedUrl = data.url || data.urls[0]
+        const imgTag = `\n<img src="${uploadedUrl}" alt="${formData.title || 'Blog article image'}" className="w-full rounded-2xl my-6 shadow-md" />\n`
+        setFormData((prev) => ({ ...prev, content: prev.content + imgTag }))
+      } else {
+        alert(data.error || 'Failed to upload content image')
+      }
+    } catch (err: any) {
+      alert(err.message || 'Image upload failed')
+    } finally {
+      setUploadingContentImage(false)
+      e.target.value = ''
+    }
+  }
 
   const fetchBlogs = async () => {
     setLoading(true)
@@ -632,15 +696,41 @@ export default function AdminBlogsPage() {
 
                   <div>
                     <label className="block text-xs font-bold uppercase text-gray-700 mb-1">
-                      Cover Image URL
+                      Cover Featured Image (Upload from Device or Paste URL)
                     </label>
-                    <input
-                      type="url"
-                      value={formData.coverImage}
-                      onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                      placeholder="https://images.unsplash.com/..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
-                    />
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
+                      <input
+                        type="text"
+                        value={formData.coverImage}
+                        onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                        placeholder="https://..."
+                        className="flex-1 w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
+                      />
+                      <label className="px-4 py-2.5 bg-[#1C2E26] text-[#E2C799] font-bold rounded-xl text-xs hover:bg-[#253e34] transition-colors cursor-pointer shrink-0 flex items-center gap-1.5 shadow-xs">
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>{uploadingCoverImage ? 'Uploading...' : 'Choose Device File'}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleCoverImageUpload}
+                          className="hidden"
+                          disabled={uploadingCoverImage}
+                        />
+                      </label>
+                    </div>
+                    {formData.coverImage && (
+                      <div className="flex items-center gap-2 pt-2">
+                        <img src={formData.coverImage} alt="Cover preview" className="w-16 h-12 rounded-lg object-cover border border-gray-200" />
+                        <span className="text-xs text-emerald-800 font-bold">Cover Image Attached</span>
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, coverImage: '' })}
+                          className="text-[11px] text-red-600 hover:underline ml-auto font-bold"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -657,17 +747,30 @@ export default function AdminBlogsPage() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold uppercase text-gray-700 mb-1">
-                      Full Article Body *
-                    </label>
-                    <textarea
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-bold uppercase text-gray-700">
+                        Full Article Body (HTML &amp; Rich Text) *
+                      </label>
+                      <label className="px-3 py-1.5 bg-[#1C2E26] text-white font-bold rounded-lg text-xs hover:bg-black transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs">
+                        <Upload className="w-3.5 h-3.5 text-[#E2C799]" />
+                        <span>{uploadingContentImage ? 'Uploading Image...' : 'Insert Image to Article'}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleContentImageUpload}
+                          className="hidden"
+                          disabled={uploadingContentImage}
+                        />
+                      </label>
+                    </div>
+                    <HtmlCodeEditor
                       value={formData.content}
-                      onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                      placeholder="Write full article markdown or text content..."
-                      rows={8}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
-                      required
+                      onChange={(val) => setFormData({ ...formData, content: val })}
+                      label="Blog Article Body HTML Editor"
+                      placeholder="Write full article HTML text content..."
+                      height="360px"
+                      mode="html"
                     />
                   </div>
                 </div>

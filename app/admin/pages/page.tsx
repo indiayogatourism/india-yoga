@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { HtmlCodeEditor } from '@/components/admin/HtmlCodeEditor'
 
 interface PageItem {
   id: string
@@ -542,15 +543,15 @@ export default function AdminPagesPage() {
 
                   <div>
                     <label className="block text-xs font-bold uppercase text-gray-700 mb-1">
-                      Page Content Body *
+                      Page Content Body (HTML &amp; Rich Text) *
                     </label>
-                    <textarea
+                    <HtmlCodeEditor
                       value={formData.content}
-                      onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                      onChange={(val) => setFormData({ ...formData, content: val })}
+                      label="CMS Page HTML Content Editor"
                       placeholder="Write main page markdown or HTML text content..."
-                      rows={12}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
-                      required
+                      height="380px"
+                      mode="html"
                     />
                   </div>
                 </div>

@@ -16,6 +16,7 @@ export interface SitemapConfig {
   includeBlogs: boolean
   includePages: boolean
   includeClasses: boolean
+  customXml?: string
 }
 
 export const DEFAULT_SITEMAP_CONFIG: SitemapConfig = {
@@ -25,6 +26,7 @@ export const DEFAULT_SITEMAP_CONFIG: SitemapConfig = {
   includeBlogs: true,
   includePages: true,
   includeClasses: true,
+  customXml: '',
 }
 
 export const DEFAULT_STATIC_ROUTES = [
@@ -177,7 +179,10 @@ export async function getSitemapData() {
   return { config, customUrls, entries }
 }
 
-export function generateSitemapXml(entries: Array<{ loc: string; lastmod: string; changefreq: string; priority: string }>): string {
+export function generateSitemapXml(
+  entries: Array<{ loc: string; lastmod: string; changefreq: string; priority: string }>,
+  customXml?: string
+): string {
   const xmlEntries = entries
     .map(
       (entry) => `  <url>
@@ -189,12 +194,14 @@ export function generateSitemapXml(entries: Array<{ loc: string; lastmod: string
     )
     .join('\n')
 
+  const extraBlock = customXml && customXml.trim() ? `\n${customXml.trim()}` : ''
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-${xmlEntries}
+${xmlEntries}${extraBlock}
 </urlset>`
 }
 

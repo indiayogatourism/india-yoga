@@ -29,7 +29,7 @@ export async function GET() {
     }
 
     const { config, customUrls, entries } = await getSitemapData()
-    const xml = generateSitemapXml(entries)
+    const xml = generateSitemapXml(entries, config.customXml)
 
     return NextResponse.json({
       success: true,
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     revalidatePath('/sitemap')
 
     const updatedData = await getSitemapData()
-    const xml = generateSitemapXml(updatedData.entries)
+    const xml = generateSitemapXml(updatedData.entries, updatedData.config.customXml)
 
     return NextResponse.json({
       success: true,

@@ -5,8 +5,8 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const { entries } = await getSitemapData()
-    const xml = generateSitemapXml(entries)
+    const { config, entries } = await getSitemapData()
+    const xml = generateSitemapXml(entries, config.customXml)
 
     return new Response(xml, {
       status: 200,
