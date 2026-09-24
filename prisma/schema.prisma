@@ -331,8 +331,8 @@ model SiteConfig {
   
   // Contact Info
   contactEmail     String   @default("info@indiayogatourism.com")
-  contactPhone     String   @default("+91 99998 76349")
-  whatsappNumber   String   @default("+91 99998 76349")
+  contactPhone     String   @default("+91 88009 19486")
+  whatsappNumber   String   @default("+91 88009 19486")
   officeAddress    String   @default("30 N Gould St Ste R, Sheridan, WY 82801")
   footerText       String?  @default("© 2026 India Yoga Tourism. All rights reserved.")
 

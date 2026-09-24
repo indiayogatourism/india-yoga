@@ -124,7 +124,7 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
           </Link>
           <div>
             <a
-              href="https://wa.me/919999876349"
+              href="https://wa.me/918800919486"
               target="_blank"
               rel="noopener noreferrer"
               className="text-secondary font-bold text-sm hover:underline flex items-center justify-center gap-1.5"

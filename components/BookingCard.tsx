@@ -31,7 +31,7 @@ export default function BookingCard({
 }: BookingCardProps) {
   const router = useRouter()
   const [guests, setGuests] = useState(1)
-  const [whatsappNumber, setWhatsappNumber] = useState('919999876349')
+  const [whatsappNumber, setWhatsappNumber] = useState('918800919486')
 
   useEffect(() => {
     async function fetchConfig() {

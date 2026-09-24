@@ -51,8 +51,8 @@ export default function AdminSiteEditPage() {
     heroTitle: 'Immerse in Authentic Himalayan Healing',
     heroSubtitle: 'Traditional Ashram practice, Panchakarma detoxification, and spiritual retreats in Rishikesh.',
     contactEmail: 'info@indiayogatourism.com',
-    contactPhone: '+91 99998 76349',
-    whatsappNumber: '+91 99998 76349',
+    contactPhone: '+91 88009 19486',
+    whatsappNumber: '+91 88009 19486',
     officeAddress: '30 N Gould St Ste R, Sheridan, WY 82801',
     footerText: '© 2026 India Yoga Tourism. All rights reserved.',
     metaTitle: 'India Yoga Tourism | Authentic Rishikesh Retreats & Online Classes',
@@ -432,7 +432,7 @@ export default function AdminSiteEditPage() {
                   type="text"
                   value={formData.contactPhone}
                   onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
-                  placeholder="e.g. +91 99998 76349"
+                  placeholder="e.g. +91 88009 19486"
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
                 />
               </div>
@@ -447,7 +447,7 @@ export default function AdminSiteEditPage() {
                   type="text"
                   value={formData.whatsappNumber}
                   onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
-                  placeholder="e.g. +91 99998 76349"
+                  placeholder="e.g. +91 88009 19486"
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
                 />
               </div>

@@ -10,8 +10,8 @@ export default function ContactPage() {
 
   const [siteConfig, setSiteConfig] = useState({
     contactEmail: 'info@indiayogatourism.com',
-    contactPhone: '+91 99998 76349',
-    whatsappNumber: '+91 99998 76349',
+    contactPhone: '+91 88009 19486',
+    whatsappNumber: '+91 88009 19486',
     officeAddress: '30 N Gould St Ste R, Sheridan, WY 82801',
   })
 
@@ -23,8 +23,8 @@ export default function ContactPage() {
         if (data.success && data.config) {
           setSiteConfig({
             contactEmail: data.config.contactEmail || 'info@indiayogatourism.com',
-            contactPhone: data.config.contactPhone || '+91 99998 76349',
-            whatsappNumber: data.config.whatsappNumber || '+91 99998 76349',
+            contactPhone: data.config.contactPhone || '+91 88009 19486',
+            whatsappNumber: data.config.whatsappNumber || '+91 88009 19486',
             officeAddress: data.config.officeAddress || '30 N Gould St Ste R, Sheridan, WY 82801',
           })
         }
@@ -35,7 +35,7 @@ export default function ContactPage() {
     fetchConfig()
   }, [])
 
-  const cleanWhatsappNumber = siteConfig.whatsappNumber.replace(/[^0-9]/g, '') || '919999876349'
+  const cleanWhatsappNumber = siteConfig.whatsappNumber.replace(/[^0-9]/g, '') || '918800919486'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

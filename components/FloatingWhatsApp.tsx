@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 
 export default function FloatingWhatsApp() {
-  const [whatsappNumber, setWhatsappNumber] = useState('919999876349')
+  const [whatsappNumber, setWhatsappNumber] = useState('918800919486')
 
   useEffect(() => {
     async function fetchConfig() {

@@ -51,7 +51,7 @@ export function getBookingConfirmedTemplate(data: BookingEmailData): string {
         <h3 style="color: #012d1d; font-family: 'Cormorant Garamond', serif;">🌿 Pre-Arrival Checklist</h3>
         <ul style="font-size: 14px; line-height: 1.6; padding-left: 20px;">
           <li>Download and keep your <strong>Booking Voucher</strong> handy.</li>
-          <li>Join the WhatsApp community group: <a href="https://wa.me/919999876349" style="color: #2c694e; font-weight: bold; text-decoration: none;">Join WhatsApp Group</a></li>
+          <li>Join the WhatsApp community group: <a href="https://wa.me/918800919486" style="color: #2c694e; font-weight: bold; text-decoration: none;">Join WhatsApp Group</a></li>
           <li>Pack comfortable cotton clothing, a personal yoga mat (optional), sunscreen, and comfortable walking shoes.</li>
           <li>We will reach out to you 7 days before arrival with final check-in guidelines and details about your personal driver if booked.</li>
         </ul>
@@ -63,7 +63,7 @@ export function getBookingConfirmedTemplate(data: BookingEmailData): string {
 
       <div style="margin-top: 40px; border-top: 1px solid #c1c8c2; padding-top: 20px; font-size: 12px; text-align: center; color: #717973;">
         <p>Globazon Enterprises LLC | 30 N Gould St Ste R, Sheridan, WY 82801</p>
-        <p>Phone: +91 99998 76349 | Email: info@indiayogatourism.com</p>
+        <p>Phone: +91 88009 19486 | Email: info@indiayogatourism.com</p>
         <p>© ${new Date().getFullYear()} India Yoga Tourism. All rights reserved.</p>
       </div>
     </div>
@@ -91,7 +91,7 @@ export function getBookingPendingTemplate(data: BookingEmailData): string {
       </div>
 
       <div style="margin-top: 40px; border-top: 1px solid #c1c8c2; padding-top: 20px; font-size: 12px; text-align: center; color: #717973;">
-        <p>Need help? Call us at +91 99998 76349 or reply directly to this email.</p>
+        <p>Need help? Call us at +91 88009 19486 or reply directly to this email.</p>
       </div>
     </div>
   `
@@ -135,7 +135,7 @@ export function getEnquiryReceivedTemplate(name: string): string {
       </div>
 
       <div style="margin-top: 40px; border-top: 1px solid #c1c8c2; padding-top: 20px; font-size: 12px; text-align: center; color: #717973;">
-        <p>Phone: +91 99998 76349 | Email: info@indiayogatourism.com</p>
+        <p>Phone: +91 88009 19486 | Email: info@indiayogatourism.com</p>
       </div>
     </div>
   `

@@ -171,7 +171,7 @@ export default function FaqClientView({ faqs }: FaqClientViewProps) {
 
         <div className="flex flex-wrap items-center gap-3 shrink-0 z-10">
           <a
-            href="https://wa.me/919999876349"
+            href="https://wa.me/918800919486"
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3 bg-[#E2C799] text-[#1C2E26] font-bold rounded-xl text-xs hover:bg-[#d6b783] transition-colors flex items-center gap-2 shadow-md"
