@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { indexNowPackage } from '@/lib/indexnow'
 
 export async function POST(req: Request) {
   try {
@@ -113,6 +114,11 @@ export async function POST(req: Request) {
         customHtmlTags: customHtmlTags || null,
       }
     })
+
+    // Notify search engines immediately if published
+    if (newPackage.status === 'PUBLISHED') {
+      indexNowPackage(newPackage.slug).catch(() => {})
+    }
 
     return NextResponse.json({ success: true, package: newPackage })
   } catch (error: any) {

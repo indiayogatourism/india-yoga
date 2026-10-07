@@ -4,7 +4,18 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
   '/admin(.*)',
-  '/booking(.*)'
+  '/booking(.*)',
+  '/api/admin(.*)',
+  '/api/user(.*)',
+  '/api/upload(.*)',
+  '/api/bookings/(.*)',
+  '/api/packages/create(.*)',
+  '/api/packages/update(.*)',
+  '/api/packages/delete(.*)',
+  '/api/pages/bulk(.*)',
+  '/api/blogs/bulk(.*)',
+  '/api/online-classes/(.*)',
+  '/api/gallery/(.*)',
 ])
 
 const clerkHandler = clerkMiddleware(async (auth, req) => {
@@ -13,21 +24,41 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
       unauthenticatedUrl: new URL('/sign-in', req.url).toString(),
     })
   }
+  // All other routes (including /) pass through freely
 })
 
 export default async function middleware(req: NextRequest, event: NextFetchEvent) {
-  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
-    console.warn("Clerk Publishable Key is missing. Bypassing Clerk middleware.")
+  const key = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || ''
+
+  // Skip Clerk entirely for non-protected routes so public pages
+  // are never touched by Clerk (prevents timeout redirects to clerk.com)
+  if (!key || !isProtectedRoute(req)) {
     return NextResponse.next()
   }
+
   return clerkHandler(req, event)
 }
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files
-    '/((?!_next|[^?]*\\.(?:html|css|js|gif|svg|png|webp|jpg|jpeg|webp|txt|ico|csv|docx|xlsx|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
+    // Only invoke middleware on routes that actually need protection.
+    // Public pages (/, /about, /packages, /blog, etc.) are NOT listed
+    // so Next.js never runs this middleware for them at all.
+    '/admin(.*)',
+    '/dashboard(.*)',
+    '/booking(.*)',
+    '/sign-in(.*)',
+    '/sign-up(.*)',
+    '/api/admin(.*)',
+    '/api/user(.*)',
+    '/api/upload(.*)',
+    '/api/bookings/(.*)',
+    '/api/packages/create(.*)',
+    '/api/packages/update(.*)',
+    '/api/packages/delete(.*)',
+    '/api/pages/bulk(.*)',
+    '/api/blogs/bulk(.*)',
+    '/api/online-classes/(.*)',
+    '/api/gallery/(.*)',
   ],
 }

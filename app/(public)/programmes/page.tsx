@@ -2,8 +2,38 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import { PackageCategory } from '@prisma/client'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Yoga Programmes | India Yoga Tourism',
+  description:
+    'Join structured yoga and Ayurveda programmes in Rishikesh led by certified Himalayan masters – from beginner immersions to advanced spiritual intensives.',
+  keywords: [
+    'yoga programmes india',
+    'rishikesh yoga course',
+    'himalayan yoga programme',
+    'ayurveda programme rishikesh',
+    'spiritual immersion india',
+  ],
+  alternates: {
+    canonical: 'https://indiayogatourism.com/programmes',
+  },
+  openGraph: {
+    title: 'Yoga Programmes | India Yoga Tourism',
+    description:
+      'Structured yoga, Pranayama, and Ayurveda programmes in the Himalayas for all levels.',
+    url: 'https://indiayogatourism.com/programmes',
+    siteName: 'India Yoga Tourism',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Yoga Programmes | India Yoga Tourism',
+    description: 'Yoga and Ayurveda programmes in Rishikesh for all levels.',
+  },
+}
 
 export default async function ProgrammesPage() {
   let dbProgrammes = await prisma.package.findMany({

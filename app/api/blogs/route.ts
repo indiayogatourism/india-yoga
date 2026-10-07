@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { indexNowBlog } from '@/lib/indexnow'
 
 export const dynamic = 'force-dynamic'
 
@@ -89,6 +90,11 @@ export async function POST(req: Request) {
         published: published !== undefined ? published : true,
       },
     })
+
+    // Notify search engines if published
+    if (newBlog.published) {
+      indexNowBlog(newBlog.slug).catch(() => {})
+    }
 
     return NextResponse.json({ success: true, blog: newBlog })
   } catch (error: any) {

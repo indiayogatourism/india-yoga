@@ -1,7 +1,37 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Yoga & Ayurveda Journal | India Yoga Tourism',
+  description:
+    'Insights, guides, and stories from Himalayan yoga masters – covering Ayurveda, Panchakarma, meditation, pranayama, and conscious living.',
+  keywords: [
+    'yoga blog india',
+    'ayurveda articles',
+    'rishikesh yoga journal',
+    'panchakarma guide',
+    'himalayan wellness',
+  ],
+  alternates: {
+    canonical: 'https://indiayogatourism.com/blog',
+  },
+  openGraph: {
+    title: 'Yoga & Ayurveda Journal | India Yoga Tourism',
+    description:
+      'Stories and wisdom from Himalayan masters on yoga, Ayurveda, and mindful living.',
+    url: 'https://indiayogatourism.com/blog',
+    siteName: 'India Yoga Tourism',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Yoga & Ayurveda Journal | India Yoga Tourism',
+    description: 'Stories and wisdom from Himalayan masters.',
+  },
+}
 
 export default async function PublicBlogListPage() {
   let blogs: any[] = []

@@ -2,8 +2,38 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import { PackageCategory } from '@prisma/client'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Yoga Retreats & Packages | India Yoga Tourism',
+  description:
+    'Explore authentic Himalayan yoga retreat packages – Panchakarma detox, Ayurvedic healing, teacher training and more. Book with Rishikesh masters.',
+  keywords: [
+    'yoga retreat packages india',
+    'panchakarma retreat rishikesh',
+    'himalayan yoga packages',
+    'ayurveda retreat booking',
+    'teacher training india',
+  ],
+  alternates: {
+    canonical: 'https://indiayogatourism.com/packages',
+  },
+  openGraph: {
+    title: 'Yoga Retreat Packages | India Yoga Tourism',
+    description:
+      'Choose from our curated selection of Himalayan wellness retreats, Panchakarma programs, and immersive yoga experiences.',
+    url: 'https://indiayogatourism.com/packages',
+    siteName: 'India Yoga Tourism',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Yoga Retreat Packages | India Yoga Tourism',
+    description: 'Curated Himalayan wellness retreats and yoga experiences.',
+  },
+}
 
 interface PageProps {
   searchParams: Promise<{

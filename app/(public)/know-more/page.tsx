@@ -1,7 +1,37 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Learn More | India Yoga Tourism',
+  description:
+    'Explore in-depth guides and resources on Himalayan yoga traditions, Ayurveda, retreat preparation, and conscious travel with India Yoga Tourism.',
+  keywords: [
+    'yoga resources india',
+    'ayurveda guides',
+    'rishikesh retreat info',
+    'himalayan yoga traditions',
+    'india yoga travel',
+  ],
+  alternates: {
+    canonical: 'https://indiayogatourism.com/know-more',
+  },
+  openGraph: {
+    title: 'Learn More | India Yoga Tourism',
+    description:
+      'In-depth guides and resources on yoga, Ayurveda, and conscious Himalayan travel.',
+    url: 'https://indiayogatourism.com/know-more',
+    siteName: 'India Yoga Tourism',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Learn More | India Yoga Tourism',
+    description: 'In-depth guides on yoga, Ayurveda, and Himalayan travel.',
+  },
+}
 
 export default async function KnowMorePage() {
   let pages: any[] = []

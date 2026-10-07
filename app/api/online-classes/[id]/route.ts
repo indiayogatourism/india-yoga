@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { indexNowOnlineClass } from '@/lib/indexnow'
 
 export const dynamic = 'force-dynamic'
 
@@ -80,6 +81,11 @@ export async function PUT(
       where: { id },
       data: updateData,
     })
+
+    // Notify search engines if published
+    if (updatedClass.published) {
+      indexNowOnlineClass(updatedClass.slug).catch(() => {})
+    }
 
     return NextResponse.json({ success: true, onlineClass: updatedClass })
   } catch (error: any) {

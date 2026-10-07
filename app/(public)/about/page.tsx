@@ -1,4 +1,36 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'About Us | India Yoga Tourism',
+  description:
+    'Learn about India Yoga Tourism – founded under the guidance of traditional Himalayan masters to preserve authentic yoga, Ayurveda, and Panchakarma healing.',
+  keywords: [
+    'about india yoga tourism',
+    'himalayan yoga masters',
+    'rishikesh ashram',
+    'authentic yoga retreat',
+    'ayurveda india',
+  ],
+  alternates: {
+    canonical: 'https://indiayogatourism.com/about',
+  },
+  openGraph: {
+    title: 'About India Yoga Tourism | Himalayan Healing Sanctuary',
+    description:
+      'Bridging ancient Himalayan wisdom with modern spiritual seekers since decades. Meet our lineage holders, Ayurveda clinicians, and retreat masters.',
+    url: 'https://indiayogatourism.com/about',
+    siteName: 'India Yoga Tourism',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About India Yoga Tourism',
+    description:
+      'Bridging ancient Himalayan wisdom with modern spiritual seekers.',
+  },
+}
+
 
 export default function AboutPage() {
   const teachers = [

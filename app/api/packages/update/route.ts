@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { indexNowPackage } from "@/lib/indexnow"
 
 export async function GET() {
   try {
@@ -174,6 +175,11 @@ export async function POST(req: Request) {
     revalidatePath("/admin/packages")
     revalidatePath("/packages")
     revalidatePath(`/packages/${updatedPackage.slug}`)
+
+    // Notify search engines if published
+    if (updatedPackage.status === 'PUBLISHED') {
+      indexNowPackage(updatedPackage.slug).catch(() => {})
+    }
 
     return NextResponse.json({ success: true, package: updatedPackage })
   } catch (error: any) {
