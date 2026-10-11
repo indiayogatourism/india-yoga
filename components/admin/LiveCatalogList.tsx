@@ -1169,7 +1169,7 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
                         type="url"
                         value={editCanonicalUrl}
                         onChange={(e) => setEditCanonicalUrl(e.target.value)}
-                        placeholder={`https://indiayogatourism.com/packages/${editSlug}`}
+                        placeholder={`https://www.indiayogatourism.com/packages/${editSlug}`}
                         className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
                       />
                     </div>

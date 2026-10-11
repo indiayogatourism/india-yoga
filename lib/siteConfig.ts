@@ -51,7 +51,7 @@ export const defaultSiteConfig: SiteConfigValues = {
   metaTitle: 'India Yoga Tourism | Authentic Rishikesh Retreats & Online Classes',
   metaDescription: 'Discover authentic Panchakarma detoxification, Ayurvedic retreats, and live stream online classes with certified masters in Rishikesh.',
   metaKeywords: 'yoga retreats, panchakarma rishikesh, ayurveda detox, online yoga classes',
-  canonicalUrl: 'https://indiayogatourism.com',
+  canonicalUrl: 'https://www.indiayogatourism.com',
   ogTitle: '',
   ogDescription: '',
   ogImage: '',

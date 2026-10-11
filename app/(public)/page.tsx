@@ -1,10 +1,22 @@
 import Link from 'next/link'
+import { SITE_URL, toPreferredUrl } from '@/lib/siteUrl'
+import { getSiteConfig } from '@/lib/siteConfig'
+import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import WhyChooseUsInteractive from '@/components/WhyChooseUsInteractive'
 import HeroSearchBar from '@/components/home/HeroSearchBar'
 
 export const revalidate = 3600 // Revalidate home page every hour
+
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getSiteConfig()
+  // Homepage canonical — always on the preferred www domain
+  const canonical = toPreferredUrl(config.canonicalUrl) || `${SITE_URL}/`
+  return {
+    alternates: { canonical: canonical.replace(/\/?$/, '/') },
+  }
+}
 
 async function getFeaturedPackages() {
   try {

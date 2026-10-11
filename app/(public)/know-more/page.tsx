@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SITE_URL } from '@/lib/siteUrl'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
@@ -16,13 +17,13 @@ export const metadata: Metadata = {
     'india yoga travel',
   ],
   alternates: {
-    canonical: 'https://indiayogatourism.com/know-more',
+    canonical: `${SITE_URL}/know-more`,
   },
   openGraph: {
     title: 'Learn More | India Yoga Tourism',
     description:
       'In-depth guides and resources on yoga, Ayurveda, and conscious Himalayan travel.',
-    url: 'https://indiayogatourism.com/know-more',
+    url: `${SITE_URL}/know-more`,
     siteName: 'India Yoga Tourism',
     type: 'website',
   },

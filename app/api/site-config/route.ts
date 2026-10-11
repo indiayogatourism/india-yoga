@@ -28,7 +28,7 @@ export async function GET() {
           metaTitle: 'India Yoga Tourism | Authentic Rishikesh Retreats & Online Classes',
           metaDescription: 'Discover authentic Panchakarma detoxification, Ayurvedic retreats, and live stream online classes with certified masters in Rishikesh.',
           metaKeywords: 'yoga retreats, panchakarma rishikesh, ayurveda detox, online yoga classes',
-          canonicalUrl: 'https://indiayogatourism.com',
+          canonicalUrl: 'https://www.indiayogatourism.com',
           destinationsJson: JSON.stringify([
             { id: '1', name: 'Rishikesh', subtitle: 'Yoga Capital of the World', locationQuery: 'Rishikesh', icon: 'landscape' },
             { id: '2', name: 'Kerala', subtitle: 'Traditional Ayurvedic Sanctuary', locationQuery: 'Kerala', icon: 'spa' },

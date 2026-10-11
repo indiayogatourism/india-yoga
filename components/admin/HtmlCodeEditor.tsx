@@ -61,7 +61,7 @@ export function HtmlCodeEditor({
 
   const insertXmlUrlTemplate = () => {
     const template = `  <url>
-    <loc>https://indiayogatourism.com/your-custom-path</loc>
+    <loc>https://www.indiayogatourism.com/your-custom-path</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

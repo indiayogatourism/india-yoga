@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { SITE_URL } from '@/lib/siteUrl'
+import HeadTags from '@/components/HeadTags'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import { PackageCategory } from '@prisma/client'
@@ -7,7 +9,7 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const canonical = 'https://indiayogatourism.com/online-classes'
+  const canonical = `${SITE_URL}/online-classes`
   return {
     title: 'Online Sanctuary Classes & Live Streams | India Yoga Tourism',
     description: 'Connect via live stream with certified yoga masters in Rishikesh. Join traditional Hatha Flow, Vinyasa, Pranayama, and Meditation classes directly from your home.',
@@ -54,9 +56,7 @@ export default async function OnlineClassesPage() {
 
   return (
     <>
-      {customHtmlTagsCombined && (
-        <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: customHtmlTagsCombined }} />
-      )}
+      <HeadTags html={customHtmlTagsCombined} />
       <main className="bg-surface pb-20">
         {/* Hero Banner */}
         <section className="relative min-h-[360px] pt-28 md:pt-32 pb-16 flex items-center justify-center overflow-hidden">

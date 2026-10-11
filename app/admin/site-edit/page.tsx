@@ -58,7 +58,7 @@ export default function AdminSiteEditPage() {
     metaTitle: 'India Yoga Tourism | Authentic Rishikesh Retreats & Online Classes',
     metaDescription: 'Discover authentic Panchakarma detoxification, Ayurvedic retreats, and live stream online classes with certified masters in Rishikesh.',
     metaKeywords: 'yoga retreats, panchakarma rishikesh, ayurveda detox, online yoga classes',
-    canonicalUrl: 'https://indiayogatourism.com',
+    canonicalUrl: 'https://www.indiayogatourism.com',
     ogTitle: '',
     ogDescription: '',
     ogImage: '',
@@ -587,7 +587,7 @@ export default function AdminSiteEditPage() {
                   type="url"
                   value={formData.canonicalUrl}
                   onChange={(e) => setFormData({ ...formData, canonicalUrl: e.target.value })}
-                  placeholder="https://indiayogatourism.com"
+                  placeholder="https://www.indiayogatourism.com"
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
                 />
               </div>

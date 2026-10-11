@@ -29,7 +29,7 @@ export default function AdminSitemapPage() {
   const [copied, setCopied] = useState(false)
 
   const [config, setConfig] = useState<SitemapConfig>({
-    baseUrl: 'https://indiayogatourism.com',
+    baseUrl: 'https://www.indiayogatourism.com',
     includeStatic: true,
     includePackages: true,
     includeBlogs: true,
@@ -283,7 +283,7 @@ export default function AdminSitemapPage() {
                 type="url"
                 value={config.baseUrl}
                 onChange={(e) => setConfig({ ...config, baseUrl: e.target.value })}
-                placeholder="https://indiayogatourism.com"
+                placeholder="https://www.indiayogatourism.com"
                 className="w-full md:w-1/2 border border-gray-200 rounded-xl p-2.5 text-xs outline-none focus:border-[#1C2E26]"
               />
             </div>
@@ -534,7 +534,7 @@ export default function AdminSitemapPage() {
               value={config.customXml || ''}
               onChange={(val) => setConfig({ ...config, customXml: val })}
               label="Custom Raw Sitemap XML Editor"
-              placeholder="<!-- Add custom sitemap XML nodes here -->&#10;<url>&#10;  <loc>https://indiayogatourism.com/custom-page</loc>&#10;  <lastmod>2026-09-17T00:00:00Z</lastmod>&#10;  <changefreq>daily</changefreq>&#10;  <priority>1.0</priority>&#10;</url>"
+              placeholder="<!-- Add custom sitemap XML nodes here -->&#10;<url>&#10;  <loc>https://www.indiayogatourism.com/custom-page</loc>&#10;  <lastmod>2026-09-17T00:00:00Z</lastmod>&#10;  <changefreq>daily</changefreq>&#10;  <priority>1.0</priority>&#10;</url>"
               height="250px"
               mode="xml"
             />

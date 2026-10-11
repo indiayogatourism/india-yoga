@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SITE_URL } from '@/lib/siteUrl'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import { PackageCategory } from '@prisma/client'
@@ -18,13 +19,13 @@ export const metadata: Metadata = {
     'spiritual immersion india',
   ],
   alternates: {
-    canonical: 'https://indiayogatourism.com/programmes',
+    canonical: `${SITE_URL}/programmes`,
   },
   openGraph: {
     title: 'Yoga Programmes | India Yoga Tourism',
     description:
       'Structured yoga, Pranayama, and Ayurveda programmes in the Himalayas for all levels.',
-    url: 'https://indiayogatourism.com/programmes',
+    url: `${SITE_URL}/programmes`,
     siteName: 'India Yoga Tourism',
     type: 'website',
   },

@@ -541,7 +541,7 @@ export default function AdminFaqsPage() {
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Google Search Snippet Preview
                 </p>
-                <p className="text-xs font-mono text-emerald-800">https://indiayogatourism.com/faqs</p>
+                <p className="text-xs font-mono text-emerald-800">https://www.indiayogatourism.com/faqs</p>
                 <h4 className="text-sm font-bold text-blue-700 hover:underline">
                   {seoTitleInput || 'Frequently Asked Questions | India Yoga Tourism'}
                 </h4>

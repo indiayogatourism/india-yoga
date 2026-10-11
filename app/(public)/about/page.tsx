@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SITE_URL } from '@/lib/siteUrl'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -13,13 +14,13 @@ export const metadata: Metadata = {
     'ayurveda india',
   ],
   alternates: {
-    canonical: 'https://indiayogatourism.com/about',
+    canonical: `${SITE_URL}/about`,
   },
   openGraph: {
     title: 'About India Yoga Tourism | Himalayan Healing Sanctuary',
     description:
       'Bridging ancient Himalayan wisdom with modern spiritual seekers since decades. Meet our lineage holders, Ayurveda clinicians, and retreat masters.',
-    url: 'https://indiayogatourism.com/about',
+    url: `${SITE_URL}/about`,
     siteName: 'India Yoga Tourism',
     type: 'website',
   },

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SITE_URL } from '@/lib/siteUrl'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import { PackageCategory } from '@prisma/client'
@@ -18,13 +19,13 @@ export const metadata: Metadata = {
     'teacher training india',
   ],
   alternates: {
-    canonical: 'https://indiayogatourism.com/packages',
+    canonical: `${SITE_URL}/packages`,
   },
   openGraph: {
     title: 'Yoga Retreat Packages | India Yoga Tourism',
     description:
       'Choose from our curated selection of Himalayan wellness retreats, Panchakarma programs, and immersive yoga experiences.',
-    url: 'https://indiayogatourism.com/packages',
+    url: `${SITE_URL}/packages`,
     siteName: 'India Yoga Tourism',
     type: 'website',
   },

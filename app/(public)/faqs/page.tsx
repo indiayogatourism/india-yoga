@@ -1,4 +1,5 @@
 import React from 'react'
+import { SITE_URL } from '@/lib/siteUrl'
 import { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import FaqClientView from '@/components/FaqClientView'
@@ -75,6 +76,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     keywords,
+    alternates: { canonical: `${SITE_URL}/faqs` },
     openGraph: {
       title,
       description,

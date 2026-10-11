@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { SITE_URL, toPreferredUrl } from '@/lib/siteUrl'
 
 export interface SitemapCustomItem {
   id: string
@@ -20,7 +21,7 @@ export interface SitemapConfig {
 }
 
 export const DEFAULT_SITEMAP_CONFIG: SitemapConfig = {
-  baseUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://indiayogatourism.com',
+  baseUrl: SITE_URL,
   includeStatic: true,
   includePackages: true,
   includeBlogs: true,
@@ -64,7 +65,7 @@ export async function getSitemapData() {
     console.error('Error reading sitemap config from database:', err)
   }
 
-  const cleanBaseUrl = config.baseUrl.replace(/\/+$/, '')
+  const cleanBaseUrl = (toPreferredUrl(config.baseUrl) || SITE_URL).replace(/\/+$/, '')
   const currentDateISO = new Date().toISOString()
 
   interface UrlEntry {
@@ -79,7 +80,7 @@ export async function getSitemapData() {
 
   const addEntry = (pathOrUrl: string, priorityNum: number, changefreq: string, lastmodDate?: string | Date | null) => {
     let fullUrl = pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')
-      ? pathOrUrl
+      ? toPreferredUrl(pathOrUrl)
       : `${cleanBaseUrl}${pathOrUrl.startsWith('/') ? pathOrUrl : '/' + pathOrUrl}`
 
     if (seenUrls.has(fullUrl)) return
@@ -194,7 +195,9 @@ export function generateSitemapXml(
     )
     .join('\n')
 
-  const extraBlock = customXml && customXml.trim() ? `\n${customXml.trim()}` : ''
+  const extraBlock = customXml && customXml.trim()
+    ? `\n${customXml.trim().replace(/https?:\/\/(?:www\.)?indiayogatourism\.com/gi, SITE_URL)}`
+    : ''
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

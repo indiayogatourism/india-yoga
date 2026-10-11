@@ -1,4 +1,6 @@
 import { prisma } from '@/lib/prisma'
+import { SITE_URL, toPreferredUrl } from '@/lib/siteUrl'
+import HeadTags from '@/components/HeadTags'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
@@ -20,7 +22,7 @@ export async function generateMetadata({
     const title = blog.metaTitle || blog.title
     const description = blog.metaDescription || blog.excerpt
     const keywords = blog.metaKeywords ? blog.metaKeywords.split(',').map((k: string) => k.trim()) : undefined
-    const canonical = blog.canonicalUrl || `https://indiayogatourism.com/blog/${slug}`
+    const canonical = toPreferredUrl(blog.canonicalUrl) || `${SITE_URL}/blog/${slug}`
     const ogImage = blog.ogImage || blog.coverImage
 
     return {
@@ -73,9 +75,7 @@ export default async function PublicBlogDetailPage({
 
   return (
     <>
-      {blog.customHtmlTags && (
-        <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: blog.customHtmlTags }} />
-      )}
+      <HeadTags html={blog.customHtmlTags} />
       <main className="bg-[#FAF7F2] min-h-screen pb-20">
         {/* Header */}
         <section className="bg-[#1C2E26] text-white pt-28 md:pt-32 pb-16 px-6">

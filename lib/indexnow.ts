@@ -8,8 +8,7 @@
  * Docs: https://www.indexnow.org/documentation
  */
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://indiayogatourism.com'
+import { SITE_URL } from '@/lib/siteUrl'
 
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || ''
 

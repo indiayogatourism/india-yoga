@@ -699,7 +699,7 @@ export default function AdminPackagesPage() {
                     type="url"
                     value={formData.canonicalUrl}
                     onChange={(e) => setFormData({ ...formData, canonicalUrl: e.target.value })}
-                    placeholder={`https://indiayogatourism.com/packages/${formData.slug}`}
+                    placeholder={`https://www.indiayogatourism.com/packages/${formData.slug}`}
                     className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
                   />
                 </div>

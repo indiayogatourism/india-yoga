@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation'
+import { SITE_URL, toPreferredUrl } from '@/lib/siteUrl'
+import HeadTags from '@/components/HeadTags'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
@@ -27,7 +29,7 @@ export async function generateMetadata({
     const title = pkg.metaTitle || pkg.title
     const description = pkg.metaDescription || pkg.shortDescription || pkg.title
     const keywords = pkg.metaKeywords ? pkg.metaKeywords.split(',').map((k: string) => k.trim()) : undefined
-    const canonical = pkg.canonicalUrl || `https://indiayogatourism.com/packages/${slug}`
+    const canonical = toPreferredUrl(pkg.canonicalUrl) || `${SITE_URL}/packages/${slug}`
     const ogImage = pkg.ogImage || pkg.featuredImage
 
     return {
@@ -90,9 +92,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
 
   return (
     <>
-      {pkg.customHtmlTags && (
-        <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: pkg.customHtmlTags }} />
-      )}
+      <HeadTags html={pkg.customHtmlTags} />
       <main className="pt-28 pb-16 md:pb-24">
       {/* Breadcrumbs */}
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 mb-6">
