@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  skipTrailingSlashRedirect: true,
   // Preferred domain is https://www.indiayogatourism.com —
   // permanently (301) redirect the bare domain, preserving path + query.
   async redirects() {
