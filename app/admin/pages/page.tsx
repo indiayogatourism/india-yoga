@@ -31,6 +31,7 @@ export default function AdminPagesPage() {
   const [activeTab, setActiveTab] = useState<'content' | 'seo'>('content')
   const [editingPage, setEditingPage] = useState<PageItem | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   // Bulk Upload Modal State
@@ -128,6 +129,7 @@ export default function AdminPagesPage() {
     e.preventDefault()
     if (!formData.title || !formData.content) return
 
+    setActionError(null)
     setSubmitting(true)
     try {
       if (editingPage) {
@@ -140,6 +142,8 @@ export default function AdminPagesPage() {
         if (data.success) {
           setIsModalOpen(false)
           fetchPages()
+        } else {
+          setActionError(data.error || 'Could not save page.')
         }
       } else {
         const res = await fetch('/api/pages', {
@@ -151,10 +155,13 @@ export default function AdminPagesPage() {
         if (data.success) {
           setIsModalOpen(false)
           fetchPages()
+        } else {
+          setActionError(data.error || 'Could not publish page.')
         }
       }
     } catch (err) {
       console.error('Error saving custom page:', err)
+      setActionError(err instanceof Error ? err.message : 'Could not save page.')
     } finally {
       setSubmitting(false)
     }
@@ -162,6 +169,7 @@ export default function AdminPagesPage() {
 
   const handleTogglePublish = async (page: PageItem) => {
     try {
+      setActionError(null)
       const res = await fetch(`/api/pages/${page.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -172,9 +180,12 @@ export default function AdminPagesPage() {
         setPages((prev) =>
           prev.map((p) => (p.id === page.id ? { ...p, published: !p.published } : p))
         )
+      } else {
+        setActionError(data.error || 'Could not update page publication status.')
       }
     } catch (err) {
       console.error('Error toggling page status:', err)
+      setActionError(err instanceof Error ? err.message : 'Could not update page publication status.')
     }
   }
 
@@ -322,6 +333,11 @@ export default function AdminPagesPage() {
       </div>
 
       {/* Search Bar */}
+      {actionError && (
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          {actionError}
+        </div>
+      )}
       <div className="bg-white p-4 rounded-2xl border border-black/5 shadow-sm relative">
         <span className="material-symbols-outlined absolute left-7 top-6 text-gray-400 text-lg">
           search
@@ -503,6 +519,11 @@ export default function AdminPagesPage() {
 
             {/* Modal Form */}
             <form onSubmit={handleSubmitForm} className="p-6 overflow-y-auto space-y-6 flex-1 text-left">
+              {actionError && (
+                <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                  {actionError}
+                </div>
+              )}
               {activeTab === 'content' && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

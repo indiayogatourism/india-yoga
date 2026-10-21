@@ -86,8 +86,10 @@ export default async function PublicDynamicPage({
 
         {/* Content */}
         <article className="max-w-4xl mx-auto px-6 py-12">
-          <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-black/5 leading-relaxed text-sm md:text-base text-gray-800 whitespace-pre-wrap">
-            {page.content}
+          <div
+            className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-black/5 prose prose-stone max-w-none text-sm md:text-base text-gray-800"
+            dangerouslySetInnerHTML={{ __html: page.content }}
+          >
           </div>
         </article>
       </main>
