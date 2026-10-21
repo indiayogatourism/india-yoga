@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
+import { HOME_EXPERIENCE_SECTION_KEY, PROGRAMME_RETREAT_SECTION_KEY } from '@/lib/siteSections'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,7 +40,19 @@ export async function GET() {
       })
     }
 
-    return NextResponse.json({ success: true, config })
+    const [homeExperienceSectionHtml, programmeRetreatSectionHtml] = await Promise.all([
+      prisma.setting.findUnique({ where: { key: HOME_EXPERIENCE_SECTION_KEY } }),
+      prisma.setting.findUnique({ where: { key: PROGRAMME_RETREAT_SECTION_KEY } }),
+    ])
+
+    return NextResponse.json({
+      success: true,
+      config: {
+        ...config,
+        homeExperienceSectionHtml: homeExperienceSectionHtml?.value || '',
+        programmeRetreatSectionHtml: programmeRetreatSectionHtml?.value || '',
+      },
+    })
   } catch (error: any) {
     console.error('Error fetching site config:', error)
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
@@ -86,6 +100,8 @@ export async function PUT(req: Request) {
       ogImage,
       customHtmlTags,
       destinationsJson,
+      homeExperienceSectionHtml,
+      programmeRetreatSectionHtml,
     } = body
 
     const updatedConfig = await (prisma as any).siteConfig.upsert({
@@ -134,6 +150,24 @@ export async function PUT(req: Request) {
         destinationsJson,
       },
     })
+
+    const sectionSettings = []
+    if (homeExperienceSectionHtml !== undefined) {
+      sectionSettings.push(prisma.setting.upsert({
+        where: { key: HOME_EXPERIENCE_SECTION_KEY },
+        update: { value: String(homeExperienceSectionHtml) },
+        create: { key: HOME_EXPERIENCE_SECTION_KEY, value: String(homeExperienceSectionHtml) },
+      }))
+      revalidatePath('/')
+    }
+    if (programmeRetreatSectionHtml !== undefined) {
+      sectionSettings.push(prisma.setting.upsert({
+        where: { key: PROGRAMME_RETREAT_SECTION_KEY },
+        update: { value: String(programmeRetreatSectionHtml) },
+        create: { key: PROGRAMME_RETREAT_SECTION_KEY, value: String(programmeRetreatSectionHtml) },
+      }))
+    }
+    await Promise.all(sectionSettings)
 
     return NextResponse.json({ success: true, config: updatedConfig })
   } catch (error: any) {

@@ -29,6 +29,8 @@ interface SiteConfigData {
   ogDescription: string
   ogImage: string
   customHtmlTags: string
+  homeExperienceSectionHtml: string
+  programmeRetreatSectionHtml: string
 }
 
 const defaultDestinations: DestinationItem[] = [
@@ -38,7 +40,7 @@ const defaultDestinations: DestinationItem[] = [
 ]
 
 export default function AdminSiteEditPage() {
-  const [activeTab, setActiveTab] = useState<'general' | 'contact' | 'seo' | 'scripts' | 'destinations'>('general')
+  const [activeTab, setActiveTab] = useState<'general' | 'contact' | 'seo' | 'scripts' | 'destinations' | 'sections'>('general')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [savedSuccess, setSavedSuccess] = useState(false)
@@ -63,6 +65,8 @@ export default function AdminSiteEditPage() {
     ogDescription: '',
     ogImage: '',
     customHtmlTags: '',
+    homeExperienceSectionHtml: '',
+    programmeRetreatSectionHtml: '',
   })
 
   // Destinations List State
@@ -105,6 +109,8 @@ export default function AdminSiteEditPage() {
             ogDescription: data.config.ogDescription || '',
             ogImage: data.config.ogImage || '',
             customHtmlTags: data.config.customHtmlTags || '',
+            homeExperienceSectionHtml: data.config.homeExperienceSectionHtml || '',
+            programmeRetreatSectionHtml: data.config.programmeRetreatSectionHtml || '',
           })
 
           if (data.config.destinationsJson) {
@@ -313,6 +319,19 @@ export default function AdminSiteEditPage() {
         >
           <span className="material-symbols-outlined text-base">code</span>
           5. Global Scripts &amp; HTML Tags
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('sections')}
+          className={`py-3.5 px-5 text-xs font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'sections'
+              ? 'border-[#1C2E26] text-[#1C2E26]'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <span className="material-symbols-outlined text-base">web</span>
+          6. Custom Page Sections
         </button>
       </div>
 
@@ -666,6 +685,49 @@ export default function AdminSiteEditPage() {
                 rows={8}
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
               />
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'sections' && (
+          <div className="space-y-6">
+            <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 space-y-1">
+              <p className="font-bold flex items-center gap-1">
+                <span className="material-symbols-outlined text-base">code</span>
+                Add custom HTML blocks at fixed page positions
+              </p>
+              <p className="text-[11px] text-emerald-800 leading-relaxed">
+                Paste an HTML section. Leave a field empty to hide that section. Changes appear after saving.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase text-gray-700 mb-1">
+                Home Page — Above “Browse by Experience”
+              </label>
+              <textarea
+                value={formData.homeExperienceSectionHtml}
+                onChange={(e) => setFormData({ ...formData, homeExperienceSectionHtml: e.target.value })}
+                placeholder={'<section class="py-12">\n  <div class="mx-auto max-w-6xl px-6">\n    <h2>Your section title</h2>\n    <p>Your section content</p>\n  </div>\n</section>'}
+                rows={10}
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase text-gray-700 mb-1">
+                Programme &amp; Retreat Pages — Below Guest Reviews
+              </label>
+              <textarea
+                value={formData.programmeRetreatSectionHtml}
+                onChange={(e) => setFormData({ ...formData, programmeRetreatSectionHtml: e.target.value })}
+                placeholder={'<section class="py-12">\n  <div class="mx-auto max-w-6xl px-6">\n    <h2>Your section title</h2>\n    <p>Your section content</p>\n  </div>\n</section>'}
+                rows={10}
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:ring-2 focus:ring-[#1C2E26] focus:outline-none"
+              />
+              <p className="text-[11px] text-gray-500 mt-1">
+                This block appears below reviews on programme and retreat detail pages.
+              </p>
             </div>
           </div>
         )}

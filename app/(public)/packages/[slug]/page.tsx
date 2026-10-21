@@ -7,6 +7,7 @@ import { formatPrice } from '@/lib/utils'
 import BookingCard from '@/components/BookingCard'
 import PackageGalleryViewer from '@/components/PackageGalleryViewer'
 import type { Metadata } from 'next'
+import { getSiteSectionHtml, PROGRAMME_RETREAT_SECTION_KEY } from '@/lib/siteSections'
 
 interface PageProps {
   params: Promise<{
@@ -61,6 +62,7 @@ export async function generateMetadata({
 
 export default async function PackageDetailPage({ params }: PageProps) {
   const { slug } = await params
+  const programmeRetreatSectionHtml = await getSiteSectionHtml(PROGRAMME_RETREAT_SECTION_KEY)
 
   let pkg: any = null
   try {
@@ -335,6 +337,9 @@ export default async function PackageDetailPage({ params }: PageProps) {
                 </div>
               )}
             </section>
+            {(pkg.category === 'PROGRAMME' || pkg.category === 'RETREAT') && programmeRetreatSectionHtml && (
+              <div dangerouslySetInnerHTML={{ __html: programmeRetreatSectionHtml }} />
+            )}
           </div>
 
           {/* Right Column: Sticky Booking Card */}

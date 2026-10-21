@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import WhyChooseUsInteractive from '@/components/WhyChooseUsInteractive'
 import HeroSearchBar from '@/components/home/HeroSearchBar'
+import { getSiteSectionHtml, HOME_EXPERIENCE_SECTION_KEY } from '@/lib/siteSections'
 
 export const revalidate = 3600 // Revalidate home page every hour
 
@@ -56,6 +57,7 @@ async function getTestimonials() {
 export default async function HomePage() {
   const featuredPackages = await getFeaturedPackages()
   const dbTestimonials = await getTestimonials()
+  const homeExperienceSectionHtml = await getSiteSectionHtml(HOME_EXPERIENCE_SECTION_KEY)
 
   const displayPackages = featuredPackages
   const displayTestimonials = dbTestimonials.map(t => ({
@@ -247,6 +249,10 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {homeExperienceSectionHtml && (
+        <div dangerouslySetInnerHTML={{ __html: homeExperienceSectionHtml }} />
+      )}
 
       {/* 3. BROWSE BY EXPERIENCE */}
       <section className="py-16 bg-surface border-b border-outline-variant/10">
