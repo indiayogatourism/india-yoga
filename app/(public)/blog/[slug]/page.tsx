@@ -76,25 +76,36 @@ export default async function PublicBlogDetailPage({
   return (
     <>
       <HeadTags html={blog.customHtmlTags} />
-      <main className="bg-[#FAF7F2] min-h-screen pb-20">
-        {/* Header */}
-        <section className="bg-[#1C2E26] text-white pt-28 md:pt-32 pb-16 px-6">
-          <div className="max-w-3xl mx-auto space-y-4 text-center">
-            <Link href="/blog" className="text-xs text-[#E2C799] hover:underline font-bold inline-flex items-center gap-1">
-              <span className="material-symbols-outlined text-xs">arrow_back</span> Back to Journal
+      <main className="min-h-screen bg-[#f8f6f0] pb-24">
+        <header className="bg-[#17372b] px-6 pb-20 pt-32 text-white md:pb-28 md:pt-40">
+          <div className="mx-auto max-w-4xl">
+            <Link href="/blog" className="mb-10 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#e5cf9a] transition hover:text-white">
+              <span aria-hidden="true">←</span> Journal
             </Link>
-            <h1 className="text-3xl md:text-5xl font-bold">{blog.title}</h1>
-            <p className="text-white/60 text-xs">{blog.authorName} • {new Date(blog.createdAt).toLocaleDateString()}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[.2em] text-[#e5cf9a]">{blog.category || 'From the journal'}</p>
+            <h1 className="mt-5 font-display-lg text-4xl leading-[1.1] md:text-6xl">{blog.title}</h1>
+            {blog.excerpt && <p className="mt-6 max-w-3xl text-base leading-8 text-white/70 md:text-lg">{blog.excerpt}</p>}
+            <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-semibold uppercase tracking-[.13em] text-white/55">
+              <span>{blog.authorName || 'India Yoga Tourism Team'}</span>
+              <span className="h-1 w-1 rounded-full bg-[#e5cf9a]" />
+              <time dateTime={new Date(blog.createdAt).toISOString()}>{new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</time>
+            </div>
           </div>
-        </section>
+        </header>
 
-        {/* Article Body */}
-        <article className="max-w-3xl mx-auto px-6 py-12 space-y-8">
+        <article className="mx-auto -mt-10 max-w-5xl px-5 md:-mt-16 md:px-8">
           {blog.coverImage && (
-            <img src={blog.coverImage} alt={blog.title} className="w-full h-80 object-cover rounded-2xl shadow-md" />
+            <div className="relative mb-8 aspect-[16/8] overflow-hidden rounded-2xl bg-[#e2e6dc] shadow-[0_24px_70px_rgba(20,45,34,.18)] md:rounded-3xl">
+              <img src={blog.coverImage} alt={blog.title} className="h-full w-full object-cover" />
+            </div>
           )}
-          <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-black/5 leading-relaxed text-sm md:text-base text-gray-800 whitespace-pre-wrap">
-            {blog.content}
+          <div className="rounded-2xl border border-[#17372b]/10 bg-white px-6 py-9 shadow-[0_20px_70px_rgba(23,55,43,.07)] md:rounded-3xl md:px-16 md:py-14">
+            <div className="rich-article" dangerouslySetInnerHTML={{ __html: blog.content }} />
+            <div className="mt-14 border-t border-[#17372b]/10 pt-7">
+              <Link href="/blog" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.16em] text-[#17372b] hover:text-[#8b7040]">
+                <span aria-hidden="true">←</span> Back to all stories
+              </Link>
+            </div>
           </div>
         </article>
       </main>
