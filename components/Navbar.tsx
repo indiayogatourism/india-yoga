@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { SignInButton, UserButton, useUser } from '@clerk/nextjs'
 
 export default function Navbar() {
-  const { isSignedIn, user } = useUser()
+  const { isLoaded, isSignedIn, user } = useUser()
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -278,7 +278,11 @@ export default function Navbar() {
 
             {/* User Sign In and Booking CTAs */}
             <div className="flex items-center gap-5">
-              {isSignedIn ? (
+              {!isLoaded ? (
+                <span aria-label="Loading account" className="inline-flex h-8 w-12 items-center justify-center">
+                  <span className={`h-1.5 w-1.5 animate-pulse rounded-full ${scrolled ? 'bg-[#1C2E26]/50' : 'bg-white/60'}`} />
+                </span>
+              ) : isSignedIn ? (
                 <div className="flex items-center gap-4">
                   <Link
                     href={isAdmin ? '/admin' : '/dashboard'}
@@ -378,7 +382,9 @@ export default function Navbar() {
               
               <hr className={`my-1 ${scrolled ? 'border-black/10' : 'border-white/20'}`} />
 
-              {isSignedIn ? (
+              {!isLoaded ? (
+                <span className={`py-2.5 text-sm ${scrolled ? 'text-[#1C2E26]/60' : 'text-white/60'}`}>Loading account…</span>
+              ) : isSignedIn ? (
                 <div className="flex items-center justify-between py-2.5">
                   <Link
                     href={isAdmin ? '/admin' : '/dashboard'}

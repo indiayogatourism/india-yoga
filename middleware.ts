@@ -19,6 +19,10 @@ const isProtectedRoute = createRouteMatcher([
   '/api/gallery/(.*)',
 ])
 
+// Clerk uses this same-origin route for its client authentication handshake.
+// It must pass through clerkMiddleware even when the current page is public.
+const isClerkFrontendApiRoute = createRouteMatcher(['/__clerk(.*)'])
+
 const clerkHandler = clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
     await auth.protect({
@@ -51,9 +55,9 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
 
   const key = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || ''
 
-  // Skip Clerk entirely for non-protected routes so public pages
-  // are never touched by Clerk (prevents timeout redirects to clerk.com)
-  if (!key || !isProtectedRoute(req)) {
+  // Keep ordinary public pages independent of Clerk, but allow Clerk's
+  // frontend handshake endpoint through so session initialization can finish.
+  if (!key || (!isProtectedRoute(req) && !isClerkFrontendApiRoute(req))) {
     return NextResponse.next()
   }
 
