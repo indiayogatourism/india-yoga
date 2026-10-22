@@ -5,9 +5,22 @@ import { indexNowBlog } from '@/lib/indexnow'
 
 export const dynamic = 'force-dynamic'
 
-// GET: Fetch all blogs (Admin sees all, public queries filter published)
+// GET: Fetch all blogs for the admin CMS only
 export async function GET() {
   try {
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const clerkUser = await currentUser()
+    const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress?.toLowerCase()
+    const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } })
+    const isAdmin = dbUser?.role === 'admin' || userEmail === 'indiayogatourism@gmail.com'
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 })
+    }
+
     const blogs = await (prisma as any).blogPost.findMany({
       orderBy: { createdAt: 'desc' },
     })

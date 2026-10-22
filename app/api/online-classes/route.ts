@@ -5,9 +5,22 @@ import { indexNowOnlineClass } from '@/lib/indexnow'
 
 export const dynamic = 'force-dynamic'
 
-// GET: Fetch all online classes (Admin gets all, public gets published)
+// GET: Fetch all online classes for admin screens only. Public pages query published fields directly.
 export async function GET() {
   try {
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const clerkUser = await currentUser()
+    const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress?.toLowerCase()
+    const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } })
+    const isAdmin = dbUser?.role === 'admin' || userEmail === 'indiayogatourism@gmail.com'
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 })
+    }
+
     const classes = await (prisma as any).onlineClass.findMany({
       orderBy: { createdAt: 'desc' },
     })

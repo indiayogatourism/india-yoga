@@ -47,23 +47,57 @@ export async function POST(req: Request) {
       paymentMethod
     } = body
 
-    // Validate Package
-    const pkg = await prisma.package.findUnique({ where: { id: packageId } })
-    if (!pkg) {
-      return NextResponse.json({ error: 'Retreat package not found' }, { status: 404 })
+    if (!packageId || !['razorpay', 'paypal'].includes(paymentMethod)) {
+      return NextResponse.json({ error: 'A valid package and payment method are required' }, { status: 400 })
     }
 
-    // Calculations
-    const pricePerPerson =
-      roomType === 'dormitory' && pkg.priceDormitory != null
-        ? pkg.priceDormitory
-        : roomType === 'private'
-        ? pkg.pricePrivate
-        : pkg.priceShared
-    const totalAmount = pricePerPerson * parseInt(guestsCount)
+    if (!['dormitory', 'shared', 'private'].includes(roomType)) {
+      return NextResponse.json({ error: 'Choose a valid room type' }, { status: 400 })
+    }
+
+    if (![fullName, email, phone, country].every((value) => typeof value === 'string' && value.trim())) {
+      return NextResponse.json({ error: 'Name, email, phone, and country are required' }, { status: 400 })
+    }
+
+    const guestCount = Number(guestsCount)
+    if (!Number.isInteger(guestCount) || guestCount < 1) {
+      return NextResponse.json({ error: 'Guest count must be a positive whole number' }, { status: 400 })
+    }
+
+    const arrival = new Date(arrivalDate)
+    if (!arrivalDate || Number.isNaN(arrival.getTime())) {
+      return NextResponse.json({ error: 'Choose a valid arrival date' }, { status: 400 })
+    }
+
+    // Validate Package
+    const pkg = await prisma.package.findFirst({
+      where: { id: packageId, status: 'PUBLISHED' },
+    })
+    if (!pkg) {
+      return NextResponse.json({ error: 'Published retreat package not found' }, { status: 404 })
+    }
+
+    if (guestCount > pkg.maxGroupSize) {
+      return NextResponse.json({ error: `Guest count cannot exceed ${pkg.maxGroupSize}` }, { status: 400 })
+    }
+
+    const roomChoice = {
+      dormitory: { enabled: pkg.enableDormitory, price: pkg.priceDormitory },
+      shared: { enabled: pkg.enableShared, price: pkg.priceShared },
+      private: { enabled: pkg.enablePrivate, price: pkg.pricePrivate },
+    }[roomType as 'dormitory' | 'shared' | 'private']
+
+    if (!roomChoice.enabled || roomChoice.price === null || !Number.isFinite(roomChoice.price) || roomChoice.price <= 0) {
+      return NextResponse.json({ error: 'That room type is not available for this retreat' }, { status: 400 })
+    }
+
+    const pricePerPerson = roomChoice.price
+    const totalAmount = pricePerPerson * guestCount
+    if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
+      return NextResponse.json({ error: 'Unable to calculate the booking total' }, { status: 400 })
+    }
 
     const bookingRef = await generateBookingRef()
-    const arrival = new Date(arrivalDate)
     const departure = new Date(arrival)
     departure.setDate(arrival.getDate() + pkg.durationDays)
 
@@ -75,12 +109,12 @@ export async function POST(req: Request) {
         packageId,
         arrivalDate: arrival,
         departureDate: departure,
-        guests: parseInt(guestsCount),
+        guests: guestCount,
         roomType,
-        fullName,
-        email,
-        phone,
-        country,
+        fullName: fullName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        country: country.trim(),
         passportNumber,
         dietaryReqs,
         medicalInfo,

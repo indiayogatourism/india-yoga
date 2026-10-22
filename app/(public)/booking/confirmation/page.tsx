@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice, formatDate } from '@/lib/utils'
+import { getAuthorizedBookingByRef } from '@/lib/bookingAccess'
 
 interface PageProps {
   searchParams: Promise<{
@@ -21,8 +22,13 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
 
   let booking: any = null
   try {
+    const authorizedBooking = await getAuthorizedBookingByRef(ref)
+    if (!authorizedBooking) {
+      notFound()
+    }
+
     booking = await prisma.booking.findUnique({
-      where: { bookingRef: ref },
+      where: { id: authorizedBooking.id },
       include: {
         package: true,
         payment: true
@@ -36,6 +42,8 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
     notFound()
   }
 
+  const isConfirmed = booking.status === 'CONFIRMED' && booking.payment?.status === 'PAID'
+
   return (
     <main className="pt-32 pb-24 max-w-[800px] mx-auto px-6 text-center">
       <div className="bg-surface-container-low/50 border border-outline-variant/30 rounded-xl p-8 md:p-12 soft-shadow">
@@ -44,9 +52,13 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
           <span className="material-symbols-outlined text-[48px] icon-fill">self_improvement</span>
         </div>
 
-        <h1 className="font-display-lg text-primary mb-3">Booking Confirmed!</h1>
+        <h1 className="font-display-lg text-primary mb-3">
+          {isConfirmed ? 'Booking Confirmed!' : 'Booking Pending'}
+        </h1>
         <p className="font-quote-italic text-on-surface-variant text-xl mb-8">
-          Namaste, {booking.fullName}. Your journey to the Himalayas is secured.
+          {isConfirmed
+            ? `Namaste, ${booking.fullName}. Your journey to the Himalayas is secured.`
+            : `Namaste, ${booking.fullName}. We have your booking request, but payment has not been confirmed yet.`}
         </p>
 
         {/* Details card */}
@@ -82,14 +94,14 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
               <span className="font-bold text-on-surface capitalize">{booking.roomType} Room</span>
             </div>
             <div className="flex justify-between border-t border-outline-variant/10 pt-2 font-bold">
-              <span className="text-primary">Total Paid</span>
+              <span className="text-primary">{isConfirmed ? 'Total Paid' : 'Booking Total'}</span>
               <span className="text-tertiary-fixed-dim text-lg">{formatPrice(booking.totalAmount)}</span>
             </div>
           </div>
         </div>
 
-        {/* PDF Download buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 max-w-md mx-auto">
+        {/* PDF Download buttons are available only after successful payment. */}
+        {isConfirmed && <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 max-w-md mx-auto">
           <a
             href={`/api/download/voucher/${booking.bookingRef}`}
             target="_blank"
@@ -109,10 +121,12 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
             <span className="material-symbols-outlined text-[18px]">receipt_long</span>
             Payment Receipt PDF
           </a>
-        </div>
+        </div>}
 
         <p className="text-sm text-on-surface-variant mb-8">
-          A confirmation email along with your Booking Voucher and Receipt has been sent to <span className="font-bold text-primary">{booking.email}</span>.
+          {isConfirmed
+            ? <>A confirmation email along with your Booking Voucher and Receipt has been sent to <span className="font-bold text-primary">{booking.email}</span>.</>
+            : <>We will send a confirmation email to <span className="font-bold text-primary">{booking.email}</span> after payment is confirmed.</>}
         </p>
 
         {/* Dashboard button */}

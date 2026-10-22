@@ -95,7 +95,7 @@ export async function generateBookingVoucher(data: VoucherData): Promise<{ buffe
   })
 
   // Generate QR Code
-  const qrUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/booking/${data.bookingRef}/confirmed`
+  const qrUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/booking/confirmation?ref=${encodeURIComponent(data.bookingRef)}`
   const qrDataUrl = await QRCode.toDataURL(qrUrl)
   const qrBase64 = qrDataUrl.split(',')[1]
   const qrPngBytes = Buffer.from(qrBase64, 'base64')

@@ -35,7 +35,7 @@ export async function POST(req: Request) {
 
     // Check if already paid to avoid duplicate executions
     if (payment.status === 'PAID') {
-      return NextResponse.json({ success: true, message: 'Already processed' })
+      return NextResponse.json({ success: true, message: 'Already processed', bookingRef: payment.booking.bookingRef })
     }
 
     // Update payment

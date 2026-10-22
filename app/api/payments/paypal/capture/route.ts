@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { capturePaypalOrder } from '@/lib/paypal'
 import { generateBookingVoucher, generatePaymentReceipt } from '@/lib/pdf'
@@ -7,19 +8,19 @@ import { getBookingConfirmedTemplate, getPaymentReceiptTemplate, getEnquiryAlert
 
 export async function POST(req: Request) {
   try {
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await req.json()
     const { paypalOrderId } = body
 
-    // Call PayPal SDK/API to capture the payment
-    const captureData = await capturePaypalOrder(paypalOrderId)
-
-    if (captureData.status !== 'COMPLETED') {
-      return NextResponse.json({ error: 'PayPal payment not completed', status: captureData.status }, { status: 400 })
+    if (typeof paypalOrderId !== 'string' || !paypalOrderId.trim()) {
+      return NextResponse.json({ error: 'PayPal order ID is required' }, { status: 400 })
     }
 
-    const captureId = captureData.purchase_units?.[0]?.payments?.captures?.[0]?.id || paypalOrderId
-
-    // Find payment record
+    // Confirm the order belongs to a locally-created booking before calling PayPal.
     const payment = await prisma.payment.findFirst({
       where: { paypalOrderId },
       include: {
@@ -33,14 +34,26 @@ export async function POST(req: Request) {
     })
 
     if (!payment) {
-      // Create fallback if payment record not found (should not happen normally)
       return NextResponse.json({ error: 'Payment record not found' }, { status: 404 })
     }
 
-    // Check if already paid to avoid duplicate executions
-    if (payment.status === 'PAID') {
-      return NextResponse.json({ success: true, message: 'Already processed' })
+    const user = await prisma.user.findUnique({ where: { clerkId: userId } })
+    if (!user || payment.booking.userId !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
+
+    if (payment.status === 'PAID') {
+      return NextResponse.json({ success: true, message: 'Already processed', bookingRef: payment.booking.bookingRef })
+    }
+
+    // Call PayPal SDK/API to capture the payment
+    const captureData = await capturePaypalOrder(paypalOrderId)
+
+    if (captureData.status !== 'COMPLETED') {
+      return NextResponse.json({ error: 'PayPal payment not completed', status: captureData.status }, { status: 400 })
+    }
+
+    const captureId = captureData.purchase_units?.[0]?.payments?.captures?.[0]?.id || paypalOrderId
 
     // Update payment
     const updatedPayment = await prisma.payment.update({

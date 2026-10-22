@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { prisma } from './prisma'
+import { randomBytes } from 'crypto'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -8,12 +9,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export async function generateBookingRef(): Promise<string> {
   const year = new Date().getFullYear().toString().slice(2) // e.g. "26" for 2026
-  const last = await prisma.booking.findFirst({
-    where: { bookingRef: { startsWith: `IYT-${year}-` } },
-    orderBy: { createdAt: 'desc' }
-  })
-  const num = last ? parseInt(last.bookingRef.split('-')[2]) + 1 : 1
-  return `IYT-${year}-${num.toString().padStart(5, '0')}`
+  const randomSuffix = randomBytes(12).toString('hex').toUpperCase()
+  return `IYT-${year}-${randomSuffix}`
 }
 
 export function formatPrice(amount: number, currency: string = 'USD'): string {
