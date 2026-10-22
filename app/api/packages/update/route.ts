@@ -90,6 +90,7 @@ export async function POST(req: Request) {
       ogDescription,
       ogImage,
       customHtmlTags,
+      contentHtml,
     } = body
 
     if (!id) {
@@ -182,6 +183,7 @@ export async function POST(req: Request) {
         ...(ogDescription !== undefined && { ogDescription }),
         ...(ogImage !== undefined && { ogImage }),
         ...(customHtmlTags !== undefined && { customHtmlTags }),
+        ...(contentHtml !== undefined && { contentHtml }),
       },
     })
 

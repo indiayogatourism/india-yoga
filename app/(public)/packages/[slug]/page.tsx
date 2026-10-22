@@ -80,7 +80,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
     console.error('Error fetching package detail:', error)
   }
 
-  if (!pkg || pkg.status === 'ARCHIVED') {
+  if (!pkg || pkg.status !== 'PUBLISHED') {
     notFound()
   }
 
@@ -337,6 +337,13 @@ export default async function PackageDetailPage({ params }: PageProps) {
                 </div>
               )}
             </section>
+            {pkg.contentHtml && (
+              <section
+                aria-label={`${pkg.title} additional information`}
+                className="package-custom-content"
+                dangerouslySetInnerHTML={{ __html: pkg.contentHtml }}
+              />
+            )}
             {(pkg.category === 'PROGRAMME' || pkg.category === 'RETREAT') && programmeRetreatSectionHtml && (
               <div dangerouslySetInnerHTML={{ __html: programmeRetreatSectionHtml }} />
             )}

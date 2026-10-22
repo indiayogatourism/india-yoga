@@ -37,6 +37,7 @@ export default function AdminPackagesPage() {
     ogDescription: '',
     ogImage: '',
     customHtmlTags: '',
+    contentHtml: '',
   })
 
   const fetchProgrammes = async () => {
@@ -209,6 +210,7 @@ export default function AdminPackagesPage() {
           ogDescription: formData.ogDescription,
           ogImage: formData.ogImage,
           customHtmlTags: formData.customHtmlTags,
+          contentHtml: formData.contentHtml,
         }),
       })
 
@@ -240,6 +242,7 @@ export default function AdminPackagesPage() {
           ogDescription: '',
           ogImage: '',
           customHtmlTags: '',
+          contentHtml: '',
         })
         setShowSeoSection(false)
         fetchProgrammes()
@@ -666,6 +669,20 @@ export default function AdminPackagesPage() {
                 className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
               />
             </div>
+          </div>
+
+          <div className="space-y-2 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4">
+            <label className="font-bold text-gray-800 block">Programme / Retreat Page HTML Section</label>
+            <p className="text-[11px] text-gray-600">
+              Optional content unique to this programme. It appears on this programme’s public page below Guest Reviews.
+            </p>
+            <textarea
+              rows={8}
+              value={formData.contentHtml}
+              onChange={(e) => setFormData({ ...formData, contentHtml: e.target.value })}
+              placeholder={'<section>\n  <h2>About this programme</h2>\n  <p>Add programme-specific information here.</p>\n</section>'}
+              className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:border-[#1C2E26] font-mono text-xs bg-white"
+            />
           </div>
 
           {/* SEO & Meta Tags Section (Collapsible / Toggleable) */}

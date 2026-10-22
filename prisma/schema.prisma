@@ -103,6 +103,7 @@ model Package {
   ogDescription    String?  @db.Text
   ogImage          String?
   customHtmlTags   String?  @db.Text
+  contentHtml      String?  @db.Text
 
   // Status + Stats
   status           PackageStatus   @default(DRAFT)

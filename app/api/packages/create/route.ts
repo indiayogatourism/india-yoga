@@ -56,6 +56,7 @@ export async function POST(req: Request) {
       ogDescription,
       ogImage,
       customHtmlTags,
+      contentHtml,
     } = body
 
     // Validate unique slug
@@ -112,6 +113,7 @@ export async function POST(req: Request) {
         ogDescription: ogDescription || metaDescription || shortDescription || '',
         ogImage: ogImage || featuredImage || null,
         customHtmlTags: customHtmlTags || null,
+        contentHtml: contentHtml || null,
       }
     })
 

@@ -47,6 +47,7 @@ export interface PackageItem {
   ogDescription?: string | null
   ogImage?: string | null
   customHtmlTags?: string | null
+  contentHtml?: string | null
 }
 
 interface LiveCatalogListProps {
@@ -109,6 +110,7 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
   const [editOgDescription, setEditOgDescription] = useState("")
   const [editOgImage, setEditOgImage] = useState("")
   const [editCustomHtmlTags, setEditCustomHtmlTags] = useState("")
+  const [editContentHtml, setEditContentHtml] = useState("")
 
   const handleDeviceImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -255,6 +257,7 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
     setEditOgDescription(pkg.ogDescription || "")
     setEditOgImage(pkg.ogImage || "")
     setEditCustomHtmlTags(pkg.customHtmlTags || "")
+    setEditContentHtml(pkg.contentHtml || "")
 
     setErrorMsg(null)
   }
@@ -312,6 +315,7 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
           ogDescription: editOgDescription,
           ogImage: editOgImage,
           customHtmlTags: editCustomHtmlTags,
+          contentHtml: editContentHtml,
         }),
       })
 
@@ -1116,6 +1120,20 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
                       onChange={(e) => setEditExclusions(e.target.value)}
                       placeholder="International airfare&#10;Personal expenses&#10;Travel insurance"
                       className="w-full border border-gray-200 rounded-lg p-2.5 outline-none focus:border-[#1C2E26]"
+                    />
+                  </div>
+
+                  <div className="space-y-2 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4">
+                    <label className="font-bold text-gray-800 block">Programme / Retreat Page HTML Section</label>
+                    <p className="text-[11px] text-gray-600">
+                      This HTML is unique to this programme and appears on its public page below Guest Reviews.
+                    </p>
+                    <textarea
+                      rows={8}
+                      value={editContentHtml}
+                      onChange={(e) => setEditContentHtml(e.target.value)}
+                      placeholder={'<section>\n  <h2>About this programme</h2>\n  <p>Add programme-specific information here.</p>\n</section>'}
+                      className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:border-[#1C2E26] font-mono text-xs bg-white"
                     />
                   </div>
                 </div>
