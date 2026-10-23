@@ -254,10 +254,8 @@ export default async function PackagesPage({ searchParams }: PageProps) {
                   <p className="font-body-md text-on-surface-variant mb-8 line-clamp-3 flex-grow">
                     {pkg.shortDescription}
                   </p>
-                  <Link href={`/packages/${pkg.slug}`} className="mt-auto">
-                    <button className="w-full py-3.5 border-2 border-on-tertiary-container text-on-tertiary-container font-label-price text-sm tracking-wider uppercase rounded hover:bg-on-tertiary-container hover:text-white transition-colors cursor-pointer">
-                      View Retreat
-                    </button>
+                  <Link href={`/packages/${pkg.slug}`} className="mt-auto block w-full py-3.5 border-2 border-on-tertiary-container text-on-tertiary-container font-label-price text-sm tracking-wider uppercase rounded hover:bg-on-tertiary-container hover:text-white transition-colors text-center">
+                    View Retreat
                   </Link>
                 </div>
               </article>

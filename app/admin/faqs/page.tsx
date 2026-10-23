@@ -262,11 +262,9 @@ export default function AdminFaqsPage() {
             Configure FAQ SEO
           </button>
 
-          <Link href="/faqs" target="_blank">
-            <button className="px-4 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl text-xs hover:bg-gray-200 transition-colors flex items-center gap-1.5 cursor-pointer">
+          <Link href="/faqs" target="_blank" className="px-4 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl text-xs hover:bg-gray-200 transition-colors flex items-center gap-1.5">
               <span className="material-symbols-outlined text-base">open_in_new</span>
               Live Public Page
-            </button>
           </Link>
 
           <button

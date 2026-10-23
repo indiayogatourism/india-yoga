@@ -140,10 +140,8 @@ export default async function OnlineClassesPage() {
                       </span>
                     </div>
                   </div>
-                  <Link href="/contact" className="shrink-0 w-full md:w-auto">
-                    <button className="w-full md:w-auto border border-primary text-primary hover:bg-primary hover:text-on-primary font-bold text-xs px-5 py-3 rounded-xl transition-all cursor-pointer">
-                      Inquire Class
-                    </button>
+                  <Link href="/contact" className="shrink-0 w-full md:w-auto border border-primary text-primary hover:bg-primary hover:text-on-primary font-bold text-xs px-5 py-3 rounded-xl transition-all text-center">
+                    Inquire Class
                   </Link>
                 </div>
               ))

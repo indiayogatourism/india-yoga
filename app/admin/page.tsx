@@ -95,11 +95,9 @@ export default async function AdminDashboardPage() {
           <p className="text-xs sm:text-sm text-gray-500 mt-1">Welcome back. Here is your operational summary.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/admin/packages/new">
-            <button className="bg-[#1C2E26] text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl hover:bg-emerald-900 transition-colors flex items-center gap-2 shadow-sm cursor-pointer">
+          <Link href="/admin/packages/new" className="bg-[#1C2E26] text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl hover:bg-emerald-900 transition-colors flex items-center gap-2 shadow-sm">
               <span className="material-symbols-outlined text-base">add_circle</span>
               New Retreat
-            </button>
           </Link>
         </div>
       </div>
@@ -164,18 +162,14 @@ export default async function AdminDashboardPage() {
           <div>
             <h3 className="text-lg font-bold text-[#1C2E26] mb-4">Quick Management</h3>
             <div className="space-y-3">
-              <Link href="/admin/packages/new">
-                <button className="w-full bg-[#1C2E26] text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-emerald-900 transition-colors shadow-xs cursor-pointer">
+              <Link href="/admin/packages/new" className="w-full bg-[#1C2E26] text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-emerald-900 transition-colors shadow-xs">
                   <span className="material-symbols-outlined text-base">add_circle</span>
                   Create Retreat Package
-                </button>
               </Link>
               
-              <Link href="/packages" target="_blank">
-                <button className="w-full bg-[#FAF7F2] text-[#1C2E26] border border-black/10 font-bold py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-black/5 transition-colors cursor-pointer">
+              <Link href="/packages" target="_blank" className="w-full bg-[#FAF7F2] text-[#1C2E26] border border-black/10 font-bold py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-black/5 transition-colors">
                   <span className="material-symbols-outlined text-base">open_in_new</span>
                   View Live Public Site
-                </button>
               </Link>
             </div>
           </div>

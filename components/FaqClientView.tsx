@@ -106,10 +106,8 @@ export default function FaqClientView({ faqs }: FaqClientViewProps) {
             <p className="text-xs text-gray-500 max-w-md mx-auto mt-1">
               We couldn&apos;t find any FAQs matching your search query. Feel free to contact our support team directly.
             </p>
-            <Link href="/contact" className="inline-block mt-4">
-              <button className="px-6 py-2.5 bg-[#1C2E26] text-[#E2C799] font-bold rounded-xl text-xs hover:bg-[#253e34] transition-colors">
-                Contact Journey Planners
-              </button>
+            <Link href="/contact" className="inline-block mt-4 px-6 py-2.5 bg-[#1C2E26] text-[#E2C799] font-bold rounded-xl text-xs hover:bg-[#253e34] transition-colors">
+              Contact Journey Planners
             </Link>
           </div>
         ) : (

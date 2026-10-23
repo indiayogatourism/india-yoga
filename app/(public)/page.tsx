@@ -237,10 +237,8 @@ export default async function HomePage() {
                       </div>
                     </div>
 
-                    <Link href={`/packages/${pkg.slug}`} className="mt-3 block w-full">
-                      <button className="w-full bg-primary/5 hover:bg-primary text-primary hover:text-on-primary font-bold text-[10px] py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center gap-0.5 cursor-pointer">
-                        View Details
-                      </button>
+                    <Link href={`/packages/${pkg.slug}`} className="mt-3 block w-full bg-primary/5 hover:bg-primary text-primary hover:text-on-primary font-bold text-[10px] py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center gap-0.5">
+                      View Details
                     </Link>
                   </div>
                 </div>
@@ -418,10 +416,8 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full sm:w-auto">
-            <Link href="/packages" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto bg-tertiary-fixed-dim hover:bg-tertiary-fixed text-on-tertiary-fixed font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-lg cursor-pointer text-center text-sm md:text-base">
-                Explore Retreats
-              </button>
+            <Link href="/packages" className="w-full sm:w-auto bg-tertiary-fixed-dim hover:bg-tertiary-fixed text-on-tertiary-fixed font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-lg text-center text-sm md:text-base">
+              Explore Retreats
             </Link>
             <a
               href="https://wa.me/918800919486"

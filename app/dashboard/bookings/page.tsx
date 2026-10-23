@@ -65,10 +65,8 @@ export default async function MyBookingsPage() {
           <p className="text-sm text-on-surface-variant max-w-md mx-auto">
             You haven't reserved any retreats yet. Browse our handpicked packages in Rishikesh, Goa, and Kerala.
           </p>
-          <Link href="/packages">
-            <button className="bg-primary text-on-primary font-bold text-xs px-6 py-3 rounded-xl hover:opacity-90 transition-opacity mt-2">
-              Browse Packages
-            </button>
+          <Link href="/packages" className="inline-flex bg-primary text-on-primary font-bold text-xs px-6 py-3 rounded-xl hover:opacity-90 transition-opacity mt-2">
+            Browse Packages
           </Link>
         </div>
       ) : (

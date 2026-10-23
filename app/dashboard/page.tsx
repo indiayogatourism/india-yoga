@@ -328,10 +328,8 @@ export default async function DashboardOverviewPage() {
                   Discover sacred ashrams and yoga teacher training programs across India.
                 </p>
               </div>
-              <Link href="/packages">
-                <button className="bg-primary text-on-primary font-bold text-xs px-6 py-3 rounded-xl hover:opacity-90 transition-opacity">
-                  Explore Programs
-                </button>
+              <Link href="/packages" className="inline-flex bg-primary text-on-primary font-bold text-xs px-6 py-3 rounded-xl hover:opacity-90 transition-opacity">
+                Explore Programs
               </Link>
             </div>
           )}

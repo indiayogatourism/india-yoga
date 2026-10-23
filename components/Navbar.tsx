@@ -315,21 +315,20 @@ export default function Navbar() {
                 </SignInButton>
               )}
 
-              <Link href="/packages">
-                <button
-                  className={`relative px-6 py-3 rounded-full transition-all duration-300 font-bold active:scale-95 cursor-pointer shadow-md overflow-hidden group ${
+              <Link
+                href="/packages"
+                className={`relative px-6 py-3 rounded-full transition-all duration-300 font-bold active:scale-95 cursor-pointer shadow-md overflow-hidden group ${
                     scrolled
                       ? 'bg-[#012d1d] text-white hover:bg-[#1b4332]'
                       : 'bg-gradient-to-r from-[#f6be39] to-[#d19e14] text-[#012d1d] hover:shadow-[0_0_20px_rgba(246,190,57,0.5)] hover:scale-105'
                   }`}
-                >
-                  <span className="relative z-10 flex items-center gap-1.5 text-sm">
-                    Book Sanctuary
-                    <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">
-                      arrow_forward
-                    </span>
+              >
+                <span className="relative z-10 flex items-center gap-1.5 text-sm">
+                  Book Sanctuary
+                  <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">
+                    arrow_forward
                   </span>
-                </button>
+                </span>
               </Link>
             </div>
           </div>
@@ -413,17 +412,17 @@ export default function Navbar() {
                 </SignInButton>
               )}
 
-              <Link href="/packages" onClick={() => setMobileMenuOpen(false)} className="mt-2">
-                <button
-                  className={`w-full py-3.5 rounded-full font-bold flex items-center justify-center gap-2 shadow-md active:scale-95 transition-transform text-sm ${
+              <Link
+                href="/packages"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`mt-2 w-full py-3.5 rounded-full font-bold flex items-center justify-center gap-2 shadow-md active:scale-95 transition-transform text-sm ${
                     scrolled
                       ? 'bg-[#012d1d] text-white'
                       : 'bg-gradient-to-r from-[#f6be39] to-[#d19e14] text-[#012d1d]'
                   }`}
-                >
-                  Book Sanctuary
-                  <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                </button>
+              >
+                Book Sanctuary
+                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </Link>
             </div>
           </div>

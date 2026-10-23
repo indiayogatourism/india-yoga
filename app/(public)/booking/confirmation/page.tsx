@@ -131,10 +131,8 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
 
         {/* Dashboard button */}
         <div className="space-y-4">
-          <Link href="/dashboard">
-            <button className="bg-tertiary-fixed-dim text-on-tertiary-fixed font-bold py-3.5 px-8 rounded-full text-center hover:opacity-90 transition-opacity">
-              Go to Guest Dashboard
-            </button>
+          <Link href="/dashboard" className="inline-flex bg-tertiary-fixed-dim text-on-tertiary-fixed font-bold py-3.5 px-8 rounded-full text-center hover:opacity-90 transition-opacity">
+            Go to Guest Dashboard
           </Link>
           <div>
             <a

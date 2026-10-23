@@ -134,11 +134,9 @@ export default async function ProgrammesPage() {
                       <span className="text-[10px] text-outline uppercase tracking-wider block">Starting From</span>
                       <span className="font-label-price text-primary font-bold text-2xl">{formatPrice(p.priceShared)}</span>
                     </div>
-                    <Link href={`/packages/${p.slug}`} className="w-full sm:w-auto">
-                      <button className="w-full sm:w-auto bg-primary hover:bg-primary-container text-on-primary font-bold px-8 py-3.5 rounded-xl transition-all duration-300 text-xs cursor-pointer shadow-md flex items-center justify-center gap-2">
-                        View Details &amp; Book
-                        <span className="material-symbols-outlined text-xs">arrow_forward</span>
-                      </button>
+                    <Link href={`/packages/${p.slug}`} className="w-full sm:w-auto bg-primary hover:bg-primary-container text-on-primary font-bold px-8 py-3.5 rounded-xl transition-all duration-300 text-xs shadow-md flex items-center justify-center gap-2">
+                      View Details &amp; Book
+                      <span className="material-symbols-outlined text-xs">arrow_forward</span>
                     </Link>
                   </div>
                 </div>
