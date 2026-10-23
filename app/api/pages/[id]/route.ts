@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { indexNowPage } from '@/lib/indexnow'
+import { revalidatePath } from 'next/cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,14 +46,28 @@ export async function PUT(
       published,
     } = body
 
+    const existingPage = await (prisma as any).page.findUnique({ where: { id } })
+    if (!existingPage) {
+      return NextResponse.json({ success: false, error: 'Page not found' }, { status: 404 })
+    }
+
     const updateData: any = {}
     if (title !== undefined) updateData.title = title
     if (slug !== undefined) {
-      updateData.slug = slug
+      const baseSlug = slug
         .toLowerCase()
         .trim()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '')
+      if (!baseSlug) {
+        return NextResponse.json({ success: false, error: 'URL slug must contain letters or numbers' }, { status: 400 })
+      }
+      let cleanSlug = baseSlug
+      let suffix = 1
+      while (await (prisma as any).page.findFirst({ where: { slug: cleanSlug, NOT: { id } }, select: { id: true } })) {
+        cleanSlug = `${baseSlug}-${suffix++}`
+      }
+      updateData.slug = cleanSlug
     }
     if (content !== undefined) updateData.content = content
     if (metaTitle !== undefined) updateData.metaTitle = metaTitle
@@ -70,8 +85,11 @@ export async function PUT(
       data: updateData,
     })
 
-    // Notify search engines if published
-    if (updatedPage.published) {
+    revalidatePath(`/${existingPage.slug}`)
+    revalidatePath(`/${updatedPage.slug}`)
+    revalidatePath('/know-more')
+    revalidatePath('/sitemap.xml')
+    if (updatedPage.published || existingPage.published !== updatedPage.published) {
       indexNowPage(updatedPage.slug).catch(() => {})
     }
 
@@ -106,9 +124,14 @@ export async function DELETE(
     }
 
     const { id } = await params
+    const existingPage = await (prisma as any).page.findUnique({ where: { id }, select: { slug: true } })
     await (prisma as any).page.delete({
       where: { id },
     })
+
+    if (existingPage?.slug) revalidatePath(`/${existingPage.slug}`)
+    revalidatePath('/know-more')
+    revalidatePath('/sitemap.xml')
 
     return NextResponse.json({ success: true, message: 'Custom page deleted successfully' })
   } catch (error: any) {

@@ -3,6 +3,7 @@ import { SITE_URL, toPreferredUrl } from '@/lib/siteUrl'
 import HeadTags from '@/components/HeadTags'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -17,7 +18,13 @@ export async function generateMetadata({
     const page: any = await (prisma as any).page.findUnique({
       where: { slug },
     })
-    if (!page) return {}
+    if (!page) return { robots: { index: false, follow: false } }
+    if (!page.published) {
+      return {
+        title: page.metaTitle || page.title,
+        robots: { index: false, follow: false },
+      }
+    }
 
     const title = page.metaTitle || page.title
     const description = page.metaDescription || page.title
@@ -67,14 +74,37 @@ export default async function PublicDynamicPage({
     console.error('Error fetching page by slug:', error)
   }
 
-  if (!page || !page.published) {
+  if (!page) {
     notFound()
+  }
+
+  let isDraftPreview = false
+  if (!page.published) {
+    try {
+      const { userId } = await auth()
+      if (userId) {
+        const [clerkUser, dbUser] = await Promise.all([
+          currentUser(),
+          prisma.user.findUnique({ where: { clerkId: userId }, select: { role: true } }),
+        ])
+        const email = clerkUser?.emailAddresses?.[0]?.emailAddress?.toLowerCase()
+        isDraftPreview = dbUser?.role === 'admin' || email === 'indiayogatourism@gmail.com'
+      }
+    } catch (error) {
+      console.error('Error authorizing CMS page preview:', error)
+    }
+    if (!isDraftPreview) notFound()
   }
 
   return (
     <>
       <HeadTags html={page.customHtmlTags} />
       <main className="min-h-screen bg-[#f8f6f0] pb-24">
+        {isDraftPreview && (
+          <div className="bg-amber-100 px-4 py-3 text-center text-xs font-bold text-amber-950">
+            Draft preview — only administrators can view this page until it is published.
+          </div>
+        )}
         <header className="relative overflow-hidden bg-[#17372b] px-6 pb-20 pt-32 text-white md:pb-28 md:pt-40">
           <div className="pointer-events-none absolute -right-24 -top-36 h-[26rem] w-[26rem] rounded-full border border-white/10" />
           <div className="relative mx-auto max-w-5xl">

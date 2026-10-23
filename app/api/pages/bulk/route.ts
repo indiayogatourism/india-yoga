@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { indexNowPage } from '@/lib/indexnow'
+import { revalidatePath } from 'next/cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -60,7 +62,7 @@ export async function POST(req: Request) {
             ogDescription: item.ogDescription || item.metaDescription || item.content.slice(0, 160),
             ogImage: item.ogImage || null,
             customHtmlTags: item.customHtmlTags || null,
-            published: item.published !== undefined ? Boolean(item.published) : true,
+            published: item.published !== undefined ? Boolean(item.published) : false,
           },
           create: {
             title: item.title,
@@ -74,7 +76,7 @@ export async function POST(req: Request) {
             ogDescription: item.ogDescription || item.metaDescription || item.content.slice(0, 160),
             ogImage: item.ogImage || null,
             customHtmlTags: item.customHtmlTags || null,
-            published: item.published !== undefined ? Boolean(item.published) : true,
+            published: item.published !== undefined ? Boolean(item.published) : false,
           },
         })
 
@@ -83,6 +85,13 @@ export async function POST(req: Request) {
         errors.push(`Item ${i + 1} (${item.title || 'Untitled'}): ${err.message}`)
       }
     }
+
+    for (const page of createdPages as Array<{ slug: string; published: boolean }>) {
+      revalidatePath(`/${page.slug}`)
+      if (page.published) indexNowPage(page.slug).catch(() => {})
+    }
+    revalidatePath('/know-more')
+    revalidatePath('/sitemap.xml')
 
     return NextResponse.json({
       success: true,

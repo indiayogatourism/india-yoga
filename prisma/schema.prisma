@@ -267,7 +267,7 @@ model Page {
   ogDescription   String?  @db.Text
   ogImage         String?
   customHtmlTags  String?  @db.Text
-  published       Boolean  @default(true)
+  published       Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

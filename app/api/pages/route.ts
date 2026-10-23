@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { indexNowPage } from '@/lib/indexnow'
+import { revalidatePath } from 'next/cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,7 +23,7 @@ export async function GET() {
     }
 
     const pages = await (prisma as any).page.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { updatedAt: 'desc' },
     })
     return NextResponse.json({ success: true, pages })
   } catch (error: any) {
@@ -71,11 +72,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Page title and Content are required' }, { status: 400 })
     }
 
-    const cleanSlug = (slug || title)
+    const baseSlug = (slug || title)
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '')
+
+    if (!baseSlug) {
+      return NextResponse.json({ error: 'Enter a title or URL slug containing letters or numbers' }, { status: 400 })
+    }
+
+    let cleanSlug = baseSlug
+    let suffix = 1
+    while (await (prisma as any).page.findUnique({ where: { slug: cleanSlug }, select: { id: true } })) {
+      cleanSlug = `${baseSlug}-${suffix++}`
+    }
+
+    const plainContent = String(content).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
 
     const newPage = await (prisma as any).page.create({
       data: {
@@ -83,21 +96,22 @@ export async function POST(req: Request) {
         slug: cleanSlug,
         content,
         metaTitle: metaTitle || title,
-        metaDescription: metaDescription || title,
+        metaDescription: metaDescription || plainContent.slice(0, 160) || title,
         metaKeywords: metaKeywords || '',
         canonicalUrl: canonicalUrl || '',
         ogTitle: ogTitle || metaTitle || title,
         ogDescription: ogDescription || metaDescription || title,
         ogImage: ogImage || null,
         customHtmlTags: customHtmlTags || null,
-        published: published !== undefined ? published : true,
+        published: published !== undefined ? Boolean(published) : false,
       },
     })
 
     // Notify search engines if published
-    if (newPage.published) {
-      indexNowPage(newPage.slug).catch(() => {})
-    }
+    revalidatePath(`/${newPage.slug}`)
+    revalidatePath('/know-more')
+    revalidatePath('/sitemap.xml')
+    if (newPage.published) indexNowPage(newPage.slug).catch(() => {})
 
     return NextResponse.json({ success: true, page: newPage })
   } catch (error: any) {

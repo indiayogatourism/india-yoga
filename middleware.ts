@@ -13,15 +13,18 @@ const isProtectedRoute = createRouteMatcher([
   '/api/packages/create(.*)',
   '/api/packages/update(.*)',
   '/api/packages/delete(.*)',
-  '/api/pages/bulk(.*)',
-  '/api/blogs/bulk(.*)',
-  '/api/online-classes/(.*)',
+  '/api/pages(.*)',
+  '/api/blogs(.*)',
+  '/api/online-classes(.*)',
   '/api/gallery/(.*)',
+  '/api/payments/paypal/capture(.*)',
+  '/api/download/(.*)',
 ])
 
 // Clerk uses this same-origin route for its client authentication handshake.
 // It must pass through clerkMiddleware even when the current page is public.
 const isClerkFrontendApiRoute = createRouteMatcher(['/__clerk(.*)'])
+const isApiRoute = createRouteMatcher(['/api(.*)'])
 
 const clerkHandler = clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
@@ -55,9 +58,10 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
 
   const key = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || ''
 
-  // Keep ordinary public pages independent of Clerk, but allow Clerk's
-  // frontend handshake endpoint through so session initialization can finish.
-  if (!key || (!isProtectedRoute(req) && !isClerkFrontendApiRoute(req))) {
+  // Clerk middleware provides auth() context for Route Handlers even when
+  // they perform their own authorization. Public API/page routes stay public
+  // because auth.protect() only runs for paths in isProtectedRoute.
+  if (!key || (!isProtectedRoute(req) && !isClerkFrontendApiRoute(req) && !isApiRoute(req))) {
     return NextResponse.next()
   }
 

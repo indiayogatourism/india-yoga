@@ -53,7 +53,7 @@ export default function AdminPagesPage() {
     ogDescription: '',
     ogImage: '',
     customHtmlTags: '',
-    published: true,
+    published: false,
   })
 
   const fetchPages = async () => {
@@ -100,7 +100,7 @@ export default function AdminPagesPage() {
       ogDescription: '',
       ogImage: '',
       customHtmlTags: '',
-      published: true,
+      published: false,
     })
     setIsModalOpen(true)
   }
