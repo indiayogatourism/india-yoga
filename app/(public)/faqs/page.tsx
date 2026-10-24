@@ -1,5 +1,5 @@
 import React from 'react'
-import { SITE_URL } from '@/lib/siteUrl'
+import { SITE_URL, withBrand } from '@/lib/siteUrl'
 import { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import FaqClientView from '@/components/FaqClientView'
@@ -64,7 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
     where: { pageKey: 'faqs' },
   })
 
-  const title = seoMeta?.title || 'Frequently Asked Questions | India Yoga Tourism'
+  const title = withBrand(seoMeta?.title || 'Frequently Asked Questions')
   const description =
     seoMeta?.description ||
     'Answers to common questions about Rishikesh retreats, Panchakarma ayurvedic detox, online classes, visas, and booking.'

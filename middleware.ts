@@ -28,8 +28,12 @@ const isApiRoute = createRouteMatcher(['/api(.*)'])
 
 const clerkHandler = clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
+    // Send logged-out users to sign-in WITH a return address, so after signing in
+    // they land back on the page they opened (e.g. /admin/blogs), not the homepage.
+    const signInUrl = new URL('/sign-in', req.url)
+    signInUrl.searchParams.set('redirect_url', req.nextUrl.pathname + req.nextUrl.search)
     await auth.protect({
-      unauthenticatedUrl: new URL('/sign-in', req.url).toString(),
+      unauthenticatedUrl: signInUrl.toString(),
     })
   }
   // All other routes (including /) pass through freely
@@ -61,7 +65,11 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
   // Clerk middleware provides auth() context for Route Handlers even when
   // they perform their own authorization. Public API/page routes stay public
   // because auth.protect() only runs for paths in isProtectedRoute.
-  if (!key || (!isProtectedRoute(req) && !isClerkFrontendApiRoute(req) && !isApiRoute(req))) {
+  // Admin draft previews (/some-page?preview=1) need Clerk's auth() context so the
+  // page can verify the admin session; without it every draft returns 404.
+  const isDraftPreview = req.nextUrl.searchParams.has('preview')
+
+  if (!key || (!isProtectedRoute(req) && !isClerkFrontendApiRoute(req) && !isApiRoute(req) && !isDraftPreview)) {
     return NextResponse.next()
   }
 

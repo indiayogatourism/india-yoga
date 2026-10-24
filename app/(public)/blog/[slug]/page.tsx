@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma'
-import { SITE_URL, toPreferredUrl } from '@/lib/siteUrl'
+import { SITE_URL, toPreferredUrl, withBrand } from '@/lib/siteUrl'
 import HeadTags from '@/components/HeadTags'
 import { notFound } from 'next/navigation'
+import { isAdminViewer } from '@/lib/adminPreview'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -18,6 +19,10 @@ export async function generateMetadata({
       where: { slug },
     })
     if (!blog) return {}
+    if (!blog.published) {
+      // Draft preview: never index
+      return { title: withBrand(blog.metaTitle || blog.title), robots: { index: false, follow: false } }
+    }
 
     const title = blog.metaTitle || blog.title
     const description = blog.metaDescription || blog.excerpt
@@ -26,7 +31,7 @@ export async function generateMetadata({
     const ogImage = blog.ogImage || blog.coverImage
 
     return {
-      title: `${title} | India Yoga Tourism`,
+      title: withBrand(title),
       description,
       keywords,
       alternates: {
@@ -69,14 +74,21 @@ export default async function PublicBlogDetailPage({
     console.error('Error fetching blog detail:', error)
   }
 
-  if (!blog || !blog.published) {
-    notFound()
-  }
+  if (!blog) notFound()
+
+  // Unpublished posts are visible to signed-in admins only (draft preview)
+  const isDraftPreview = !blog.published
+  if (isDraftPreview && !(await isAdminViewer())) notFound()
 
   return (
     <>
       <HeadTags html={blog.customHtmlTags} />
       <main className="min-h-screen bg-[#f8f6f0] pb-24">
+        {isDraftPreview && (
+          <div className="relative z-40 border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-xs font-bold text-amber-950 mt-20">
+            Draft preview — only administrators can view this post until it is published.
+          </div>
+        )}
         <header className="bg-[#17372b] px-6 pb-20 pt-32 text-white md:pb-28 md:pt-40">
           <div className="mx-auto max-w-4xl">
             <Link href="/blog" className="mb-10 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#e5cf9a] transition hover:text-white">

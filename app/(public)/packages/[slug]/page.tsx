@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
-import { SITE_URL, toPreferredUrl } from '@/lib/siteUrl'
+import { isAdminViewer } from '@/lib/adminPreview'
+import { SITE_URL, toPreferredUrl, withBrand } from '@/lib/siteUrl'
 import HeadTags from '@/components/HeadTags'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
@@ -26,6 +27,10 @@ export async function generateMetadata({
       where: { slug },
     })
     if (!pkg) return {}
+    if (pkg.status !== 'PUBLISHED') {
+      // Draft preview: never index
+      return { title: withBrand(pkg.metaTitle || pkg.title), robots: { index: false, follow: false } }
+    }
 
     const title = pkg.metaTitle || pkg.title
     const description = pkg.metaDescription || pkg.shortDescription || pkg.title
@@ -34,7 +39,7 @@ export async function generateMetadata({
     const ogImage = pkg.ogImage || pkg.featuredImage
 
     return {
-      title: `${title} | India Yoga Tourism`,
+      title: withBrand(title),
       description,
       keywords,
       alternates: {
@@ -80,9 +85,11 @@ export default async function PackageDetailPage({ params }: PageProps) {
     console.error('Error fetching package detail:', error)
   }
 
-  if (!pkg || pkg.status !== 'PUBLISHED') {
-    notFound()
-  }
+  if (!pkg) notFound()
+
+  // Unpublished (draft / archived) packages are visible to signed-in admins only
+  const isDraftPreview = pkg.status !== 'PUBLISHED'
+  if (isDraftPreview && !(await isAdminViewer())) notFound()
 
   // Parse itinerary if it is a JSON array
   let itineraryList: Array<{ day: number; title: string; activities: string[] }> = []
@@ -96,6 +103,11 @@ export default async function PackageDetailPage({ params }: PageProps) {
     <>
       <HeadTags html={pkg.customHtmlTags} />
       <main className="pt-28 pb-16 md:pb-24">
+      {isDraftPreview && (
+        <div className="relative z-40 border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-xs font-bold text-amber-950">
+          Draft preview — only administrators can view this package until it is published.
+        </div>
+      )}
       {/* Breadcrumbs */}
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 mb-6">
         <nav aria-label="Breadcrumb" className="flex text-sm text-on-surface-variant">

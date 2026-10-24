@@ -29,3 +29,15 @@ export const SITE_URL = toPreferredUrl(
 export function absoluteUrl(path = '/'): string {
   return `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`
 }
+
+export const SITE_NAME = 'India Yoga Tourism'
+
+/**
+ * Append " | India Yoga Tourism" to a page title only if the brand isn't
+ * already in it — prevents "… | India Yoga Tourism | India Yoga Tourism".
+ */
+export function withBrand(title: string | null | undefined): string {
+  const t = (title || '').trim()
+  if (!t) return SITE_NAME
+  return t.toLowerCase().includes(SITE_NAME.toLowerCase()) ? t : `${t} | ${SITE_NAME}`
+}

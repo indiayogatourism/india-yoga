@@ -41,6 +41,7 @@ export const DEFAULT_STATIC_ROUTES = [
   { path: '/contact', priority: 0.7, changefreq: 'monthly' },
   { path: '/know-more', priority: 0.6, changefreq: 'monthly' },
   { path: '/faqs', priority: 0.6, changefreq: 'monthly' },
+  { path: '/privacy-policy', priority: 0.3, changefreq: 'yearly' },
 ]
 
 export async function getSitemapData() {

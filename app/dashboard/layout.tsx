@@ -8,12 +8,12 @@ export const dynamic = "force-dynamic"
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const { userId } = await auth()
   if (!userId) {
-    redirect("/sign-in")
+    redirect("/sign-in?redirect_url=%2Fdashboard")
   }
 
   const clerkUser = await currentUser()
   if (!clerkUser) {
-    redirect("/sign-in")
+    redirect("/sign-in?redirect_url=%2Fdashboard")
   }
 
   // Ensure DB User exists

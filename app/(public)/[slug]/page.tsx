@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { SITE_URL, toPreferredUrl } from '@/lib/siteUrl'
+import { SITE_URL, toPreferredUrl, withBrand } from '@/lib/siteUrl'
 import HeadTags from '@/components/HeadTags'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -33,7 +33,7 @@ export async function generateMetadata({
     const ogImage = page.ogImage
 
     return {
-      title: `${title} | India Yoga Tourism`,
+      title: withBrand(title),
       description,
       keywords,
       alternates: {

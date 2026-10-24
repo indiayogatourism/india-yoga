@@ -489,7 +489,7 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
 
                   {/* View on Main Site Link */}
                   <Link
-                    href={`/packages/${p.slug}`}
+                    href={p.status === 'PUBLISHED' ? `/packages/${p.slug}` : `/packages/${p.slug}?preview=1`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 border border-gray-200 hover:border-[#1C2E26] text-[#1C2E26] rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
@@ -1245,7 +1245,7 @@ export function LiveCatalogList({ initialPackages }: LiveCatalogListProps) {
 
               <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
                 <a
-                  href={`/packages/${editSlug}`}
+                  href={editStatus === 'PUBLISHED' ? `/packages/${editSlug}` : `/packages/${editSlug}?preview=1`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"

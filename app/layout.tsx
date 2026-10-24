@@ -40,10 +40,9 @@ const ebGaramond = EB_Garamond({
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig()
   return {
-    title: {
-      default: config.metaTitle || config.siteName,
-      template: `%s | ${config.siteName}`,
-    },
+    // Plain string, no "%s | Site" template: page titles already carry the brand
+    // (via withBrand()), and the template produced "… | India Yoga Tourism | India Yoga Tourism".
+    title: config.metaTitle || config.siteName,
     description: config.metaDescription || config.siteTagline,
     keywords: config.metaKeywords ? config.metaKeywords.split(',').map((k) => k.trim()) : undefined,
     // Resolves relative metadata URLs (OG images etc.) against the preferred www domain.
@@ -55,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: config.ogTitle || config.metaTitle || config.siteName,
       description: config.ogDescription || config.metaDescription || config.siteTagline,
-      images: config.ogImage ? [{ url: config.ogImage }] : undefined,
+      images: [{ url: config.ogImage || '/og-default.jpg' }],
     },
   }
 }

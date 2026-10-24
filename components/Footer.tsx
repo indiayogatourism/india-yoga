@@ -121,7 +121,10 @@ export default function Footer() {
         {/* Brand Block */}
         <div className="md:col-span-4 flex flex-col items-start gap-4">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-tertiary-fixed-dim text-3xl">self_improvement</span>
+            <span className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-sm shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-mark.png" alt="India Yoga Tourism logo" width={240} height={201} className="w-[78%] h-auto" />
+            </span>
             <span className="font-display-lg text-on-primary text-2xl font-bold tracking-tight">
               {siteConfig.siteName}
             </span>
@@ -203,6 +206,11 @@ export default function Footer() {
                 Help &amp; FAQs
               </Link>
             </li>
+            <li>
+              <Link href="/privacy-policy" className="hover:text-tertiary-fixed transition-colors">
+                Privacy Policy
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -278,6 +286,10 @@ export default function Footer() {
             </p>
             <p className="font-body-md text-[11px] text-on-primary-container/50">
               Globazon Enterprises LLC · 30 N Gould St Ste R, Sheridan, WY 82801
+              <span className="mx-2" aria-hidden="true">·</span>
+              <Link href="/privacy-policy" className="underline-offset-2 hover:underline hover:text-tertiary-fixed">
+                Privacy Policy
+              </Link>
             </p>
           </div>
           

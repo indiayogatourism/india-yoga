@@ -121,17 +121,18 @@ export default function Navbar() {
           {/* Brand Logo with Dynamic Transition */}
           <Link href="/" className="flex items-center gap-2.5 group cursor-pointer shrink-0">
             <div
-              className={`relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-all duration-500 shrink-0 ${
-                scrolled ? 'bg-[#012d1d]/10 group-hover:bg-[#012d1d]/20' : 'bg-white/15 border border-white/25 group-hover:bg-white/25'
+              className={`relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white shadow-sm transition-all duration-500 shrink-0 ${
+                scrolled ? 'ring-1 ring-[#012d1d]/10' : 'ring-1 ring-white/40'
               }`}
             >
-              <span
-                className={`material-symbols-outlined text-xl sm:text-2xl group-hover:rotate-12 transition-transform duration-500 ${
-                  scrolled ? 'text-[#012d1d]' : 'text-[#f6be39]'
-                }`}
-              >
-                self_improvement
-              </span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo-mark.png"
+                alt="India Yoga Tourism logo"
+                width={240}
+                height={201}
+                className="w-[78%] h-auto transition-transform duration-500 group-hover:scale-110"
+              />
               <div
                 className={`absolute inset-0 rounded-full transition-transform duration-500 group-hover:scale-110 ${
                   scrolled ? 'border border-[#f6be39]/40' : 'border border-white/30'

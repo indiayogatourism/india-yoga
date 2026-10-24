@@ -421,7 +421,7 @@ export default function AdminPagesPage() {
                 </button>
 
                 <Link
-                  href={`/${p.slug}`}
+                  href={p.published ? `/${p.slug}` : `/${p.slug}?preview=1`}
                   target="_blank"
                   className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-[#1C2E26] rounded-xl text-xs font-bold flex items-center gap-1 transition-colors"
                 >
