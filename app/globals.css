@@ -21,6 +21,13 @@
   text-transform: none;
   display: inline-block;
   white-space: nowrap;
+  /* Reserve a fixed square box so the raw ligature text ("expand_more") shown
+     before the icon font loads can't widen links and shift the navbar. */
+  width: 1em;
+  height: 1em;
+  overflow: hidden;
+  flex-shrink: 0;
+  vertical-align: middle;
   word-wrap: normal;
   direction: ltr;
   -webkit-font-smoothing: antialiased;

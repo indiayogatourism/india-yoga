@@ -5,7 +5,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { SignInButton, UserButton, useUser } from '@clerk/nextjs'
 
-export default function Navbar() {
+type NavbarConfig = {
+  siteName: string
+  siteTagline: string
+  announcementText: string
+  destinations: any[]
+}
+
+export default function Navbar({ initialConfig }: { initialConfig?: Partial<NavbarConfig> }) {
   const { isLoaded, isSignedIn, user } = useUser()
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
@@ -19,14 +26,16 @@ export default function Navbar() {
     { id: '3', name: 'Dharamshala', subtitle: 'Peace in the Himalayan foothills', locationQuery: 'Dharamshala', icon: 'filter_drama' },
   ]
 
-  const [siteConfig, setSiteConfig] = useState({
-    siteName: 'India Yoga Tourism',
-    siteTagline: 'Himalayan Wellness & Wisdom',
-    announcementText: '',
-    destinations: defaultDests,
+  const [siteConfig, setSiteConfig] = useState<NavbarConfig>({
+    siteName: initialConfig?.siteName || 'India Yoga Tourism',
+    siteTagline: initialConfig?.siteTagline || 'Ancient Wisdom. Modern Journey.',
+    announcementText: initialConfig?.announcementText || '',
+    destinations: initialConfig?.destinations?.length ? initialConfig.destinations : defaultDests,
   })
 
   useEffect(() => {
+    // Server already supplied the config — no client fetch, no text swap.
+    if (initialConfig) return
     async function fetchConfig() {
       try {
         const res = await fetch('/api/site-config')
@@ -280,7 +289,7 @@ export default function Navbar() {
             {/* User Sign In and Booking CTAs */}
             <div className="flex items-center gap-5">
               {!isLoaded ? (
-                <span aria-label="Loading account" className="inline-flex h-8 w-12 items-center justify-center">
+                <span aria-label="Loading account" className="inline-flex h-8 w-14 items-center justify-center">
                   <span className={`h-1.5 w-1.5 animate-pulse rounded-full ${scrolled ? 'bg-[#1C2E26]/50' : 'bg-white/60'}`} />
                 </span>
               ) : isSignedIn ? (
@@ -307,7 +316,7 @@ export default function Navbar() {
               ) : (
                 <SignInButton mode="modal">
                   <button
-                    className={`font-body-md font-bold transition-colors text-sm cursor-pointer ${
+                    className={`inline-flex h-8 w-14 items-center justify-center font-body-md font-bold transition-colors text-sm cursor-pointer ${
                       scrolled ? 'text-[#1C2E26] hover:text-[#012d1d]' : 'text-white/90 hover:text-[#f6be39]'
                     }`}
                   >

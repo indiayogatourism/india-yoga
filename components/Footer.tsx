@@ -3,7 +3,14 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-export default function Footer() {
+type FooterConfig = {
+  siteName: string
+  siteTagline: string
+  footerText: string
+  destinations: any[]
+}
+
+export default function Footer({ initialConfig }: { initialConfig?: Partial<FooterConfig> }) {
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
   const defaultDests = [
@@ -12,14 +19,15 @@ export default function Footer() {
     { id: '3', name: 'Dharamshala', locationQuery: 'Dharamshala' },
   ]
 
-  const [siteConfig, setSiteConfig] = useState({
-    siteName: 'India Yoga Tourism',
-    siteTagline: 'Ancient Wisdom. Modern Journey.',
-    footerText: '© 2026 India Yoga Tourism. All rights reserved.',
-    destinations: defaultDests,
+  const [siteConfig, setSiteConfig] = useState<FooterConfig>({
+    siteName: initialConfig?.siteName || 'India Yoga Tourism',
+    siteTagline: initialConfig?.siteTagline || 'Ancient Wisdom. Modern Journey.',
+    footerText: initialConfig?.footerText || '© 2026 India Yoga Tourism. All rights reserved.',
+    destinations: initialConfig?.destinations?.length ? initialConfig.destinations : defaultDests,
   })
 
   useEffect(() => {
+    if (initialConfig) return
     async function fetchConfig() {
       try {
         const res = await fetch('/api/site-config')

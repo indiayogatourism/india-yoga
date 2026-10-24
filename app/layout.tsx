@@ -74,8 +74,11 @@ export default async function RootLayout({
       >
         <head>
           {/* Material Symbols Outlined Icon Font */}
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          {/* display=block: icons stay invisible (not raw text) for the brief moment before the font loads */}
           <link
-            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
             rel="stylesheet"
           />
           {/* Admin custom tags (e.g. Google Search Console verification) — must live in <head> */}
