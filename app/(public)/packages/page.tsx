@@ -3,6 +3,7 @@ import { SITE_URL } from '@/lib/siteUrl'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import { PackageCategory } from '@prisma/client'
+import { filterAvailablePackages } from '@/lib/packageAvailability'
 import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -85,12 +86,12 @@ export default async function PackagesPage({ searchParams }: PageProps) {
 
   let packages: any[] = []
   try {
-    packages = await prisma.package.findMany({
+    packages = filterAvailablePackages(await prisma.package.findMany({
       where: whereClause,
       orderBy: {
         createdAt: 'desc'
       }
-    })
+    }))
   } catch (error) {
     console.error('Error fetching packages:', error)
   }

@@ -6,8 +6,10 @@ import WhyChooseUsInteractive from '@/components/WhyChooseUsInteractive'
 import HeroSearchBar from '@/components/home/HeroSearchBar'
 import { getSiteSectionHtml, HOME_EXPERIENCE_SECTION_KEY } from '@/lib/siteSections'
 import { HOME_URL, HOME_TITLE, HOME_DESCRIPTION, homeServices, homeFaqs } from '@/lib/homepageContent'
+import { filterAvailablePackages } from '@/lib/packageAvailability'
 
-export const revalidate = 3600
+// Date-based availability must be checked on every request, including at midnight IST.
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig()
@@ -35,24 +37,25 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-async function getFeaturedPackages() {
+async function getAvailablePackages() {
   try {
-    return await prisma.package.findMany({
+    const packages = await prisma.package.findMany({
       where: { status: 'PUBLISHED' },
-      take: 4,
+      select: { id: true, location: true, startDate: true, endDate: true, upcomingDates: true, durationDays: true },
       orderBy: { totalBookings: 'desc' },
     })
+    return filterAvailablePackages(packages)
   } catch {
     return []
   }
 }
 
-async function getPublishedLocations() {
+async function getFeaturedPackages(ids: string[]) {
+  if (ids.length === 0) return []
   try {
     return await prisma.package.findMany({
-      where: { status: 'PUBLISHED' },
-      select: { location: true },
-      distinct: ['location'],
+      where: { status: 'PUBLISHED', id: { in: ids } },
+      orderBy: { totalBookings: 'desc' },
     })
   } catch {
     return []
@@ -75,18 +78,19 @@ async function getTestimonials() {
 const priceFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
 
 export default async function HomePage() {
-  const [featuredPackages, testimonials, locations, config, homeExperienceSectionHtml] = await Promise.all([
-    getFeaturedPackages(),
+  const [availablePackages, testimonials, config, homeExperienceSectionHtml] = await Promise.all([
+    getAvailablePackages(),
     getTestimonials(),
-    getPublishedLocations(),
     getSiteConfig(),
     getSiteSectionHtml(HOME_EXPERIENCE_SECTION_KEY),
   ])
+  // Apply the four-card limit after filtering so expired popular retreats cannot hide current ones.
+  const featuredPackages = await getFeaturedPackages(availablePackages.slice(0, 4).map(({ id }) => id))
 
-  // A configured destination is displayed only when a published listing matches it.
+  // A configured destination is displayed only when an available published listing matches it.
   const destinations = config.destinations.filter((destination) => {
     const query = (destination.locationQuery || destination.name).trim().toLowerCase()
-    return query && locations.some(({ location }) => location.toLowerCase().includes(query))
+    return query && availablePackages.some(({ location }) => location.toLowerCase().includes(query))
   })
   const whatsappNumber = config.whatsappNumber.replace(/\D/g, '')
   const phoneNumber = config.contactPhone.replace(/[^\d+]/g, '')

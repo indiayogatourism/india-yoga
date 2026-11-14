@@ -7,7 +7,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "db:migrate:deploy": "prisma migrate deploy",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:availability": "node --test tests/package-availability.test.cjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1090.0",
