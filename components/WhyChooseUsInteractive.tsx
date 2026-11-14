@@ -24,177 +24,95 @@ export interface TabFeature {
 
 const featuresData: TabFeature[] = [
   {
-    id: 'verified',
-    title: 'Handpicked & Verified Retreats',
-    shortTitle: 'Verified Retreats',
-    icon: 'workspace_premium',
+    id: 'experiences', title: 'Yoga, Meditation & Ayurveda Together', shortTitle: 'Experiences', icon: 'self_improvement',
     card1: {
-      badge: '✦ 10-POINT INSPECTION',
-      title: '100% On-Site Inspected Sanctuaries',
-      description: 'Every ashram and retreat on India Yoga Tourism undergoes rigorous quality checks before listing.',
+      badge: 'EXPLORE YOUR OPTIONS', title: 'Find an Experience That Fits Your Interests',
+      description: 'Browse yoga and wellness experiences, then review the individual program before deciding.',
       timeline: [
-        { label: 'GURUS', text: 'Authentic Lineage & Accreditation Check' },
-        { label: 'LOCATION', text: 'Peaceful Environment & Noise Audit' },
-        { label: 'STAY', text: 'Hygiene & High-Comfort Private Rooms' },
-        { label: 'FOOD', text: 'Pure Organic Sattvic Meal Preparation' }
+        { label: 'YOGA', text: 'Retreats and guided practice' },
+        { label: 'MIND', text: 'Meditation and breathwork experiences' },
+        { label: 'AYURVEDA', text: 'Practitioner-guided wellness programs' },
+        { label: 'ONLINE', text: 'Classes to explore from home' }
       ]
     },
     card2: {
-      badge: 'PEACE OF MIND',
-      title: 'What Verification Means for You',
+      badge: 'YOUR JOURNEY', title: 'Choose Your Starting Point',
       pillars: [
-        { icon: 'self_improvement', title: 'Certified Teachers', desc: 'Masters with 10+ years ashram experience.' },
-        { icon: 'verified', title: 'Zero Fraud Guarantee', desc: 'Directly contracted with verified owners.' },
-        { icon: 'clean_hands', title: 'Clean Facilities', desc: 'Hot water, Wi-Fi & fresh linens.' },
-        { icon: 'star', title: 'Real Guest Reviews', desc: '100% verified traveler ratings.' }
+        { icon: 'self_improvement', title: 'Practice', desc: 'Check the level and daily schedule.' },
+        { icon: 'air', title: 'Meditation', desc: 'Explore the activities on offer.' },
+        { icon: 'spa', title: 'Wellness', desc: 'Discuss suitability with a practitioner.' },
+        { icon: 'devices', title: 'Classes', desc: 'Review online class options.' }
       ],
-      footerLeft: '100% Quality Inspected',
-      footerRight: 'Sanctuary Guaranteed'
+      footerLeft: 'Different Ways to Explore', footerRight: 'Your Interests First'
     }
   },
   {
-    id: 'pricing',
-    title: 'No Hidden Charges & Transparent Rates',
-    shortTitle: 'No Hidden Charges',
-    icon: 'payments',
+    id: 'details', title: 'Program Details in One Place', shortTitle: 'Compare Details', icon: 'checklist',
     card1: {
-      badge: '✦ DIRECT RATES',
-      title: 'Transparent Pricing & No Extra Fees',
-      description: 'Pay direct ashram rates with zero surprise taxes or hidden resort fees at check-in.',
+      badge: 'COMPARE BEFORE BOOKING', title: 'Look Beyond the Retreat Title',
+      description: 'Compare the practical details that matter for your stay using the published package information.',
       timeline: [
-        { label: 'MEALS', text: 'All Daily Organic Sattvic Meals Included' },
-        { label: 'CLASSES', text: 'No Extra Fee for Props & Materials' },
-        { label: 'TERMS', text: 'Clear Cancellation & Refund Terms' },
-        { label: 'INVOICE', text: 'Instant Official Invoice & Receipt' }
+        { label: 'WHERE', text: 'Review the listed destination' },
+        { label: 'WHEN', text: 'Check duration and confirm your dates' },
+        { label: 'STAY', text: 'Compare available room options' },
+        { label: 'PRICE', text: 'Read inclusions and currency details' }
       ]
     },
     card2: {
-      badge: 'ALL-INCLUSIVE',
-      title: 'Everything Included in Your Stay',
+      badge: 'PLAN WITH CONTEXT', title: 'Understand What You Are Booking',
       pillars: [
-        { icon: 'bed', title: 'Sanctuary Stay', desc: 'Clean private/shared rooms with amenities.' },
-        { icon: 'restaurant', title: '3 Daily Meals', desc: 'Nutritious vegetarian food daily.' },
-        { icon: 'spa', title: 'All Sessions', desc: 'Yoga, meditation & Ganga Aarti tours.' },
-        { icon: 'local_cafe', title: 'Herbal Teas', desc: 'Unlimited detox teas & pure water.' }
+        { icon: 'calendar_month', title: 'Duration', desc: 'Compare days and nights.' },
+        { icon: 'bed', title: 'Rooms', desc: 'Review accommodation options.' },
+        { icon: 'list_alt', title: 'Inclusions', desc: 'Read included and excluded items.' },
+        { icon: 'policy', title: 'Terms', desc: 'Confirm the applicable booking terms.' }
       ],
-      footerLeft: 'Best Rate Promise',
-      footerRight: 'Zero Hidden Charges'
+      footerLeft: 'Review Each Listing', footerRight: 'Confirm Before Paying'
     }
   },
   {
-    id: 'support',
-    title: 'Local India-Based Support Team',
-    shortTitle: 'Local India Support',
-    icon: 'support_agent',
+    id: 'providers', title: 'Direct & Partner-Operated Programs', shortTitle: 'Providers', icon: 'handshake',
     card1: {
-      badge: '✦ 24/7 GROUND TEAM',
-      title: 'Local Experts On the Ground in Rishikesh',
-      description: 'Our dedicated India-based team is available on WhatsApp and phone at every step of your journey.',
+      badge: 'KNOW YOUR PROVIDER', title: 'A Platform Connecting Different Experiences',
+      description: 'Our team offers some programs directly, while independent providers operate other experiences. Ask who operates your chosen program.',
       timeline: [
-        { label: 'PICKUP', text: 'Dehradun Airport & Train Station Transfers' },
-        { label: '24/7 HELP', text: 'Instant WhatsApp Concierge Support' },
-        { label: 'SAFETY', text: 'Local Emergency & Doctor Assistance' },
-        { label: 'ADVICE', text: 'Personalized Travel & Local Tips' }
+        { label: 'OPERATOR', text: 'Confirm who provides the stay' },
+        { label: 'TEACHERS', text: 'Ask about instructors and qualifications' },
+        { label: 'CARE', text: 'Discuss practitioner guidance individually' },
+        { label: 'TERMS', text: 'Check provider-specific policies' }
       ]
     },
     card2: {
-      badge: 'ALWAYS CONNECTED',
-      title: 'Seamless Travel Assistance',
+      badge: 'INFORMED CHOICES', title: 'Ask the Questions That Matter',
       pillars: [
-        { icon: 'airport_shuttle', title: 'Airport Pickup', desc: 'Private driver waiting with name placard.' },
-        { icon: 'chat', title: 'Instant Help', desc: 'Reach out on WhatsApp anytime 24/7.' },
-        { icon: 'luggage', title: 'Travel Care', desc: 'Help with local cabs, trains & SIM cards.' },
-        { icon: 'forum', title: 'English Team', desc: 'Fluent English-speaking local guides.' }
+        { icon: 'home', title: 'Operator', desc: 'Who delivers the experience?' },
+        { icon: 'school', title: 'Guidance', desc: 'Who teaches or supervises?' },
+        { icon: 'person', title: 'Suitability', desc: 'Does the program fit your needs?' },
+        { icon: 'description', title: 'Policies', desc: 'What terms apply to this booking?' }
       ],
-      footerLeft: 'India Support Team',
-      footerRight: '24/7 Assistance'
+      footerLeft: 'Direct and Partner Programs', footerRight: 'Check Provider Details'
     }
   },
   {
-    id: 'teachers',
-    title: 'English-Speaking Guides & Teachers',
-    shortTitle: 'English Guides',
-    icon: 'forum',
+    id: 'support', title: 'Contact Our Team Before You Book', shortTitle: 'Enquiries', icon: 'support_agent',
     card1: {
-      badge: '✦ EASY COMMUNICATION',
-      title: 'Fluent & Empathetic Himalayan Masters',
-      description: 'Bridge ancient Vedic philosophy with clear, accessible English explanations for all levels.',
+      badge: 'BOOKING ENQUIRIES', title: 'Get Help With Your Questions',
+      description: 'Use the contact form, WhatsApp or phone to ask about a program and clarify the information you need before booking.',
       timeline: [
-        { label: 'Q&A', text: 'In-Depth Philosophy & Sutra Sessions' },
-        { label: 'ASANA', text: 'Clear Step-by-Step Posture Instructions' },
-        { label: 'ALIGN', text: 'Personalized Posture Correction' },
-        { label: 'MENTOR', text: 'One-on-One Spiritual & Practice Guidance' }
+        { label: 'COMPARE', text: 'Ask about differences between programs' },
+        { label: 'DATES', text: 'Confirm options for your travel plans' },
+        { label: 'DETAILS', text: 'Clarify accommodation and inclusions' },
+        { label: 'CONTACT', text: 'Use your preferred enquiry channel' }
       ]
     },
     card2: {
-      badge: 'ACCESSIBLE WISDOM',
-      title: 'Deep Learning Without Barriers',
+      badge: 'TRAVEL PLANNING', title: 'For Visitors From India and Overseas',
       pillars: [
-        { icon: 'self_improvement', title: 'Asana Guidance', desc: 'Clear anatomical posture alignment.' },
-        { icon: 'air', title: 'Pranayama', desc: 'Guided breathing explained simply.' },
-        { icon: 'menu_book', title: 'Philosophy', desc: 'Vedic wisdom for modern life.' },
-        { icon: 'psychology', title: 'Open Dialogue', desc: 'Ask any practice or spiritual question.' }
+        { icon: 'mail', title: 'Enquiries', desc: 'Use the contact form to send questions.' },
+        { icon: 'chat', title: 'WhatsApp', desc: 'Ask about your chosen program.' },
+        { icon: 'call', title: 'Phone', desc: 'Use the published contact number.' },
+        { icon: 'help', title: 'FAQs', desc: 'Read booking and travel information.' }
       ],
-      footerLeft: 'Fluent English Masters',
-      footerRight: 'Traditional Lineage'
-    }
-  },
-  {
-    id: 'ashram',
-    title: 'Safe & Comfortable Ashram Stays',
-    shortTitle: 'Safe Ashram Stays',
-    icon: 'verified_user',
-    card1: {
-      badge: '✦ SOLO FEMALE FRIENDLY',
-      title: 'High Comfort Meets Ashram Serenity',
-      description: 'Enjoy modern amenities combined with peaceful meditation gardens. Trusted by 70%+ solo travellers.',
-      timeline: [
-        { label: 'SECURITY', text: '24/7 Gated Premises & Caring Staff' },
-        { label: 'ROOMS', text: 'Private Bathrooms with 24h Hot Water' },
-        { label: 'HYGIENE', text: 'Daily Cleaning & High Sanitation' },
-        { label: 'PEACE', text: 'Quiet Gardens & Riverside Spaces' }
-      ]
-    },
-    card2: {
-      badge: 'HOLISTIC RETREAT',
-      title: 'Your Home in the Himalayas',
-      pillars: [
-        { icon: 'single_bed', title: 'Private Rooms', desc: 'Cozy bedding & attached bathrooms.' },
-        { icon: 'wifi', title: 'High-Speed Wi-Fi', desc: 'Stay connected with loved ones.' },
-        { icon: 'shield_person', title: 'Solo Friendly', desc: '70%+ guests are solo travellers.' },
-        { icon: 'park', title: 'Serene Environment', desc: 'Lush mountain views & riversides.' }
-      ],
-      footerLeft: 'Solo Female Approved',
-      footerRight: '24/7 Gated Safety'
-    }
-  },
-  {
-    id: 'guarantee',
-    title: 'Best Price Assistance Guarantee',
-    shortTitle: 'Price Guarantee',
-    icon: 'local_offer',
-    card1: {
-      badge: '✦ VALUE GUARANTEE',
-      title: 'Unmatched Direct Value & Price Match',
-      description: 'Find the exact same retreat cheaper anywhere else? We match the price and add free airport pickup.',
-      timeline: [
-        { label: 'DIRECT', text: 'Direct Partnership Rates with Top Centers' },
-        { label: 'PERKS', text: 'Free Doctor Consultation & Aarti Tour' },
-        { label: 'FLEXIBLE', text: 'Free Date Rescheduling Support' },
-        { label: '0% COMM', text: 'No Middleman Commission Added' }
-      ]
-    },
-    card2: {
-      badge: 'BEST VALUE',
-      title: 'More Than Just a Booking',
-      pillars: [
-        { icon: 'sell', title: 'Price Match', desc: 'Found lower? We match it instantly.' },
-        { icon: 'card_giftcard', title: 'Bonus Perks', desc: 'Free consultation & tours included.' },
-        { icon: 'calendar_month', title: 'Flexible Dates', desc: 'Easy date changes up to 7 days prior.' },
-        { icon: 'handshake', title: 'Direct Value', desc: 'No hidden agent fees or commissions.' }
-      ],
-      footerLeft: 'Best Rate Guaranteed',
-      footerRight: 'Direct Ashram Price'
+      footerLeft: 'Questions Welcome', footerRight: 'Plan Before You Book'
     }
   }
 ]
@@ -212,6 +130,9 @@ export default function WhyChooseUsInteractive() {
           return (
             <button
               key={feat.id}
+              type="button"
+              aria-pressed={isActive}
+              aria-controls="why-feature-details"
               onClick={() => setActiveTab(idx)}
               className={`flex items-center justify-between gap-3 p-4 rounded-xl text-left transition-all duration-300 cursor-pointer border ${
                 isActive
@@ -227,7 +148,7 @@ export default function WhyChooseUsInteractive() {
                 >
                   {feat.icon}
                 </span>
-                <span className="font-bold text-xs leading-snug truncate">
+                <span className="font-bold text-sm leading-snug">
                   {feat.title}
                 </span>
               </div>
@@ -244,7 +165,7 @@ export default function WhyChooseUsInteractive() {
       </div>
 
       {/* Right Column: Dynamic Informative Cards (col-span-8) */}
-      <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-5 h-full">
+      <div id="why-feature-details" className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-5 h-full">
         {/* Card 1: Green Themed Specific Feature Highlight */}
         <div className="bg-[#012d1d] text-white rounded-2xl p-6 shadow-md border border-white/10 flex flex-col justify-between relative overflow-hidden min-h-[310px] transition-all duration-500">
           <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-tertiary-fixed-dim/10 blur-xl pointer-events-none"></div>
@@ -270,7 +191,7 @@ export default function WhyChooseUsInteractive() {
                   <span className="font-bold text-tertiary-fixed-dim w-16 shrink-0 uppercase text-[9px] tracking-wider">
                     {item.label}
                   </span>
-                  <span className="truncate">{item.text}</span>
+                  <span>{item.text}</span>
                 </div>
               ))}
             </div>
@@ -295,7 +216,7 @@ export default function WhyChooseUsInteractive() {
                 <div key={idx} className="bg-surface-container-low p-2.5 rounded-xl border border-outline-variant/10">
                   <div className="flex items-center gap-1.5 text-primary font-bold text-xs mb-0.5">
                     <span className="material-symbols-outlined text-secondary text-sm">{pil.icon}</span>
-                    <span className="truncate">{pil.title}</span>
+                    <span>{pil.title}</span>
                   </div>
                   <p className="text-[9px] text-on-surface-variant leading-tight line-clamp-2">
                     {pil.desc}

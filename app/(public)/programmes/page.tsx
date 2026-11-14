@@ -8,9 +8,9 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Yoga Programmes | India Yoga Tourism',
+  title: 'Ayurveda & Panchakarma Programs in India | India Yoga Tourism',
   description:
-    'Join structured yoga and Ayurveda programmes in Rishikesh led by certified Himalayan masters – from beginner immersions to advanced spiritual intensives.',
+    'Explore Ayurvedic treatment and Panchakarma programs in India. Review program details and discuss suitability with the relevant practitioner before booking.',
   keywords: [
     'yoga programmes india',
     'rishikesh yoga course',
@@ -22,17 +22,17 @@ export const metadata: Metadata = {
     canonical: `${SITE_URL}/programmes`,
   },
   openGraph: {
-    title: 'Yoga Programmes | India Yoga Tourism',
+    title: 'Ayurveda & Panchakarma Programs | India Yoga Tourism',
     description:
-      'Structured yoga, Pranayama, and Ayurveda programmes in the Himalayas for all levels.',
+      'Explore Ayurveda and Panchakarma wellness programs, compare details and confirm suitability with the provider.',
     url: `${SITE_URL}/programmes`,
     siteName: 'India Yoga Tourism',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Yoga Programmes | India Yoga Tourism',
-    description: 'Yoga and Ayurveda programmes in Rishikesh for all levels.',
+    title: 'Ayurveda & Panchakarma Programs | India Yoga Tourism',
+    description: 'Explore Ayurveda and Panchakarma programs and review provider details before booking.',
   },
 }
 

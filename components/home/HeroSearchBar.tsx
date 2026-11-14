@@ -15,7 +15,7 @@ export default function HeroSearchBar() {
   const router = useRouter()
 
   // State
-  const [selectedDestination, setSelectedDestination] = useState('Rishikesh')
+  const [selectedDestination, setSelectedDestination] = useState('')
   const [customSearchQuery, setCustomSearchQuery] = useState('')
 
   const [selectedDuration, setSelectedDuration] = useState<'any' | 'short' | 'medium' | 'long'>('any')
@@ -134,7 +134,7 @@ export default function HeroSearchBar() {
   return (
     <div ref={widgetRef} className="relative w-full max-w-4xl mx-auto z-40">
       {/* Desktop Search Bento Widget */}
-      <div className="hidden md:flex w-full bg-white/95 backdrop-blur-md rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.25)] p-2.5 items-center justify-between border border-white/50 relative z-30">
+      <div className="hidden lg:flex w-full bg-white/95 backdrop-blur-md rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.25)] p-2.5 items-center justify-between border border-white/50 relative z-30">
         {/* 1. Destination */}
         <div
           onClick={() => setActiveDropdown(activeDropdown === 'destination' ? null : 'destination')}
@@ -206,7 +206,7 @@ export default function HeroSearchBar() {
       </div>
 
       {/* Mobile Search Bento Widget */}
-      <div className="md:hidden w-full bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-4 border border-white/40 mt-4 flex flex-col gap-3 text-left">
+      <div className="lg:hidden w-full bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-4 border border-white/40 mt-4 flex flex-col gap-3 text-left">
         <div className="grid grid-cols-2 gap-2.5">
           {/* Destination */}
           <div

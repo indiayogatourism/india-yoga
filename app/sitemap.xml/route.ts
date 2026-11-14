@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server'
 import { getSitemapData, generateSitemapXml } from '@/lib/sitemap-helper'
 
 export const dynamic = 'force-dynamic'

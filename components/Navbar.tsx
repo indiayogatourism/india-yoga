@@ -167,8 +167,8 @@ export default function Navbar({ initialConfig }: { initialConfig?: Partial<Navb
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-8" ref={dropdownRef}>
-            <div className="flex items-center gap-6 relative">
+          <div className="hidden xl:flex items-center gap-4" ref={dropdownRef}>
+            <div className="flex items-center gap-3 2xl:gap-6 relative">
               {navLinks.map((link) => (
                 <div
                   key={link.name}
@@ -346,8 +346,10 @@ export default function Navbar({ initialConfig }: { initialConfig?: Partial<Navb
           {/* Mobile Menu Toggle Button */}
           <button
             aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden p-2 cursor-pointer focus:outline-none w-11 h-11 min-w-[44px] min-h-[44px] rounded-full active:scale-95 flex items-center justify-center transition-all ${
+            className={`xl:hidden p-2 cursor-pointer focus:outline-none w-11 h-11 min-w-[44px] min-h-[44px] rounded-full active:scale-95 flex items-center justify-center transition-all ${
               scrolled ? 'text-[#012d1d] hover:bg-black/5' : 'text-white hover:bg-white/10'
             }`}
           >
@@ -360,7 +362,8 @@ export default function Navbar({ initialConfig }: { initialConfig?: Partial<Navb
         {/* Mobile Drawer Menu */}
         {mobileMenuOpen && (
           <div
-            className={`md:hidden absolute top-full left-0 w-full shadow-2xl py-6 px-6 max-h-[calc(100vh-80px)] overflow-y-auto animate-fade-in z-50 ${
+            id="mobile-navigation"
+            className={`xl:hidden absolute top-full left-0 w-full shadow-2xl py-6 px-6 max-h-[calc(100vh-80px)] overflow-y-auto animate-fade-in z-50 ${
               scrolled
                 ? 'bg-[#FAF7F2] text-[#1C2E26] border-t border-black/10'
                 : 'bg-[#012d1d]/95 text-white border-t border-white/20 backdrop-blur-xl rounded-b-2xl'

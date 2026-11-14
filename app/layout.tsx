@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { SITE_URL, GOOGLE_SITE_VERIFICATION } from '@/lib/siteUrl'
-import { Playfair_Display, Cormorant_Garamond, DM_Sans, Sora, EB_Garamond } from 'next/font/google'
+import { Playfair_Display, DM_Sans, Sora, EB_Garamond } from 'next/font/google'
+import localFont from 'next/font/local'
 import { ClerkProvider } from '@clerk/nextjs'
 import { getSiteConfig } from '@/lib/siteConfig'
 import HeadTags from '@/components/HeadTags'
@@ -12,10 +13,13 @@ const playfair = Playfair_Display({
   weight: ['700'],
 })
 
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
+const cormorant = localFont({
+  src: '../public/fonts/cormorant-garamond-latin.woff2',
   variable: '--font-cormorant',
-  weight: ['500', '600'],
+  weight: '500 600',
+  style: 'normal',
+  display: 'swap',
+  adjustFontFallback: 'Times New Roman',
 })
 
 const dmSans = DM_Sans({
@@ -82,7 +86,7 @@ export default async function RootLayout({
             rel="stylesheet"
           />
           {/* Admin custom tags (e.g. Google Search Console verification) — must live in <head> */}
-          <HeadTags html={siteConfig.customHtmlTags} part="head" skipMetaNames={['google-site-verification']} />
+          <HeadTags html={siteConfig.customHtmlTags} part="head" skipMetaNames={['google-site-verification']} skipMetadataTags />
         </head>
         <body className="min-h-full flex flex-col bg-background text-on-background">
           <HeadTags html={siteConfig.customHtmlTags} part="body" />

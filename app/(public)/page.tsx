@@ -1,37 +1,60 @@
 import Link from 'next/link'
-import { SITE_URL, toPreferredUrl } from '@/lib/siteUrl'
-import { getSiteConfig } from '@/lib/siteConfig'
 import type { Metadata } from 'next'
+import { getSiteConfig } from '@/lib/siteConfig'
 import { prisma } from '@/lib/prisma'
-import { formatPrice } from '@/lib/utils'
 import WhyChooseUsInteractive from '@/components/WhyChooseUsInteractive'
 import HeroSearchBar from '@/components/home/HeroSearchBar'
 import { getSiteSectionHtml, HOME_EXPERIENCE_SECTION_KEY } from '@/lib/siteSections'
+import { HOME_URL, HOME_TITLE, HOME_DESCRIPTION, homeServices, homeFaqs } from '@/lib/homepageContent'
 
-export const revalidate = 3600 // Revalidate home page every hour
+export const revalidate = 3600
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig()
-  // Homepage canonical — always on the preferred www domain
-  const canonical = toPreferredUrl(config.canonicalUrl) || `${SITE_URL}/`
+  const image = config.ogImage || '/og-default.jpg'
+
   return {
-    alternates: { canonical: canonical.replace(/\/?$/, '/') },
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    keywords: null,
+    alternates: { canonical: HOME_URL },
+    openGraph: {
+      title: HOME_TITLE,
+      description: HOME_DESCRIPTION,
+      url: HOME_URL,
+      siteName: 'India Yoga Tourism',
+      type: 'website',
+      images: [{ url: image, alt: 'India Yoga Tourism' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: HOME_TITLE,
+      description: HOME_DESCRIPTION,
+      images: [{ url: image, alt: 'India Yoga Tourism' }],
+    },
   }
 }
 
 async function getFeaturedPackages() {
   try {
-    const pkgs = await prisma.package.findMany({
-      where: {
-        status: 'PUBLISHED'
-      },
+    return await prisma.package.findMany({
+      where: { status: 'PUBLISHED' },
       take: 4,
-      orderBy: {
-        totalBookings: 'desc'
-      }
+      orderBy: { totalBookings: 'desc' },
     })
-    return pkgs
-  } catch (e) {
+  } catch {
+    return []
+  }
+}
+
+async function getPublishedLocations() {
+  try {
+    return await prisma.package.findMany({
+      where: { status: 'PUBLISHED' },
+      select: { location: true },
+      distinct: ['location'],
+    })
+  } catch {
     return []
   }
 }
@@ -39,458 +62,256 @@ async function getFeaturedPackages() {
 async function getTestimonials() {
   try {
     return await prisma.review.findMany({
-      where: {
-        isPublished: true,
-        rating: 5
-      },
+      where: { isPublished: true, isVerified: true },
       take: 3,
-      include: {
-        user: true,
-        package: true
-      }
+      orderBy: { createdAt: 'desc' },
+      include: { user: true },
     })
-  } catch (e) {
+  } catch {
     return []
   }
 }
 
-export default async function HomePage() {
-  const featuredPackages = await getFeaturedPackages()
-  const dbTestimonials = await getTestimonials()
-  const homeExperienceSectionHtml = await getSiteSectionHtml(HOME_EXPERIENCE_SECTION_KEY)
+const priceFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
 
-  const displayPackages = featuredPackages
-  const displayTestimonials = dbTestimonials.map(t => ({
-    name: t.user.name,
-    country: t.country || 'International Guest',
-    content: t.content,
-    rating: t.rating
-  }))
+export default async function HomePage() {
+  const [featuredPackages, testimonials, locations, config, homeExperienceSectionHtml] = await Promise.all([
+    getFeaturedPackages(),
+    getTestimonials(),
+    getPublishedLocations(),
+    getSiteConfig(),
+    getSiteSectionHtml(HOME_EXPERIENCE_SECTION_KEY),
+  ])
+
+  // A configured destination is displayed only when a published listing matches it.
+  const destinations = config.destinations.filter((destination) => {
+    const query = (destination.locationQuery || destination.name).trim().toLowerCase()
+    return query && locations.some(({ location }) => location.toLowerCase().includes(query))
+  })
+  const whatsappNumber = config.whatsappNumber.replace(/\D/g, '')
+  const phoneNumber = config.contactPhone.replace(/[^\d+]/g, '')
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${HOME_URL}#website`,
+    name: 'India Yoga Tourism',
+    url: HOME_URL,
+    description: HOME_DESCRIPTION,
+    inLanguage: 'en',
+  }
+  const hasWebsiteSchema = /"@type"\s*:\s*(?:"WebSite"|\[[^\]]*"WebSite")/i.test(config.customHtmlTags)
+  // Keep the CMS section while reserving the homepage's single H1 for its main title.
+  const experienceHtml = homeExperienceSectionHtml.replace(/<(\/?)h1(?=[\s>])/gi, '<$1h2')
 
   return (
     <main className="bg-surface relative pb-12">
-      {/* 1. HERO SECTION WITH SEARCH WIDGET */}
-      <section className="relative min-h-[600px] lg:h-[95vh] flex items-center justify-center overflow-visible pt-24 pb-20">
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/35 to-primary/30 z-10"></div>
+      {!hasWebsiteSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema).replace(/</g, '\\u003c') }} />}
+
+      <section className="relative min-h-[600px] flex items-center justify-center pt-40 pb-16 md:pt-44 md:pb-20" aria-labelledby="home-title">
+        <div className="absolute inset-0 overflow-hidden">
           <img
-            className="object-cover w-full h-full absolute inset-0 scale-105"
-            alt="A breathtaking yoga session overlooking Rishikesh and the holy Ganges"
+            className="object-cover w-full h-full absolute inset-0"
+            alt="Yoga practice on a terrace overlooking a mountain valley"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            width={1600}
+            height={1000}
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSQ4PkqcD83cx3q9NfEA2D4D0dACa2KEUrl3ocyJqQEj8MsZiKp7yVUjfsz1PhCLoRpbOpTPCoSruI3zUdpAXV495u5Nx2wyRvMXsbWoFsC8TpG2X0Rq4esc3tdBCS7oprShHV2A_7yXUHsa8M_BcP9MXTc2RSEM0uCMoKYPbsZe5DZsZM13f-jaDBBnIrbBe6i7bndREoFQiDr5xm7JKp_iXQ2Z8BSeyFbYuAFCn22z3Nhf5-im3Iko54LI1Rq4pmjJJZPzbrJGjh"
           />
+          <div className="absolute inset-0 bg-black/60" />
         </div>
-
-        <div className="relative z-20 w-full max-w-[1280px] mx-auto px-6 md:px-12 flex flex-col items-center text-center">
-          <span className="inline-block px-4 py-1.5 bg-tertiary-fixed-dim/20 backdrop-blur-sm border border-tertiary-fixed-dim/30 text-tertiary-fixed rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6">
-            ✦ RISHIKESH · KERALA · DHARAMSHALA ✦
+        <div className="relative z-20 w-full max-w-[1280px] mx-auto px-6 md:px-12 text-center">
+          <span className="inline-block px-4 py-1.5 bg-primary/70 border border-tertiary-fixed-dim/40 text-tertiary-fixed rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+            Yoga · Meditation · Ayurveda
           </span>
-
-          <h1 className="font-display-lg text-4xl md:text-5xl lg:text-7xl text-on-primary max-w-5xl mx-auto leading-[1.1] mb-4 md:mb-6 drop-shadow-lg">
-            Transform Your Life <br />
-            <span className="text-tertiary-fixed-dim font-headline-lg italic">in Rishikesh, India</span>
+          <h1 id="home-title" className="font-display-lg text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white max-w-5xl mx-auto leading-tight mb-6">
+            Yoga Retreats in India{' – '}
+            <span className="text-tertiary-fixed font-headline-lg">Discover Yoga, Meditation &amp; Ayurveda</span>
           </h1>
-
-          <p className="font-body-md text-sm md:text-lg text-on-primary/95 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed drop-shadow-sm">
-            Discover handpicked yoga retreats, schools & wellness experiences in the Yoga Capital of the World.
+          <p className="font-body-md text-sm md:text-base text-white max-w-3xl mx-auto mb-8 leading-relaxed">
+            Discover India&apos;s rich traditions of yoga, meditation and Ayurveda with India Yoga Tourism. Explore yoga retreats, guided wellness experiences, yoga classes and traditional Ayurveda programs across destinations such as Rishikesh, Kerala and Dharamshala. Whether you&apos;re travelling from within India or overseas, find experiences that match your interests, schedule and wellness goals.
           </p>
-
-          {/* Interactive Search Bento Widget */}
-          <HeroSearchBar />
-
-          {/* Desktop trust badges row */}
-          <div className="hidden md:flex mt-12 flex-wrap justify-center gap-6 text-on-primary/95 text-xs font-bold">
-            <div className="flex items-center gap-1.5 bg-black/15 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
-              <span className="material-symbols-outlined text-tertiary-fixed-dim text-sm icon-fill">star</span>
-              <span>Trusted by International Travellers</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-black/15 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
-              <span className="material-symbols-outlined text-tertiary-fixed-dim text-sm icon-fill">verified_user</span>
-              <span>Verified Retreats &amp; Centers</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-black/15 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
-              <span className="material-symbols-outlined text-tertiary-fixed-dim text-sm icon-fill">local_offer</span>
-              <span>Best Price Guarantee</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-black/15 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
-              <span className="material-symbols-outlined text-tertiary-fixed-dim text-sm icon-fill">support_agent</span>
-              <span>24/7 Support Speaking Team</span>
-            </div>
-          </div>
-
-          {/* Mobile trust badges row (Horizontal scroll) */}
-          <div className="md:hidden mt-8 w-full overflow-x-auto no-scrollbar pb-2">
-            <div className="flex gap-3 whitespace-nowrap min-w-max">
-              <div className="flex items-center gap-1.5 bg-black/15 px-3 py-2 rounded-full border border-white/10 backdrop-blur-sm text-[10px] text-on-primary font-bold">
-                <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">star</span>
-                <span>Trusted by Travellers</span>
-              </div>
-              <div className="flex items-center gap-1.5 bg-black/15 px-3 py-2 rounded-full border border-white/10 backdrop-blur-sm text-[10px] text-on-primary font-bold">
-                <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">verified_user</span>
-                <span>Verified Retreats</span>
-              </div>
-              <div className="flex items-center gap-1.5 bg-black/15 px-3 py-2 rounded-full border border-white/10 backdrop-blur-sm text-[10px] text-on-primary font-bold">
-                <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">local_offer</span>
-                <span>Best Price Guarantee</span>
-              </div>
-              <div className="flex items-center gap-1.5 bg-black/15 px-3 py-2 rounded-full border border-white/10 backdrop-blur-sm text-[10px] text-on-primary font-bold">
-                <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">support_agent</span>
-                <span>24/7 Support English Team</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. FEATURED RETREATS */}
-      <section className="py-16 md:py-24 bg-[#F8F3E3]">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <div className="flex justify-between items-end mb-10">
-            <div className="max-w-2xl text-left">
-              <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold">
-                Featured Yoga Retreats in Rishikesh
-              </h2>
-            </div>
-            <Link
-              href="/packages"
-              className="flex items-center gap-1 text-primary hover:text-secondary font-bold transition-colors border-b border-primary hover:border-secondary pb-0.5 text-xs md:text-sm whitespace-nowrap"
-            >
-              View All
-              <span className="material-symbols-outlined text-xs">arrow_forward</span>
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10">
+            <Link href="/packages?category=RETREAT" className="bg-tertiary-fixed-dim hover:bg-tertiary-fixed text-on-tertiary-fixed font-bold px-7 py-3.5 rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+              Explore Yoga Retreats
+            </Link>
+            <Link href="/programmes" className="border border-white text-white hover:bg-white/10 font-bold px-7 py-3.5 rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+              Browse Wellness Programs
             </Link>
           </div>
-
-          {/* Desktop & Mobile Card Wrapper (Horizontal Snap Scroll on Mobile, Grid on Desktop) */}
-          <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 overflow-x-auto md:overflow-x-visible no-scrollbar gap-5 pb-4 md:pb-0 snap-x snap-mandatory">
-            {displayPackages.map((pkg) => {
-              const inclusionList = Array.isArray(pkg.inclusions) 
-                ? pkg.inclusions.slice(0, 3).join(' • ') 
-                : ((pkg as any).inclusions || 'Daily Yoga • Meditation • Meals');
-
-              return (
-                <div
-                  key={pkg.id}
-                  className="snap-start shrink-0 w-[82vw] md:w-auto bg-surface rounded-2xl overflow-hidden ambient-shadow flex flex-col group hover:-translate-y-2 transition-transform duration-300 border border-outline-variant/10 relative"
-                >
-                  {/* Image + Badges */}
-                  <div className="relative h-44 w-full overflow-hidden">
-                    <div className="absolute top-3 left-3 z-10 flex gap-1">
-                      <span className="bg-primary/95 text-on-primary text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
-                        {pkg.durationDays} Days / {pkg.durationNights || (pkg.durationDays - 1)} Nights
-                      </span>
-                      {pkg.isBestseller && (
-                        <span className="bg-tertiary-fixed-dim text-on-tertiary-fixed text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">
-                          Bestseller
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Heart Icon Toggle */}
-                    <button className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-primary/80 hover:bg-white hover:text-error transition-all duration-300">
-                      <span className="material-symbols-outlined text-[16px]">favorite</span>
-                    </button>
-
-                    <img
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      alt={pkg.title}
-                      src={pkg.featuredImage || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsp1ohJUUm13w0goBUZadNiTv4u_MRoXwO2fX6rZiVHoSkkd7vLLPNgriZMi67_cHAerB5rJLczMvqs_yyz26gTCkhc1u6oDVIGQ9_yfcEaFhCleqCq4VoXqeHjrnDYbM2NyMxpz6nNIAkgZuXL96ueCVzSUMhp7RrRAY2WaZp1IzbGH4Fvn79EkCVmwVkT-SrjOYRCvFPWGa8MeOOZEBbu7wrY12x58cNSTI2cTlO6AXCjH-csyKrFZ3Eb7nJ2UNMsWsPXWE20USb'}
-                    />
-                  </div>
-
-                  {/* Content info */}
-                  <div className="p-4 flex flex-col flex-1 text-left">
-                    <div className="flex items-center gap-0.5 text-[9px] font-bold text-secondary uppercase tracking-widest mb-1.5">
-                      <span className="material-symbols-outlined text-[12px]">location_on</span>
-                      {pkg.location}
-                    </div>
-
-                    <h3 className="font-headline-md text-primary text-lg font-bold leading-tight line-clamp-2 mb-2 group-hover:text-secondary transition-colors duration-300">
-                      {pkg.title}
-                    </h3>
-
-                    {/* Highlights/Inclusions details */}
-                    <div className="bg-surface-container-low p-2 rounded-lg text-[10px] text-on-surface-variant mb-3 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-xs text-secondary">spa</span>
-                      <span className="font-body-md line-clamp-1">
-                        {inclusionList}
-                      </span>
-                    </div>
-
-                    <hr className="border-outline-variant/10 mb-3" />
-
-                    {/* Rating + Price block */}
-                    <div className="flex justify-between items-center mt-auto">
-                      <div className="flex items-center gap-0.5">
-                        <span className="material-symbols-outlined text-tertiary-fixed-dim text-xs icon-fill">star</span>
-                        <span className="text-xs font-bold text-on-surface">
-                          {(pkg as any).avgRating || 4.8}
-                        </span>
-                        <span className="text-[9px] text-outline">
-                          ({(pkg as any).totalReviews || 65} Reviews)
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col text-right">
-                        <span className="text-[8px] text-outline uppercase tracking-wider">From</span>
-                        <span className="font-label-price text-primary font-bold text-sm">
-                          {formatPrice(pkg.priceShared)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <Link href={`/packages/${pkg.slug}`} className="mt-3 block w-full bg-primary/5 hover:bg-primary text-primary hover:text-on-primary font-bold text-[10px] py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center gap-0.5">
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <HeroSearchBar />
+          <p className="mt-6 text-sm text-white/90">Explore direct and partner-operated experiences. Review each provider&apos;s program details before booking.</p>
         </div>
       </section>
 
-      {homeExperienceSectionHtml && (
-        <div dangerouslySetInnerHTML={{ __html: homeExperienceSectionHtml }} />
-      )}
-
-      {/* 3. BROWSE BY EXPERIENCE */}
-      <section className="py-16 bg-surface border-b border-outline-variant/10">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12 text-center">
-          <div className="max-w-2xl mx-auto mb-10 text-left md:text-center">
-            <span className="text-xs text-secondary font-bold uppercase tracking-widest mb-2 block">
-              EXPLORE MODALITIES
-            </span>
-            <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold mb-4">
-              Browse by Experience
-            </h2>
-            <p className="font-body-md text-xs md:text-sm text-on-surface-variant/80 max-w-xl mx-auto">
-              Filter and find the exact path of wisdom matching your inner journey.
-            </p>
-          </div>
-
-          {/* Premium modaility circle row (Horizontal scroll on mobile, wrap on desktop) */}
-          <div className="flex overflow-x-auto no-scrollbar gap-5 py-4 px-2 snap-x snap-mandatory md:justify-center md:flex-wrap md:overflow-visible">
-            {[
-              { 
-                label: 'Yoga Retreats', 
-                href: '/packages?category=RETREAT',
-                img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=150&q=80'
-              },
-              { 
-                label: 'Meditation Retreats', 
-                href: '/packages?category=RETREAT',
-                img: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=150&q=80'
-              },
-              { 
-                label: 'Ayurveda & Healing', 
-                href: '/programmes',
-                img: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=150&q=80'
-              },
-              { 
-                label: 'Detox Retreats', 
-                href: '/packages?category=RETREAT',
-                img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=150&q=80'
-              },
-              { 
-                label: 'Wellness Retreats', 
-                href: '/packages?category=RETREAT',
-                img: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=150&q=80'
-              },
-              { 
-                label: 'Solo Female Retreats', 
-                href: '/packages',
-                img: 'https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&w=150&q=80'
-              },
-              { 
-                label: 'Couples Retreats', 
-                href: '/packages',
-                img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=150&q=80'
-              },
-              { 
-                label: 'Himalayan Retreats', 
-                href: '/packages?category=TREK',
-                img: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=150&q=80'
-              }
-            ].map((cat, idx) => (
-              <Link
-                key={idx}
-                href={cat.href}
-                className="snap-start shrink-0 flex flex-col items-center w-24 group cursor-pointer"
-              >
-                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-white shadow-md group-hover:border-secondary transition-all duration-300 relative">
-                  <img
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-                    src={cat.img}
-                    alt={cat.label}
-                  />
-                </div>
-                <span className="font-body-md text-[10px] font-bold text-on-surface-variant group-hover:text-primary transition-colors text-center mt-2 leading-tight truncate w-full">
-                  {cat.label}
-                </span>
-              </Link>
+      <section className="py-16 md:py-24 bg-surface" aria-labelledby="services-title">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <h2 id="services-title" className="font-headline-md text-3xl md:text-4xl text-primary font-bold mb-4">Explore Yoga Tourism &amp; Wellness Experiences in India</h2>
+          <p className="text-on-surface-variant max-w-3xl mb-10 leading-relaxed">Find a starting point for your journey, from yoga and meditation retreats in India to Ayurveda retreats and guided classes.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {homeServices.map((service) => (
+              <article key={service.title} className="bg-white border border-outline-variant/40 rounded-2xl p-6 flex flex-col ambient-shadow">
+                <span className="material-symbols-outlined text-secondary text-3xl mb-4" aria-hidden="true">{service.icon}</span>
+                <h3 className="font-headline-md text-2xl font-bold text-primary mb-3">{service.title}</h3>
+                <p className="text-sm text-on-surface-variant leading-relaxed mb-5">{service.description}</p>
+                <Link href={service.href} className="mt-auto text-sm text-secondary font-bold underline underline-offset-4 hover:text-primary">{service.linkText}</Link>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 4. WHY CHOOSE INDIA YOGA TOURISM? */}
-      <section className="py-16 md:py-24 bg-surface-container-lowest border-b border-outline-variant/10 text-left">
+      <section className="py-16 bg-surface-container-low" aria-labelledby="destinations-title">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <span className="text-xs text-secondary font-bold uppercase tracking-widest mb-2 block">
-            OUR LINEAGE
-          </span>
-          <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold mb-4">
-            Why Choose India Yoga Tourism (IYT)?
-          </h2>
-          <p className="font-body-md text-xs md:text-sm text-on-surface-variant/80 max-w-2xl mb-10">
-            We make your journey simple, safe, and deeply transformative. By bridging traditional guru-disciple lineages with high-end comforts, we deliver verified retreats.
-          </p>
+          <h2 id="destinations-title" className="font-headline-md text-3xl md:text-4xl text-primary font-bold mb-4">Discover the Best Yoga Retreat Destinations in India</h2>
+          <p className="text-on-surface-variant max-w-3xl mb-8 leading-relaxed">Explore India&apos;s diverse wellness destinations. From the Himalayan setting of Rishikesh to Kerala&apos;s Ayurveda traditions and Dharamshala&apos;s mountain atmosphere, each location offers a distinctive environment for yoga and mindful travel. Check current listings for available experiences.</p>
+          {destinations.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {destinations.map((destination) => (
+                <Link key={destination.id} href={`/packages?location=${encodeURIComponent(destination.locationQuery || destination.name)}`} className="group block bg-white border border-outline-variant/40 rounded-2xl p-6 hover:border-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-secondary">
+                  <span className="material-symbols-outlined text-secondary text-3xl mb-3" aria-hidden="true">{destination.icon || 'landscape'}</span>
+                  <h3 className="font-headline-md text-2xl text-primary font-bold mb-2">{destination.name}</h3>
+                  <p className="text-sm text-on-surface-variant mb-4">{destination.subtitle}</p>
+                  <span className="text-sm text-secondary font-bold underline underline-offset-4">Explore experiences in {destination.name}</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <Link href="/packages" className="inline-block text-secondary font-bold underline underline-offset-4">Browse listings by destination</Link>
+          )}
+        </div>
+      </section>
 
-          {/* Interactive Why Choose Us Component (Tabs on left, dynamic info cards on right) */}
+      <section className="py-16 md:py-24 bg-[#F8F3E3]" aria-labelledby="packages-title">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <h2 id="packages-title" className="font-headline-md text-3xl md:text-4xl text-primary font-bold mb-4">Find Yoga Retreats &amp; Wellness Packages That Suit You</h2>
+          <p className="text-on-surface-variant max-w-3xl mb-6 leading-relaxed">Compare yoga and wellness programs by destination, duration, activities and accommodation options. Browse available experiences, review program inclusions and explore booking options before planning your journey.</p>
+          <Link href="/packages" className="inline-block text-secondary font-bold underline underline-offset-4 mb-8">View all yoga retreat and wellness packages</Link>
+          {featuredPackages.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredPackages.map((pkg) => {
+                const roomPrices = [
+                  pkg.enableDormitory ? pkg.priceDormitory : null,
+                  pkg.enableShared ? pkg.priceShared : null,
+                  pkg.enablePrivate ? pkg.pricePrivate : null,
+                ].filter((price): price is number => typeof price === 'number' && Number.isFinite(price) && price >= 0)
+                const startingPrice = roomPrices.length > 0 ? Math.min(...roomPrices) : null
+                const hasRating = pkg.totalReviews > 0 && pkg.avgRating > 0 && pkg.avgRating <= 5
+
+                return (
+                  <article key={pkg.id} className="bg-white rounded-2xl overflow-hidden ambient-shadow flex flex-col border border-outline-variant/30">
+                    <div className="relative aspect-[4/3] bg-surface-container-low overflow-hidden">
+                      {pkg.featuredImage ? (
+                        <img src={pkg.featuredImage} alt={`${pkg.title} in ${pkg.location}`} loading="lazy" decoding="async" width={480} height={360} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-secondary"><span className="material-symbols-outlined text-4xl" aria-hidden="true">spa</span></div>
+                      )}
+                    </div>
+                    <div className="p-5 flex flex-col flex-1">
+                      <p className="text-xs text-secondary font-bold mb-2">{pkg.location}</p>
+                      <h3 className="font-headline-md text-xl text-primary font-bold mb-3"><Link href={`/packages/${pkg.slug}`} className="hover:underline">{pkg.title}</Link></h3>
+                      <p className="text-sm text-on-surface-variant mb-3">{pkg.durationDays} {pkg.durationDays === 1 ? 'day' : 'days'} / {pkg.durationNights} {pkg.durationNights === 1 ? 'night' : 'nights'}</p>
+                      {pkg.inclusions.length > 0 && (
+                        <ul className="list-disc pl-4 text-sm text-on-surface-variant space-y-1 mb-4">
+                          {pkg.inclusions.slice(0, 3).map((inclusion, index) => <li key={index}>{inclusion}</li>)}
+                        </ul>
+                      )}
+                      {hasRating && <p className="text-xs text-on-surface-variant mb-3">Rated {pkg.avgRating.toFixed(1)} / 5 · {pkg.totalReviews} {pkg.totalReviews === 1 ? 'review' : 'reviews'}</p>}
+                      <p className="mt-auto text-primary font-bold mb-4">{startingPrice !== null ? `From ${priceFormatter.format(startingPrice)} USD per person` : 'Contact us for pricing'}</p>
+                      <Link href={`/packages/${pkg.slug}`} aria-label={`View details and booking options for ${pkg.title}`} className="block text-center text-sm font-bold rounded-xl px-4 py-3 bg-primary text-white hover:bg-primary-container">View Details &amp; Booking Options</Link>
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
+          ) : (
+            <p className="text-on-surface-variant">Package details are currently unavailable here. <Link href="/contact" className="text-secondary underline underline-offset-4">Contact our team about current programs.</Link></p>
+          )}
+          <p className="text-sm text-on-surface-variant mt-6">Prices shown are in USD. Inclusions, dates, operator details and cancellation terms vary by program; confirm them before booking.</p>
+        </div>
+      </section>
+
+      {experienceHtml && <div dangerouslySetInnerHTML={{ __html: experienceHtml }} />}
+
+      <section className="py-16 md:py-24 bg-surface" aria-labelledby="ayurveda-title">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <h2 id="ayurveda-title" className="font-headline-md text-3xl md:text-4xl text-primary font-bold mb-5">Experience Traditional Ayurveda &amp; Panchakarma in India</h2>
+            <p className="text-on-surface-variant leading-relaxed mb-6">Discover Ayurveda wellness programs that introduce visitors to traditional Indian approaches to daily routines, relaxation and holistic well-being. Some centres also offer Panchakarma programs under qualified practitioner supervision. Program suitability, treatment details and medical considerations should be discussed with the relevant practitioner before booking.</p>
+            <div className="flex flex-wrap gap-x-6 gap-y-4 text-sm font-bold text-secondary">
+              <Link href="/programmes" className="underline underline-offset-4">Explore Ayurveda programs</Link>
+              <Link href="/panchakarma-retreat-rishikesh" className="underline underline-offset-4">Learn about Panchakarma in Rishikesh</Link>
+            </div>
+          </div>
+          <div className="bg-surface-container-low rounded-2xl p-6 md:p-8 border border-outline-variant/30">
+            <span className="material-symbols-outlined text-secondary text-4xl mb-4" aria-hidden="true">spa</span>
+            <h3 className="font-headline-md text-2xl text-primary font-bold mb-3">Choose a program with individual guidance</h3>
+            <p className="text-on-surface-variant leading-relaxed">Ask who provides the program, what a consultation includes, which activities are optional and whether the experience is appropriate for your circumstances. Wellness packages differ between centres.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-white border-y border-outline-variant/30" aria-labelledby="why-title">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+          <h2 id="why-title" className="font-headline-md text-3xl md:text-4xl text-primary font-bold mb-4">Why Choose India Yoga Tourism?</h2>
+          <p className="text-on-surface-variant max-w-3xl mb-10 leading-relaxed">Our platform brings together yoga, meditation and Ayurveda experiences in one place. Explore programs offered directly by our team alongside options from independent retreat providers, with information to help you compare experiences and make informed booking decisions.</p>
           <WhyChooseUsInteractive />
         </div>
       </section>
 
-      {/* 5. WHAT OUR GUESTS SAY */}
-      <section className="py-16 bg-surface border-b border-outline-variant/10 text-left">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12">
-          <div className="mb-8">
-            <h2 className="font-headline-md text-2xl md:text-4xl text-primary font-bold">
-              What Our Guests Say
-            </h2>
+      {testimonials.length > 0 && (
+        <section className="py-16" aria-labelledby="reviews-title">
+          <div className="max-w-[1280px] mx-auto px-6 md:px-12">
+            <h2 id="reviews-title" className="font-headline-md text-3xl text-primary font-bold mb-8">What Our Guests Say</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {testimonials.map((review) => (
+                <figure key={review.id} className="bg-white border border-outline-variant/30 rounded-2xl p-6">
+                  <p className="text-sm text-secondary mb-3">{review.rating} / 5</p>
+                  <blockquote className="text-sm text-on-surface-variant leading-relaxed mb-4">{review.content}</blockquote>
+                  <figcaption className="text-sm text-primary font-bold">{review.user.name}{review.country ? ` · ${review.country}` : ''}</figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
+        </section>
+      )}
 
-          {/* Horizontal Snap Scroll row for reviews & video play preview */}
-          <div className="flex overflow-x-auto no-scrollbar gap-4 pb-4 snap-x snap-mandatory">
-            {displayTestimonials.map((t, idx) => (
-              <div
-                key={idx}
-                className="snap-start shrink-0 w-[80vw] md:w-[400px] bg-white border border-outline-variant/20 rounded-2xl p-5 shadow-sm text-left flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex text-amber-500 mb-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-sm icon-fill">star</span>
-                    ))}
-                  </div>
-                  <p className="font-body-md text-xs text-on-surface-variant leading-relaxed">
-                    "{t.content}"
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 mt-4">
-                  <div className="w-8 h-8 rounded-full bg-secondary/15 text-secondary font-bold text-xs flex items-center justify-center uppercase">
-                    {t.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-primary">— {t.name}</p>
-                    <p className="text-[9px] text-outline">{t.country}</p>
-                  </div>
-                </div>
-              </div>
+      <section className="py-16 md:py-24 bg-surface-container-low" aria-labelledby="faq-title">
+        <div className="max-w-4xl mx-auto px-6 md:px-12">
+          <h2 id="faq-title" className="font-headline-md text-3xl md:text-4xl text-primary font-bold mb-8">Frequently Asked Questions About Yoga Retreats in India</h2>
+          <div className="space-y-4">
+            {homeFaqs.map((faq) => (
+              <details key={faq.question} className="group bg-white border border-outline-variant/40 rounded-xl p-5">
+                <summary className="cursor-pointer font-bold text-primary text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary"><h3 className="inline font-body-md">{faq.question}</h3></summary>
+                <p className="text-sm text-on-surface-variant leading-relaxed mt-4">{faq.answer}</p>
+              </details>
             ))}
-
-
           </div>
+          <Link href="/faqs" className="inline-block mt-6 text-secondary font-bold underline underline-offset-4">More booking and travel FAQs</Link>
         </div>
       </section>
 
-      {/* 6. CALL TO ACTION SECTION */}
-      <section className="relative py-20 overflow-hidden bg-[#012d1d] text-white">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-transparent z-10"></div>
-          <img
-            src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1600&q=80"
-            alt="Rishikesh Sunset Ganges"
-            className="object-cover w-full h-full object-center opacity-40 scale-105"
-          />
-        </div>
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-12 text-center lg:text-left flex flex-col lg:flex-row items-center justify-between gap-8">
-          <div className="max-w-2xl">
-            <span className="inline-block text-tertiary-fixed-dim font-bold text-xs uppercase tracking-widest mb-3">
-              ✦ Start Your Pilgrimage ✦
-            </span>
-            <h2 className="font-display-lg text-3xl md:text-5xl font-bold leading-tight mb-4">
-              Ready to Begin Your Journey?
-            </h2>
-            <p className="text-on-primary-container/90 text-sm md:text-lg max-w-xl leading-relaxed">
-              Book your perfect yoga retreat in Rishikesh today and learn directly from the traditional sages.
-            </p>
+      <section className="relative py-16 md:py-24 bg-primary text-white overflow-hidden" aria-labelledby="journey-title">
+        <img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1600&q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" width={1600} height={1000} className="absolute inset-0 object-cover w-full h-full opacity-20" />
+        <div className="relative max-w-[1280px] mx-auto px-6 md:px-12 text-center">
+          <h2 id="journey-title" className="font-display-lg text-3xl md:text-4xl font-bold mb-5">Start Planning Your Yoga &amp; Wellness Journey in India</h2>
+          <p className="text-white leading-relaxed mb-8">Explore retreats, compare wellness experiences and discover programs that fit your travel plans.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link href="/packages" className="bg-tertiary-fixed-dim hover:bg-tertiary-fixed text-on-tertiary-fixed font-bold px-7 py-3.5 rounded-full">Explore Retreats</Link>
+            <Link href="/contact" className="border border-white hover:bg-white/10 text-white font-bold px-7 py-3.5 rounded-full">Contact Our Team</Link>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full sm:w-auto">
-            <Link href="/packages" className="w-full sm:w-auto bg-tertiary-fixed-dim hover:bg-tertiary-fixed text-on-tertiary-fixed font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-lg text-center text-sm md:text-base">
-              Explore Retreats
-            </Link>
-            <a
-              href="https://wa.me/918800919486"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 border border-white/60 hover:bg-white/10 text-white font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-md cursor-pointer text-center text-sm md:text-base"
-            >
-              <span className="material-symbols-outlined text-lg">chat</span>
-              Talk to Retreat Expert
-            </a>
-          </div>
+          {whatsappNumber && <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="inline-block text-sm text-white underline underline-offset-4 mt-6">Ask our team on WhatsApp</a>}
         </div>
       </section>
 
-      {/* 7. BOTTOM VALUE PROPS BAR */}
-      <section className="bg-surface-container-low border-t border-outline-variant/30 py-8 relative z-10 mb-16 md:mb-0">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
-          <div className="flex flex-col md:flex-row items-center gap-3">
-            <span className="material-symbols-outlined text-secondary text-2xl">event_repeat</span>
-            <div>
-              <h4 className="font-bold text-xs text-primary uppercase tracking-wider">Flexible Booking</h4>
-              <p className="text-[10px] text-on-surface-variant">Easy online rescheduling</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center gap-3">
-            <span className="material-symbols-outlined text-secondary text-2xl">shield</span>
-            <div>
-              <h4 className="font-bold text-xs text-primary uppercase tracking-wider">Secure Payments</h4>
-              <p className="text-[10px] text-on-surface-variant">100% safe checkout</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center gap-3">
-            <span className="material-symbols-outlined text-secondary text-2xl">cancel</span>
-            <div>
-              <h4 className="font-bold text-xs text-primary uppercase tracking-wider">Free Cancellation</h4>
-              <p className="text-[10px] text-on-surface-variant">Up to 7 days departure</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center gap-3">
-            <span className="material-symbols-outlined text-secondary text-2xl">support_agent</span>
-            <div>
-              <h4 className="font-bold text-xs text-primary uppercase tracking-wider">24/7 Support</h4>
-              <p className="text-[10px] text-on-surface-variant">We are here to guide you</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile Sticky Footer Action Bar (WhatsApp & Call shortcuts) */}
-      <div className="md:hidden fixed bottom-4 left-4 right-20 z-40 flex gap-2 items-center">
-        <a
-          href="https://wa.me/918800919486"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 bg-[#1b4332] text-white hover:bg-primary-container px-4 py-3 rounded-full shadow-lg flex items-center gap-2 border border-white/20"
-        >
-          <span className="material-symbols-outlined text-sm bg-white/25 p-1 rounded-full text-white">chat</span>
-          <div className="flex flex-col text-left">
-            <span className="text-[10px] font-bold leading-none">Book on WhatsApp</span>
-            <span className="text-[8px] opacity-80 leading-none mt-0.5">Get Dates, Prices &amp; Instant Help</span>
-          </div>
-        </a>
-
-        <a
-          href="tel:+918800919486"
-          className="w-12 h-12 rounded-full bg-white border border-outline-variant/30 flex flex-col items-center justify-center text-primary shadow-lg hover:bg-surface shrink-0"
-        >
-          <span className="material-symbols-outlined text-lg">call</span>
-          <span className="text-[7px] font-bold uppercase tracking-wider -mt-0.5">Call Us</span>
-        </a>
+      <div className="md:hidden fixed bottom-4 left-4 right-24 z-40 flex gap-2 items-center">
+        {whatsappNumber && (
+          <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="flex-1 bg-primary text-white px-4 py-3 rounded-full shadow-lg flex items-center justify-center gap-2 border border-white/30 text-xs font-bold">
+            <span className="material-symbols-outlined text-sm" aria-hidden="true">chat</span>Ask on WhatsApp
+          </a>
+        )}
+        {phoneNumber && <a href={`tel:${phoneNumber}`} aria-label={`Call India Yoga Tourism on ${config.contactPhone}`} className="w-12 h-12 rounded-full bg-white border border-outline-variant flex items-center justify-center text-primary shadow-lg shrink-0"><span className="material-symbols-outlined text-lg" aria-hidden="true">call</span></a>}
       </div>
     </main>
   )

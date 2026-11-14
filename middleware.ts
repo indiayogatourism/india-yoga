@@ -55,7 +55,9 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
   // 2. Trailing slash normalization -> non-trailing slash (301 Moved Permanently)
   // Skip root '/' and API routes
   if (pathname.length > 1 && pathname.endsWith('/') && !pathname.startsWith('/api/')) {
-    const url = req.nextUrl.clone()
+    // NextURL remembers the original trailing slash and can add it back when
+    // serializing a clone. A native URL avoids redirecting the page to itself.
+    const url = new URL(req.url)
     url.pathname = pathname.replace(/\/+$/, '')
     return NextResponse.redirect(url, 301)
   }

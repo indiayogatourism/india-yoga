@@ -80,7 +80,7 @@ export async function getSitemapData() {
   const seenUrls = new Set<string>()
 
   const addEntry = (pathOrUrl: string, priorityNum: number, changefreq: string, lastmodDate?: string | Date | null) => {
-    let fullUrl = pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')
+    const fullUrl = pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')
       ? toPreferredUrl(pathOrUrl)
       : `${cleanBaseUrl}${pathOrUrl.startsWith('/') ? pathOrUrl : '/' + pathOrUrl}`
 
@@ -159,12 +159,14 @@ export async function getSitemapData() {
   // 5. Dynamic Online Classes
   if (config.includeClasses) {
     try {
-      const classes = await prisma.onlineClass.findMany({
+      const latestClass = await prisma.onlineClass.findFirst({
         where: { published: true },
-        select: { slug: true, updatedAt: true },
+        select: { updatedAt: true },
+        orderBy: { updatedAt: 'desc' },
       })
-      for (const cls of classes) {
-        addEntry(`/online-classes/${cls.slug}`, 0.8, 'weekly', cls.updatedAt)
+      // Classes are listed and booked on this page; there is no /online-classes/[slug] route.
+      if (latestClass) {
+        addEntry('/online-classes', 0.8, 'weekly', latestClass.updatedAt)
       }
     } catch (e) {
       console.error('Error fetching online classes for sitemap:', e)

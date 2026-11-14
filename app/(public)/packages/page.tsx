@@ -8,9 +8,9 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Yoga Retreats & Packages | India Yoga Tourism',
+  title: 'Yoga Retreat Packages in India | India Yoga Tourism',
   description:
-    'Explore authentic Himalayan yoga retreat packages – Panchakarma detox, Ayurvedic healing, teacher training and more. Book with Rishikesh masters.',
+    'Compare yoga retreat packages in India by destination, duration, accommodation and price. Review program inclusions and explore available booking options.',
   keywords: [
     'yoga retreat packages india',
     'panchakarma retreat rishikesh',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Yoga Retreat Packages | India Yoga Tourism',
     description:
-      'Choose from our curated selection of Himalayan wellness retreats, Panchakarma programs, and immersive yoga experiences.',
+      'Compare yoga and wellness packages by destination, duration, accommodation and price. Review each program before booking.',
     url: `${SITE_URL}/packages`,
     siteName: 'India Yoga Tourism',
     type: 'website',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Yoga Retreat Packages | India Yoga Tourism',
-    description: 'Curated Himalayan wellness retreats and yoga experiences.',
+    description: 'Compare yoga and wellness packages in India, review inclusions and explore booking options.',
   },
 }
 
@@ -117,10 +117,10 @@ export default async function PackagesPage({ searchParams }: PageProps) {
       {/* Header Section */}
       <section className="max-w-[1280px] mx-auto px-6 md:px-12 mb-16 text-center">
         <h1 className="font-display-lg-mobile md:font-display-lg text-primary mb-6">
-          Our Sanctuary Packages
+          Compare Yoga Retreat Packages in India
         </h1>
         <p className="font-body-lg text-on-surface-variant max-w-2xl mx-auto">
-          Discover transformative journeys curated to restore balance, deepen your practice, and reconnect you with nature in the heart of the Himalayas.
+          Compare available yoga and wellness experiences by destination, duration and accommodation. Review each program’s inclusions and booking details before choosing your stay.
         </p>
       </section>
 

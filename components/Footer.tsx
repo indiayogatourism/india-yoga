@@ -87,9 +87,9 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
             <span className="text-tertiary-fixed font-label-price text-xs uppercase tracking-widest block mb-2">
               ✦ Vasudhaiva Kutumbakam ✦
             </span>
-            <h3 className="font-headline-lg text-3xl md:text-4xl text-on-primary mb-3">
+            <h2 className="font-headline-lg text-3xl md:text-4xl text-on-primary mb-3">
               Join Our Inner Sanctuary
-            </h3>
+            </h2>
             <p className="font-body-md text-on-primary-container/80 text-sm md:text-base leading-relaxed">
               Subscribe to receive sacred travel updates, traditional wellness philosophies, and priority access to upcoming retreats.
             </p>
@@ -138,7 +138,7 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
             </span>
           </div>
           <p className="font-body-md text-on-primary-container/70 text-sm leading-relaxed mt-1">
-            Connecting global seekers with the authentic roots of Himalayan yoga, traditional Ayurveda, and sacred heritage. We offer luxury wellness sanctuaries for self-discovery and transformation.
+            Explore yoga, meditation and Ayurveda experiences in India, with programs offered directly by our team and by independent retreat providers. Review each listing and plan a journey that fits your interests.
           </p>
 
           <div className="flex items-start gap-2.5 text-xs text-on-primary-container/80 pt-1">
@@ -161,9 +161,9 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
 
         {/* Navigation Columns */}
         <div className="md:col-span-2 md:col-start-6 flex flex-col gap-4">
-          <h4 className="font-label-price font-bold text-tertiary-fixed-dim uppercase tracking-wider text-xs">
+          <h3 className="font-label-price font-bold text-tertiary-fixed-dim uppercase tracking-wider text-xs">
             Destinations
-          </h4>
+          </h3>
           <ul className="space-y-3 text-sm text-on-primary-container/80">
             {siteConfig.destinations.map((dest) => (
               <li key={dest.id || dest.name}>
@@ -180,9 +180,9 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
         </div>
 
         <div className="md:col-span-2 flex flex-col gap-4">
-          <h4 className="font-label-price font-bold text-tertiary-fixed-dim uppercase tracking-wider text-xs">
+          <h3 className="font-label-price font-bold text-tertiary-fixed-dim uppercase tracking-wider text-xs">
             Quick Links
-          </h4>
+          </h3>
           <ul className="space-y-3 text-sm text-on-primary-container/80">
             <li>
               <Link href="/packages" className="hover:text-tertiary-fixed transition-colors">
@@ -222,33 +222,33 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
           </ul>
         </div>
 
-        {/* Accreditations & Certifications */}
+        {/* Planning links: no unverified accreditations or certifications. */}
         <div className="md:col-span-3 flex flex-col gap-4">
-          <h4 className="font-label-price font-bold text-tertiary-fixed-dim uppercase tracking-wider text-xs">
-            Accreditation &amp; Trust
-          </h4>
+          <h3 className="font-label-price font-bold text-tertiary-fixed-dim uppercase tracking-wider text-xs">
+            Plan Your Visit
+          </h3>
           <div className="space-y-4">
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-on-primary-container/10">
-              <span className="material-symbols-outlined text-tertiary-fixed-dim text-2xl">verified_user</span>
+            <Link href="/contact" className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-on-primary-container/10 hover:bg-white/10">
+              <span className="material-symbols-outlined text-tertiary-fixed-dim text-2xl" aria-hidden="true">support_agent</span>
               <div>
-                <p className="text-xs font-bold text-on-primary">Ministry of Tourism India</p>
-                <p className="text-[10px] text-on-primary-container/70">Approved Wellness Platform</p>
+                <p className="text-xs font-bold text-on-primary">Contact Our Team</p>
+                <p className="text-[10px] text-on-primary-container/90">Ask about programs and providers</p>
               </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-on-primary-container/10">
-              <span className="material-symbols-outlined text-tertiary-fixed-dim text-2xl">spa</span>
+            </Link>
+            <Link href="/faqs" className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-on-primary-container/10 hover:bg-white/10">
+              <span className="material-symbols-outlined text-tertiary-fixed-dim text-2xl" aria-hidden="true">help</span>
               <div>
-                <p className="text-xs font-bold text-on-primary">Yoga Alliance USA</p>
-                <p className="text-[10px] text-on-primary-container/70">Certified Retreat Directors</p>
+                <p className="text-xs font-bold text-on-primary">Booking &amp; Travel FAQs</p>
+                <p className="text-[10px] text-on-primary-container/90">Review information before booking</p>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Social Media Links */}
           <div className="mt-2">
-            <h4 className="font-label-price font-bold text-tertiary-fixed-dim uppercase tracking-wider text-xs mb-3">
+            <h3 className="font-label-price font-bold text-tertiary-fixed-dim uppercase tracking-wider text-xs mb-3">
               Follow Our Journey
-            </h4>
+            </h3>
             <div className="flex flex-wrap gap-2">
               <a href="https://www.facebook.com/share/1D1aRiMwFp/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"
                 aria-label="Facebook" title="Facebook"

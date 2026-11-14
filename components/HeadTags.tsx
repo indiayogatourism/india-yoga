@@ -43,7 +43,7 @@ function parseAttrs(raw: string): Record<string, string | boolean> {
   return attrs
 }
 
-export function parseHeadTags(html: string, skipMetaNames: string[] = []) {
+export function parseHeadTags(html: string, skipMetaNames: string[] = [], skipMetadataTags = false) {
   const skip = new Set(skipMetaNames.map((n) => n.toLowerCase()))
   const elements: React.ReactNode[] = []
   let leftover = html.replace(/<!--[\s\S]*?-->/g, '')
@@ -63,7 +63,7 @@ export function parseHeadTags(html: string, skipMetaNames: string[] = []) {
 
   // <title>...</title>
   leftover = leftover.replace(/<title\b[^>]*>([\s\S]*?)<\/title\s*>/gi, (_, t) => {
-    elements.push(<title key={`ht${i++}`}>{String(t).trim()}</title>)
+    if (!skipMetadataTags) elements.push(<title key={`ht${i++}`}>{String(t).trim()}</title>)
     return ''
   })
 
@@ -72,6 +72,16 @@ export function parseHeadTags(html: string, skipMetaNames: string[] = []) {
     const attrs = parseAttrs(a)
     if (tag.toLowerCase() === 'meta' && typeof attrs.name === 'string' && skip.has(attrs.name.toLowerCase())) {
       return ''
+    }
+    if (skipMetadataTags) {
+      const name = String(attrs.name || attrs.property || '').toLowerCase()
+      const rel = String(attrs.rel || '').toLowerCase().split(/\s+/)
+      // The Metadata API owns these tags. Preserve verification, robots restrictions,
+      // tracking scripts, JSON-LD, and other admin-supplied integrations.
+      if (tag.toLowerCase() === 'meta' && (
+        name === 'description' || name === 'keywords' || name.startsWith('og:') || name.startsWith('twitter:')
+      )) return ''
+      if (tag.toLowerCase() === 'link' && rel.includes('canonical')) return ''
     }
     elements.push(
       tag.toLowerCase() === 'meta'
@@ -88,15 +98,18 @@ export default function HeadTags({
   html,
   part = 'all',
   skipMetaNames = [],
+  skipMetadataTags = false,
 }: {
   html?: string | null
   /** meta names already emitted elsewhere (e.g. via the Metadata API) — dropped to avoid duplicates */
   skipMetaNames?: string[]
+  /** Let native metadata control titles, descriptions, canonical and social tags. */
+  skipMetadataTags?: boolean
   /** 'head' = only meta/link/script/title, 'body' = only the non-head leftovers */
   part?: 'all' | 'head' | 'body'
 }) {
   if (!html || !html.trim()) return null
-  const { elements, leftover } = parseHeadTags(html, skipMetaNames)
+  const { elements, leftover } = parseHeadTags(html, skipMetaNames, skipMetadataTags)
   return (
     <>
       {part !== 'body' && elements}
