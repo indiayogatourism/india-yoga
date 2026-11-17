@@ -122,6 +122,7 @@ export function getPaymentReceiptTemplate(data: BookingEmailData): string {
 }
 
 export function getEnquiryReceivedTemplate(name: string): string {
+  name = escapeEnquiryHtml(name)
   return `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #c1c8c2; border-radius: 8px; background-color: #fcf8ff; color: #1a1a2e;">
       <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #012d1d; padding-bottom: 20px;">
@@ -131,7 +132,7 @@ export function getEnquiryReceivedTemplate(name: string): string {
       <div style="padding: 10px 0;">
         <h2 style="color: #012d1d; font-family: 'Cormorant Garamond', serif;">Namaste ${name} 🙏</h2>
         <p style="font-size: 16px; line-height: 1.6;">We have received your enquiry and would like to thank you for contacting us.</p>
-        <p style="font-size: 16px; line-height: 1.6;">One of our dedicated wellness planners will reach out to you within the next 24 hours to help you plan your spiritual journey.</p>
+        <p style="font-size: 16px; line-height: 1.6;">Our team will review your travel preferences and respond using the contact details you provided. This email acknowledges an enquiry and is not a booking confirmation.</p>
       </div>
 
       <div style="margin-top: 40px; border-top: 1px solid #c1c8c2; padding-top: 20px; font-size: 12px; text-align: center; color: #717973;">
@@ -142,6 +143,11 @@ export function getEnquiryReceivedTemplate(name: string): string {
 }
 
 export function getEnquiryAlertTemplate(name: string, email: string, phone: string | null, message: string, packageTitle?: string): string {
+  name = escapeEnquiryHtml(name)
+  email = escapeEnquiryHtml(email)
+  phone = phone ? escapeEnquiryHtml(phone) : null
+  message = escapeEnquiryHtml(message).replace(/\n/g, '<br>')
+  packageTitle = packageTitle ? escapeEnquiryHtml(packageTitle) : undefined
   return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
       <h2 style="color: #ba1a1a;">New Customer Enquiry Alert!</h2>
@@ -155,6 +161,10 @@ export function getEnquiryAlertTemplate(name: string, email: string, phone: stri
       </div>
     </div>
   `
+}
+
+function escapeEnquiryHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]!)
 }
 
 export function getReviewRequestTemplate(name: string, packageTitle: string, reviewLink: string): string {

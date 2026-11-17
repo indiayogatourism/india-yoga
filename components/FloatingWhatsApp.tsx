@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
 export default function FloatingWhatsApp() {
+  const pathname = usePathname()
   const [whatsappNumber, setWhatsappNumber] = useState('918800919486')
 
   useEffect(() => {
@@ -16,7 +18,7 @@ export default function FloatingWhatsApp() {
             setWhatsappNumber(cleanNum)
           }
         }
-      } catch (err) {
+      } catch {
         // Fallback to default
       }
     }
@@ -32,7 +34,8 @@ export default function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`Chat with us on WhatsApp +${whatsappNumber}`}
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 group cursor-pointer select-none"
+      data-track-event="whatsapp_enquiry_click"
+      className={`fixed right-6 z-30 flex items-center gap-2.5 group cursor-pointer select-none ${pathname.startsWith('/packages/') ? 'bottom-28 lg:bottom-6' : 'bottom-6'}`}
     >
       {/* Tooltip text bubble */}
       <span className="hidden sm:inline-flex items-center gap-1.5 bg-surface/95 text-on-surface backdrop-blur-md px-3.5 py-2 rounded-full shadow-lg border border-outline-variant/30 text-xs font-bold transition-all duration-300 group-hover:scale-105 group-hover:bg-white">

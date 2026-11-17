@@ -99,7 +99,7 @@ export async function POST(req: Request) {
 
     const bookingRef = await generateBookingRef()
     const departure = new Date(arrival)
-    departure.setDate(arrival.getDate() + pkg.durationDays)
+    departure.setUTCDate(arrival.getUTCDate() + pkg.durationNights)
 
     // Save Booking
     const booking = await prisma.booking.create({
@@ -167,8 +167,8 @@ export async function POST(req: Request) {
       totalAmount,
       gatewayData
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Booking creation error:', error)
-    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json({ error: 'Unable to start your booking. Please try again or contact our team.' }, { status: 500 })
   }
 }

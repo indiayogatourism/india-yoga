@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import FloatingWhatsApp from '@/components/FloatingWhatsApp'
 import { getSiteConfig } from '@/lib/siteConfig'
+import ConversionTracking from '@/components/ConversionTracking'
 
 export default async function PublicLayout({
   children,
@@ -21,6 +22,7 @@ export default async function PublicLayout({
 
   return (
     <>
+      <ConversionTracking />
       <Navbar initialConfig={shared} />
       <div className="flex-grow">
         {children}

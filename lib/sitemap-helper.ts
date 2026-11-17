@@ -33,6 +33,8 @@ export const DEFAULT_SITEMAP_CONFIG: SitemapConfig = {
 export const DEFAULT_STATIC_ROUTES = [
   { path: '', priority: 1.0, changefreq: 'daily' },
   { path: '/packages', priority: 0.9, changefreq: 'daily' },
+  { path: '/yoga-retreats-india', priority: 0.9, changefreq: 'daily' },
+  { path: '/destinations/rishikesh', priority: 0.8, changefreq: 'weekly' },
   { path: '/programmes', priority: 0.9, changefreq: 'daily' },
   { path: '/online-classes', priority: 0.8, changefreq: 'weekly' },
   { path: '/blog', priority: 0.8, changefreq: 'daily' },
@@ -91,7 +93,7 @@ export async function getSitemapData() {
     if (lastmodDate) {
       try {
         formattedDate = new Date(lastmodDate).toISOString()
-      } catch (e) {
+      } catch {
         formattedDate = currentDateISO
       }
     }

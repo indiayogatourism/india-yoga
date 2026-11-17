@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { SITE_URL } from '@/lib/siteUrl'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
+import type { Page } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,14 +32,14 @@ export const metadata: Metadata = {
   },
 }
 
-function getExcerpt(page: any) {
+function getExcerpt(page: Pick<Page, 'metaDescription' | 'content'>) {
   return (page.metaDescription || page.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()).slice(0, 180)
 }
 
 export default async function KnowMorePage() {
-  let pages: any[] = []
+  let pages: Page[] = []
   try {
-    pages = await (prisma as any).page.findMany({
+    pages = await prisma.page.findMany({
       where: { published: true },
       orderBy: { title: 'asc' },
     })
@@ -73,6 +74,10 @@ export default async function KnowMorePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 pt-12 md:px-10 md:pt-16">
+        <div className="mb-8 flex flex-wrap gap-4 rounded-2xl border border-[#17372b]/15 bg-white p-6 text-sm font-semibold text-[#17372b]">
+          <Link href="/yoga-retreats-india" className="underline underline-offset-4">Choosing a yoga retreat in India</Link>
+          <Link href="/destinations/rishikesh" className="underline underline-offset-4">Planning your Rishikesh retreat</Link>
+        </div>
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[#18372b]/15 pb-5">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[.2em] text-[#997c43]">Explore the library</p>
@@ -89,7 +94,7 @@ export default async function KnowMorePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {pages.map((page: any, index: number) => (
+            {pages.map((page, index) => (
               <Link
                 key={page.id}
                 href={`/${page.slug}`}

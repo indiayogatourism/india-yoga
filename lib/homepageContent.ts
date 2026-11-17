@@ -42,7 +42,7 @@ export const homeServices = [
     title: 'Yoga Retreats',
     description: 'Explore short and extended yoga retreats across India’s popular wellness destinations.',
     icon: 'landscape',
-    href: '/packages?category=RETREAT',
+    href: '/yoga-retreats-india',
     linkText: 'Compare yoga retreat packages',
   },
 ]

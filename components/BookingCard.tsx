@@ -1,235 +1,58 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { formatPrice } from '@/lib/utils'
+import { usdPrice } from '@/lib/retreatContent'
+import { trackConversion } from '@/lib/analytics'
 
 interface BookingCardProps {
   packageId: string
-  priceDormitory?: number | null
-  priceShared: number
-  pricePrivate: number
-  enableDormitory?: boolean
-  enableShared?: boolean
-  enablePrivate?: boolean
-  startDate?: string | null
-  endDate?: string | null
-  upcomingDates?: string[]
+  packageSlug: string
+  packageTitle: string
+  rooms: { type: 'dormitory' | 'shared' | 'private'; label: string; price: number }[]
+  bookingDates: string[]
+  canBook: boolean
+  maxGuests: number
+  flexibleDates: boolean
+  enquiryUrl: string
+  whatsappUrl: string
 }
 
-export default function BookingCard({
-  packageId,
-  priceDormitory,
-  priceShared,
-  pricePrivate,
-  enableDormitory = false,
-  enableShared = true,
-  enablePrivate = true,
-  startDate,
-  endDate,
-  upcomingDates = [],
-}: BookingCardProps) {
+export default function BookingCard({ packageId, packageSlug, packageTitle, rooms, bookingDates, canBook, maxGuests, flexibleDates, enquiryUrl, whatsappUrl }: BookingCardProps) {
   const router = useRouter()
   const [guests, setGuests] = useState(1)
-  const [whatsappNumber, setWhatsappNumber] = useState('918800919486')
-
-  useEffect(() => {
-    async function fetchConfig() {
-      try {
-        const res = await fetch('/api/site-config')
-        const data = await res.json()
-        if (data.success && data.config?.whatsappNumber) {
-          const cleanNum = data.config.whatsappNumber.replace(/[^0-9]/g, '')
-          if (cleanNum) setWhatsappNumber(cleanNum)
-        }
-      } catch (err) {
-        // use default fallback
-      }
-    }
-    fetchConfig()
-  }, [])
-
-  // Determine available options
-  const availableOptions: Array<{ type: 'dormitory' | 'shared' | 'private'; label: string; price: number }> = []
-  if (enableDormitory && priceDormitory != null) {
-    availableOptions.push({ type: 'dormitory', label: 'Dormitory Room', price: priceDormitory })
-  }
-  if (enableShared !== false) {
-    availableOptions.push({ type: 'shared', label: 'Shared Twin Room', price: priceShared })
-  }
-  if (enablePrivate !== false) {
-    availableOptions.push({ type: 'private', label: 'Private Room', price: pricePrivate })
-  }
-
-  // Fallback to shared if nothing enabled
-  if (availableOptions.length === 0) {
-    availableOptions.push({ type: 'shared', label: 'Shared Twin Room', price: priceShared })
-  }
-
-  const [roomType, setRoomType] = useState<'dormitory' | 'shared' | 'private'>(availableOptions[0].type)
-  const [selectedBatch, setSelectedBatch] = useState<string>(() => {
-    if (upcomingDates && upcomingDates.length > 0) return upcomingDates[0]
-    if (startDate && endDate) return `${startDate} to ${endDate}`
-    if (startDate) return startDate
-    return ''
-  })
-
-  // Selected base price
-  const selectedOpt = availableOptions.find((o) => o.type === roomType) || availableOptions[0]
-  const basePrice = selectedOpt.price
-  const startingPrice = Math.min(...availableOptions.map((o) => o.price))
-  const total = basePrice * guests
+  const [roomType, setRoomType] = useState<string>(rooms[0]?.type || '')
+  const [selectedBatch, setSelectedBatch] = useState(bookingDates[0] || '')
+  const room = rooms.find((option) => option.type === roomType)
+  const total = room ? room.price * guests : null
 
   const handleBookNow = () => {
-    let url = `/booking/checkout?packageId=${packageId}&guests=${guests}&roomType=${roomType}`
-    if (selectedBatch) {
-      url += `&selectedBatch=${encodeURIComponent(selectedBatch)}`
-    }
-    router.push(url)
+    if (!canBook || !room || (!flexibleDates && !bookingDates.includes(selectedBatch))) return
+    trackConversion('booking_cta_click', { package_slug: packageSlug, source: 'booking_card' })
+    const query = new URLSearchParams({ packageId, guests: String(guests), roomType: room.type })
+    if (selectedBatch) query.set('selectedBatch', selectedBatch)
+    router.push(`/booking/checkout?${query}`)
   }
 
-  return (
-    <>
-      <div id="booking-card-section" className="sticky top-28 bg-surface-container-low/75 backdrop-blur-md soft-shadow rounded-2xl p-6 border-t-2 border-tertiary-fixed-dim z-20 shadow-md">
-        <div className="flex justify-between items-end mb-6 border-b border-outline-variant/20 pb-4">
-          <div>
-            <span className="text-xs text-on-surface-variant block mb-1">Starting From</span>
-            <div className="font-label-price text-3xl text-primary leading-none font-bold">
-              {formatPrice(startingPrice)}
-              <span className="text-xs font-body-md text-on-surface-variant font-normal"> /person</span>
-            </div>
-          </div>
-          <div className="bg-secondary-container/35 text-secondary text-xs px-2.5 py-1 rounded-full font-bold">
-            Early Bird Offer
-          </div>
-        </div>
-
-        <div className="space-y-5">
-          {/* Retreat Date Batch Selection */}
-          {(upcomingDates.length > 0 || startDate) && (
-            <div>
-              <label className="block text-xs font-bold text-primary mb-1.5 uppercase tracking-wider flex items-center gap-1">
-                <span className="material-symbols-outlined text-[16px] text-secondary">calendar_month</span>
-                Retreat Batch / Dates
-              </label>
-              {upcomingDates.length > 0 ? (
-                <select
-                  value={selectedBatch}
-                  onChange={(e) => setSelectedBatch(e.target.value)}
-                  className="w-full p-3 bg-surface-container-lowest border border-secondary/40 rounded-xl text-primary text-xs sm:text-sm font-bold focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary cursor-pointer shadow-xs"
-                >
-                  {upcomingDates.map((batch, idx) => (
-                    <option key={idx} value={batch}>
-                      📅 Batch {idx + 1}: {batch}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <div className="p-3 bg-secondary-container/20 border border-secondary/30 rounded-xl text-xs font-bold text-primary flex items-center justify-between">
-                  <span>{startDate} {endDate ? `to ${endDate}` : ''}</span>
-                  <span className="text-[10px] text-secondary font-semibold uppercase tracking-wider">Fixed Dates</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Guest Counter */}
-          <div>
-            <label className="block text-xs font-bold text-primary mb-1.5 uppercase tracking-wider">Guests</label>
-            <div className="flex items-center justify-between border border-outline-variant/50 rounded-xl p-2 bg-surface-container-lowest">
-              <button
-                onClick={() => setGuests(Math.max(1, guests - 1))}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container hover:bg-surface-dim text-primary transition-colors cursor-pointer"
-                type="button"
-              >
-                <span className="material-symbols-outlined text-[18px]">remove</span>
-              </button>
-              <span className="font-bold text-base w-8 text-center text-primary">{guests}</span>
-              <button
-                onClick={() => setGuests(guests + 1)}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container hover:bg-surface-dim text-primary transition-colors cursor-pointer"
-                type="button"
-              >
-                <span className="material-symbols-outlined text-[18px]">add</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Accommodation Selection (Dynamically Ticked Options) */}
-          <div>
-            <label className="block text-xs font-bold text-primary mb-1.5 uppercase tracking-wider">Accommodation</label>
-            <select
-              value={roomType}
-              onChange={(e) => setRoomType(e.target.value as 'dormitory' | 'shared' | 'private')}
-              className="w-full p-3.5 bg-surface-container-lowest border border-outline-variant/50 rounded-xl text-primary text-xs sm:text-sm font-semibold focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary cursor-pointer"
-            >
-              {availableOptions.map((opt) => (
-                <option key={opt.type} value={opt.type}>
-                  {opt.label} ({formatPrice(opt.price)}/person)
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Total calculation */}
-          <div className="flex justify-between items-center pt-2 border-t border-outline-variant/20">
-            <span className="font-bold text-primary text-sm">Total Amount</span>
-            <span className="font-label-price text-2xl font-bold text-primary">{formatPrice(total)}</span>
-          </div>
-
-          {/* Actions */}
-          <div className="pt-2 space-y-3">
-            <button
-              onClick={handleBookNow}
-              className="w-full bg-[#1C2E26] text-[#E2C799] font-body-lg font-bold py-4 rounded-full text-center hover:bg-black transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
-              type="button"
-            >
-              <span>Book Sanctuary</span>
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </button>
-            
-            <a
-              href={`https://wa.me/${whatsappNumber}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full border border-secondary text-secondary py-3 rounded-full font-body-md font-bold text-xs sm:text-sm text-center flex justify-center items-center gap-2 hover:bg-secondary/5 transition-colors"
-            >
-              <span className="material-symbols-outlined text-[18px]">chat</span>
-              WhatsApp Consultation
-            </a>
-          </div>
-        </div>
-
-        {/* Trust Signals */}
-        <div className="mt-6 flex flex-col gap-2.5 border-t border-outline-variant/20 pt-4">
-          <div className="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
-            <span className="material-symbols-outlined text-base text-secondary">lock</span>
-            <span>Secure SSL encrypted checkout</span>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
-            <span className="material-symbols-outlined text-base text-secondary">event_available</span>
-            <span>Free cancellation up to 30 days before</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Sticky Mobile Bottom Booking Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1C2E26]/95 backdrop-blur-md text-white px-5 py-3 border-t border-[#E2C799]/30 shadow-[0_-4px_25px_rgba(0,0,0,0.2)] flex items-center justify-between animate-in slide-in-from-bottom duration-300">
-        <div>
-          <span className="text-[10px] text-[#E2C799] uppercase tracking-wider block font-bold">Total Price</span>
-          <div className="text-lg font-bold text-white flex items-baseline gap-1">
-            {formatPrice(total)}
-            <span className="text-[10px] text-white/60 font-normal">({guests} {guests === 1 ? 'guest' : 'guests'})</span>
-          </div>
-        </div>
-        <button
-          onClick={handleBookNow}
-          className="bg-[#E2C799] text-[#1C2E26] font-bold text-xs px-5 py-2.5 rounded-full shadow-md flex items-center gap-1.5 active:scale-95 transition-transform"
-        >
-          <span>Book Now</span>
-          <span className="material-symbols-outlined text-sm">arrow_forward</span>
-        </button>
-      </div>
-    </>
-  )
+  return <>
+    <aside id="booking-card-section" aria-label={`Booking options for ${packageTitle}`} className="scroll-mt-32 rounded-3xl border border-[#17372b]/15 bg-white p-6 shadow-sm lg:sticky lg:top-28">
+      <h2 className="font-display-lg text-2xl text-[#17372b]">Plan your retreat</h2>
+      <p className="mt-2 text-sm leading-6 text-[#536457]">{canBook ? 'Choose your room and guests, then review your travel details in checkout.' : 'Current dates or room prices need confirmation. Enquire about the next available retreat.'}</p>
+      {canBook && <div className="mt-6 space-y-5">
+        {bookingDates.length > 0 ? <div><label htmlFor="retreat-batch" className="mb-2 block text-sm font-semibold text-[#17372b]">Retreat dates</label><select id="retreat-batch" value={selectedBatch} onChange={(event) => setSelectedBatch(event.target.value)} className="min-h-12 w-full rounded-xl border border-[#17372b]/25 bg-white p-3 text-sm text-[#17372b]">{bookingDates.map((batch) => <option key={batch} value={batch}>{batch}</option>)}</select></div> : <p className="rounded-xl bg-[#e9ecdf] p-3 text-sm leading-6 text-[#536457]">Flexible dates: select arrival dates in checkout and confirm arrangements with the team.</p>}
+        <div><label htmlFor="retreat-room" className="mb-2 block text-sm font-semibold text-[#17372b]">Accommodation</label><select id="retreat-room" value={roomType} onChange={(event) => setRoomType(event.target.value)} className="min-h-12 w-full rounded-xl border border-[#17372b]/25 bg-white p-3 text-sm text-[#17372b]">{rooms.map((option) => <option key={option.type} value={option.type}>{option.label} — {usdPrice(option.price)} USD / person</option>)}</select></div>
+        <div><label htmlFor="retreat-guests" className="mb-2 block text-sm font-semibold text-[#17372b]">Guests</label><input id="retreat-guests" type="number" min={1} max={maxGuests} value={guests} onChange={(event) => setGuests(Math.max(1, Math.min(maxGuests, Math.floor(Number(event.target.value)) || 1)))} className="min-h-12 w-full rounded-xl border border-[#17372b]/25 p-3 text-[#17372b]" /></div>
+        {total !== null && <div className="border-t border-[#17372b]/15 pt-5"><p className="text-sm text-[#536457]">Total for {guests} {guests === 1 ? 'guest' : 'guests'}</p><p className="mt-1 text-2xl font-bold text-[#17372b]">{usdPrice(total)} USD</p></div>}
+        <button type="button" onClick={handleBookNow} className="min-h-12 w-full rounded-full bg-[#17372b] px-5 py-3 font-bold text-white hover:bg-[#294e3e]">Continue to booking</button>
+      </div>}
+      <Link href={enquiryUrl} className="mt-5 flex min-h-12 items-center justify-center rounded-full border border-[#17372b]/30 px-4 text-sm font-semibold text-[#17372b]">Enquire about this retreat</Link>
+      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" data-track-event="whatsapp_enquiry_click" data-track-package={packageSlug} className="mt-3 flex min-h-12 items-center justify-center text-sm font-semibold text-[#17372b] underline underline-offset-4">Ask on WhatsApp</a>
+      <p className="mt-5 text-xs leading-6 text-[#536457]">Confirm room availability and review the <Link href="/refund-policy" className="underline">cancellation policy</Link> before payment. Prices are in US dollars (USD).</p>
+    </aside>
+    <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-[#e5cf9a]/30 bg-[#17372b] px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-white lg:hidden">
+      <div className="min-w-0"><p className="text-xs text-[#e5cf9a]">{total !== null ? `Total · ${guests} ${guests === 1 ? 'guest' : 'guests'}` : 'Plan your retreat'}</p><p className="font-bold">{total !== null ? `${usdPrice(total)} USD` : 'Ask about dates'}</p></div>
+      <a href={canBook ? '#booking-card-section' : enquiryUrl} data-track-event={canBook ? 'booking_cta_click' : undefined} data-track-package={packageSlug} className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-[#e5cf9a] px-5 text-sm font-bold text-[#17372b]">{canBook ? 'Choose & book' : 'Enquire'}</a>
+    </div>
+  </>
 }

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { SITE_URL } from '@/lib/siteUrl'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
-import { PackageCategory } from '@prisma/client'
+import { PackageCategory, type Prisma, type Package } from '@prisma/client'
 import { filterAvailablePackages } from '@/lib/packageAvailability'
 import type { Metadata } from 'next'
 
@@ -54,7 +54,7 @@ export default async function PackagesPage({ searchParams }: PageProps) {
   const locationParam = params.location || ''
 
   // Build prisma filter query
-  const whereClause: any = {
+  const whereClause: Prisma.PackageWhereInput = {
     status: 'PUBLISHED'
   }
 
@@ -84,7 +84,7 @@ export default async function PackagesPage({ searchParams }: PageProps) {
     }
   }
 
-  let packages: any[] = []
+  let packages: Package[] = []
   try {
     packages = filterAvailablePackages(await prisma.package.findMany({
       where: whereClause,
@@ -255,7 +255,7 @@ export default async function PackagesPage({ searchParams }: PageProps) {
                   <p className="font-body-md text-on-surface-variant mb-8 line-clamp-3 flex-grow">
                     {pkg.shortDescription}
                   </p>
-                  <Link href={`/packages/${pkg.slug}`} className="mt-auto block w-full py-3.5 border-2 border-on-tertiary-container text-on-tertiary-container font-label-price text-sm tracking-wider uppercase rounded hover:bg-on-tertiary-container hover:text-white transition-colors text-center">
+                  <Link href={`/packages/${pkg.slug}`} data-track-event="retreat_listing_click" data-track-package={pkg.slug} className="mt-auto block w-full py-3.5 border-2 border-on-tertiary-container text-on-tertiary-container font-label-price text-sm tracking-wider uppercase rounded hover:bg-on-tertiary-container hover:text-white transition-colors text-center">
                     View Retreat
                   </Link>
                 </div>

@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatPrice, formatDate } from '@/lib/utils'
 import { getAuthorizedBookingByRef } from '@/lib/bookingAccess'
+import ConversionTracking from '@/components/ConversionTracking'
+import type { Prisma } from '@prisma/client'
 
 interface PageProps {
   searchParams: Promise<{
@@ -11,6 +13,7 @@ interface PageProps {
 }
 
 export const dynamic = 'force-dynamic'
+export const metadata = { title: 'Booking Status | India Yoga Tourism', robots: { index: false, follow: false } }
 
 export default async function BookingConfirmationPage({ searchParams }: PageProps) {
   const params = await searchParams
@@ -20,7 +23,7 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
     redirect('/packages')
   }
 
-  let booking: any = null
+  let booking: Prisma.BookingGetPayload<{ include: { package: true; payment: true } }> | null = null
   try {
     const authorizedBooking = await getAuthorizedBookingByRef(ref)
     if (!authorizedBooking) {
@@ -46,6 +49,7 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
 
   return (
     <main className="pt-32 pb-24 max-w-[800px] mx-auto px-6 text-center">
+      {isConfirmed && <ConversionTracking event="booking_confirmed" packageSlug={booking.package.slug} source="confirmation" dedupeKey={booking.id} value={booking.totalAmount} currency={booking.currency} />}
       <div className="bg-surface-container-low/50 border border-outline-variant/30 rounded-xl p-8 md:p-12 soft-shadow">
         {/* Success Icon */}
         <div className="w-20 h-20 bg-secondary-container/40 text-secondary rounded-full flex items-center justify-center mx-auto mb-6">

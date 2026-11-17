@@ -30,7 +30,7 @@ const menuGroups: Record<MenuKey, { eyebrow: string; title: string; description:
     description: 'Find a retreat that fits your practice, your pace and your travel plans.',
     href: '/packages', linkText: 'Explore all retreats',
     links: [
-      { label: 'Yoga retreats', href: '/packages?category=RETREAT', description: 'Short escapes and longer immersions', icon: Compass },
+      { label: 'Yoga retreats', href: '/yoga-retreats-india', description: 'Compare stays, practice and destinations', icon: Compass },
       { label: 'Yoga & meditation', href: '/packages?search=meditation', description: 'Space to breathe and reconnect', icon: Leaf },
       { label: 'Himalayan journeys', href: '/packages?category=TREK', description: 'Explore mountain travel experiences', icon: Mountain },
     ],
@@ -52,6 +52,7 @@ const menuGroups: Record<MenuKey, { eyebrow: string; title: string; description:
     links: [
       { label: 'The wellness journal', href: '/blog', description: 'Stories on yoga, Ayurveda and travel', icon: BookOpen },
       { label: 'Guides & resources', href: '/know-more', description: 'A thoughtful place to start planning', icon: Compass },
+      { label: 'Rishikesh guide', href: '/destinations/rishikesh', description: 'Plan your yoga retreat visit', icon: MapPin },
       { label: 'Photo gallery', href: '/gallery', description: 'A closer look at the experience', icon: Camera },
       { label: 'Our story', href: '/about', description: 'Meet India Yoga Tourism', icon: Leaf },
     ],
@@ -59,7 +60,7 @@ const menuGroups: Record<MenuKey, { eyebrow: string; title: string; description:
 }
 
 const navItems: NavItem[] = [
-  { label: 'Retreats', href: '/packages', description: 'Find your next mindful escape', icon: Compass, menu: 'retreats' },
+  { label: 'Retreats', href: '/yoga-retreats-india', description: 'Find your next mindful escape', icon: Compass, menu: 'retreats' },
   { label: 'Wellness', href: '/programmes', description: 'Ayurveda, Panchakarma & meditation', icon: Leaf, menu: 'wellness' },
   { label: 'Online Classes', href: '/online-classes', description: 'Make space for practice, wherever you are', icon: Play },
   { label: 'Discover', href: '/know-more', description: 'Stories, guides & a closer look', icon: BookOpen, menu: 'discover' },

@@ -7,17 +7,18 @@ type FooterConfig = {
   siteName: string
   siteTagline: string
   footerText: string
-  destinations: any[]
+  destinations: { id: string; name: string; locationQuery: string }[]
 }
 
-export default function Footer({ initialConfig }: { initialConfig?: Partial<FooterConfig> }) {
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
-  const defaultDests = [
+const defaultDests = [
     { id: '1', name: 'Rishikesh', locationQuery: 'Rishikesh' },
     { id: '2', name: 'Kerala', locationQuery: 'Kerala' },
     { id: '3', name: 'Dharamshala', locationQuery: 'Dharamshala' },
   ]
+
+export default function Footer({ initialConfig }: { initialConfig?: Partial<FooterConfig> }) {
+  const [email, setEmail] = useState('')
+  const [subscribed, setSubscribed] = useState(false)
 
   const [siteConfig, setSiteConfig] = useState<FooterConfig>({
     siteName: initialConfig?.siteName || 'India Yoga Tourism',
@@ -40,7 +41,7 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
               if (Array.isArray(parsed) && parsed.length > 0) {
                 dests = parsed
               }
-            } catch (e) {
+            } catch {
               // fallback
             }
           }
@@ -52,12 +53,12 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
             destinations: dests,
           })
         }
-      } catch (err) {
+      } catch {
         // Fallback
       }
     }
     fetchConfig()
-  }, [])
+  }, [initialConfig])
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault()
@@ -154,7 +155,7 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
               Sanctuary Mission
             </span>
             <p className="font-quote-italic text-sm text-on-primary/95 italic">
-              "Yoga is the journey of the self, through the self, to the self." — The Bhagavad Gita
+              &ldquo;Yoga is the journey of the self, through the self, to the self.&rdquo; — The Bhagavad Gita
             </p>
           </div>
         </div>
@@ -165,6 +166,7 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
             Destinations
           </h3>
           <ul className="space-y-3 text-sm text-on-primary-container/80">
+            <li><Link href="/yoga-retreats-india" className="hover:text-tertiary-fixed transition-colors">Yoga Retreats in India</Link></li>
             {siteConfig.destinations.map((dest) => (
               <li key={dest.id || dest.name}>
                 <Link
@@ -201,7 +203,7 @@ export default function Footer({ initialConfig }: { initialConfig?: Partial<Foot
             </li>
             <li>
               <Link href="/about" className="hover:text-tertiary-fixed transition-colors">
-                Our Lineage &amp; Story
+                About India Yoga Tourism
               </Link>
             </li>
             <li>

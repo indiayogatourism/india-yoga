@@ -76,3 +76,27 @@ export function filterAvailablePackages<T extends PackageSchedule>(packages: rea
   const today = calendarDay(part('year'), part('month'), part('day'))!
   return packages.filter((pkg) => isAvailableOn(pkg, today))
 }
+
+/** Only current dates become booking choices; flexible dates are chosen in checkout. */
+export function getPackageDateOptions(schedule: PackageSchedule, now = new Date()) {
+  const parts = indiaDateFormatter.formatToParts(now)
+  const part = (name: Intl.DateTimeFormatPartTypes) => Number(parts.find((item) => item.type === name)?.value)
+  const today = calendarDay(part('year'), part('month'), part('day'))!
+  const batches = (schedule.upcomingDates || []).map((date) => date.trim()).filter(Boolean)
+  const currentBatches = batches.filter((batch) => {
+    const end = batchEndDate(batch, schedule.durationDays)
+    return end !== null && end >= today
+  })
+  const primary = { ...schedule, upcomingDates: [] }
+  const hasPrimary = Boolean(schedule.startDate?.trim() || schedule.endDate?.trim())
+  const primaryCurrent = hasPrimary && Boolean(schedule.startDate?.trim()) && isAvailableOn(primary, today)
+  const primaryLabel = [schedule.startDate?.trim(), schedule.endDate?.trim()].filter(Boolean).join(' to ')
+  const dates = [...new Set(currentBatches.length ? currentBatches : primaryCurrent ? [primaryLabel] : [])]
+  const flexible = !hasPrimary && batches.length === 0
+  const arrivals: Record<string, string> = {}
+  for (const label of dates) {
+    const first = parseDate(label.split(/\s+(?:to|[-–—])\s+|\s*[–—]\s*/i)[0])
+    if (first !== null) arrivals[label] = new Date(first * DAY_MS).toISOString().slice(0, 10)
+  }
+  return { dates, arrivals, flexible, canBook: flexible || dates.length > 0 }
+}

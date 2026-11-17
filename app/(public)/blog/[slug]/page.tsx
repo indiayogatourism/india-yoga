@@ -5,6 +5,10 @@ import { notFound } from 'next/navigation'
 import { isAdminViewer } from '@/lib/adminPreview'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import type { BlogPost } from '@prisma/client'
+import { getRetreatCatalog } from '@/lib/retreatCatalog'
+import { TARGET_RETREAT_SLUG } from '@/lib/retreatContent'
+import RetreatCard from '@/components/retreats/RetreatCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +19,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   try {
-    const blog: any = await (prisma as any).blogPost.findUnique({
+    const blog = await prisma.blogPost.findUnique({
       where: { slug },
     })
     if (!blog) return {}
@@ -54,7 +58,7 @@ export async function generateMetadata({
         images: ogImage ? [ogImage] : [],
       },
     }
-  } catch (error) {
+  } catch {
     return {}
   }
 }
@@ -65,9 +69,9 @@ export default async function PublicBlogDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  let blog: any = null
+  let blog: BlogPost | null = null
   try {
-    blog = await (prisma as any).blogPost.findUnique({
+    blog = await prisma.blogPost.findUnique({
       where: { slug },
     })
   } catch (error) {
@@ -79,10 +83,13 @@ export default async function PublicBlogDetailPage({
   // Unpublished posts are visible to signed-in admins only (draft preview)
   const isDraftPreview = !blog.published
   if (isDraftPreview && !(await isAdminViewer())) notFound()
+  const relatedRetreat = !isDraftPreview && /yoga|rishikesh|meditation|pranayama/i.test(`${blog.title} ${blog.slug}`)
+    ? (await getRetreatCatalog()).find((retreat) => retreat.slug === TARGET_RETREAT_SLUG)
+    : undefined
 
   return (
     <>
-      <HeadTags html={blog.customHtmlTags} />
+      <HeadTags html={blog.customHtmlTags} skipMetadataTags />
       <main className="min-h-screen bg-[#f8f6f0] pb-24">
         {isDraftPreview && (
           <div className="relative z-40 border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-xs font-bold text-amber-950 mt-20">
@@ -112,7 +119,8 @@ export default async function PublicBlogDetailPage({
             </div>
           )}
           <div className="rounded-2xl border border-[#17372b]/10 bg-white px-6 py-9 shadow-[0_20px_70px_rgba(23,55,43,.07)] md:rounded-3xl md:px-16 md:py-14">
-            <div className="rich-article" dangerouslySetInnerHTML={{ __html: blog.content }} />
+            <div className="rich-article" dangerouslySetInnerHTML={{ __html: blog.content.replace(/<(\/?)h1(?=[\s>])/gi, '<$1h2') }} />
+            {relatedRetreat && <section className="mt-12 border-t border-[#17372b]/15 pt-8"><h2 className="mb-5 font-display-lg text-3xl text-[#17372b]">Explore a yoga retreat in Rishikesh</h2><RetreatCard retreat={relatedRetreat} featured /></section>}
             <div className="mt-14 border-t border-[#17372b]/10 pt-7">
               <Link href="/blog" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.16em] text-[#17372b] hover:text-[#8b7040]">
                 <span aria-hidden="true">←</span> Back to all stories

@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import { SITE_URL } from '@/lib/siteUrl'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | India Yoga Tourism',
+  title: 'Contact India Yoga Tourism | Plan Your Yoga Retreat',
   description:
-    'Get in touch with India Yoga Tourism. Reach out about Rishikesh retreats, Panchakarma packages, online yoga classes, or any other enquiry.',
+    'Plan your yoga retreat with India Yoga Tourism. Share your preferred destination, travel dates and guest count, or contact the team by email, phone and WhatsApp.',
   keywords: [
     'contact india yoga tourism',
     'yoga retreat enquiry',
@@ -16,17 +16,17 @@ export const metadata: Metadata = {
     canonical: `${SITE_URL}/contact`,
   },
   openGraph: {
-    title: 'Contact Us | India Yoga Tourism',
+    title: 'Contact India Yoga Tourism | Plan Your Yoga Retreat',
     description:
-      'We are here to help you plan your perfect Himalayan yoga and Ayurveda journey.',
+      'Ask about retreat dates, accommodation and booking details. Share your travel preferences with India Yoga Tourism.',
     url: `${SITE_URL}/contact`,
     siteName: 'India Yoga Tourism',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Contact Us | India Yoga Tourism',
-    description: 'Plan your perfect Himalayan yoga and Ayurveda journey.',
+    title: 'Contact India Yoga Tourism | Plan Your Yoga Retreat',
+    description: 'Share your destination, dates and guest count to plan your yoga retreat.',
   },
 }
 

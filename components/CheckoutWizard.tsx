@@ -1,16 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
-import { formatPrice } from '@/lib/utils'
+import { SignInButton, useUser } from '@clerk/nextjs'
+import { getRetreatRooms, usdPrice as formatPrice } from '@/lib/retreatContent'
 
 interface PackageData {
   id: string
   title: string
   location: string
   durationDays: number
+  maxGroupSize: number
+  enableDormitory: boolean
+  enableShared: boolean
+  enablePrivate: boolean
   priceDormitory?: number | null
   priceShared: number
   pricePrivate: number
@@ -22,6 +26,11 @@ interface CheckoutWizardProps {
   initialGuests: number
   initialRoomType: 'dormitory' | 'shared' | 'private'
   initialSelectedBatch?: string
+  initialArrivalDate?: string
+}
+
+declare global {
+  interface Window { Razorpay: new (options: Record<string, unknown>) => { open(): void } }
 }
 
 export default function CheckoutWizard({
@@ -29,35 +38,32 @@ export default function CheckoutWizard({
   initialGuests,
   initialRoomType,
   initialSelectedBatch = '',
+  initialArrivalDate = '',
 }: CheckoutWizardProps) {
   const router = useRouter()
+  const { isLoaded, isSignedIn } = useUser()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+  const errorRef = useRef<HTMLDivElement>(null)
+  useEffect(() => { if (errorMsg) errorRef.current?.focus() }, [errorMsg])
 
   // Step 1: Details state
   const [guests, setGuests] = useState(initialGuests)
   const [roomType, setRoomType] = useState<'dormitory' | 'shared' | 'private'>(initialRoomType)
-  const [selectedBatch, setSelectedBatch] = useState(initialSelectedBatch)
-  const [arrivalDate, setArrivalDate] = useState(() => {
-    // Default to a date 30 days from now
-    const d = new Date()
-    d.setDate(d.getDate() + 30)
-    return d.toISOString().split('T')[0]
-  })
-  const [promoCode, setPromoCode] = useState('')
-  const [promoDiscount, setPromoDiscount] = useState(0)
+  const [selectedBatch] = useState(initialSelectedBatch)
+  const [arrivalDate, setArrivalDate] = useState(initialArrivalDate)
 
   // Step 2: Traveler Info state
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [country, setCountry] = useState('US')
+  const [country, setCountry] = useState('')
   const [passportNumber, setPassportNumber] = useState('')
   const [dietaryReqs, setDietaryReqs] = useState('')
-  const [medicalInfo, setMedicalInfo] = useState('')
-  const [specialRequests, setSpecialRequests] = useState('')
+  const [medicalInfo] = useState('')
+  const [specialRequests] = useState('')
 
   // Step 3: Payment state
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'paypal'>('razorpay')
@@ -70,17 +76,9 @@ export default function CheckoutWizard({
       ? pkg.pricePrivate
       : pkg.priceShared
   const subtotal = basePrice * guests
-  const discount = promoDiscount
+  const discount = 0
   const total = subtotal - discount
-
-  const handleApplyPromo = () => {
-    if (promoCode.toUpperCase() === 'PEACE10') {
-      setPromoDiscount(subtotal * 0.1) // 10% off
-    } else {
-      setErrorMsg('Invalid Promo Code')
-      setTimeout(() => setErrorMsg(''), 3000)
-    }
-  }
+  const roomOptions = getRetreatRooms(pkg)
 
   // Load Razorpay Script
   const loadRazorpayScript = () => {
@@ -138,7 +136,7 @@ export default function CheckoutWizard({
         name: 'India Yoga Tourism',
         description: `Booking ref: ${bookingRef}`,
         order_id: gatewayData.orderId,
-        handler: async function (response: any) {
+        handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) {
           setLoading(true)
           // 3. Verify Signature
           try {
@@ -159,8 +157,8 @@ export default function CheckoutWizard({
 
             // Redirect to success page
             router.push(`/booking/confirmation?ref=${bookingRef}`)
-          } catch (err: any) {
-            setErrorMsg(err.message || 'Payment verification failed')
+          } catch (err) {
+            setErrorMsg(err instanceof Error ? err.message : 'Payment verification failed')
             setLoading(false)
           }
         },
@@ -174,11 +172,12 @@ export default function CheckoutWizard({
         }
       }
 
-      const paymentObject = new (window as any).Razorpay(options)
+      const RazorpayCheckout = window.Razorpay
+      const paymentObject = new RazorpayCheckout(options)
       paymentObject.open()
       setLoading(false)
-    } catch (err: any) {
-      setErrorMsg(err.message || 'An error occurred during booking creation')
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'An error occurred during booking creation')
       setLoading(false)
     }
   }
@@ -213,13 +212,13 @@ export default function CheckoutWizard({
       }
 
       return bookingData.gatewayData.orderId
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to create PayPal order')
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to create PayPal order')
       return ''
     }
   }
 
-  const handlePaypalApprove = async (data: any) => {
+  const handlePaypalApprove = async (data: { orderID: string }) => {
     setLoading(true)
     try {
       const captureRes = await fetch('/api/payments/paypal/capture', {
@@ -236,8 +235,8 @@ export default function CheckoutWizard({
       }
 
       router.push(`/booking/confirmation?ref=${captureData.bookingRef}`)
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to capture PayPal payment')
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to capture PayPal payment')
       setLoading(false)
     }
   }
@@ -254,8 +253,12 @@ export default function CheckoutWizard({
     }
     if (targetStep === 3) {
       // Step 2 validation
-      if (!firstName || !lastName || !email || !phone || !passportNumber) {
+      if (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim() || !country.trim()) {
         setErrorMsg('Please fill in all required traveler information fields (*)')
+        return
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        setErrorMsg('Please enter a valid email address')
         return
       }
     }
@@ -384,7 +387,7 @@ export default function CheckoutWizard({
                     : 'bg-surface-container-highest text-outline'
                 }`}
               >
-                '3'
+                3
               </div>
               <span className={`text-sm ${step === 3 ? 'font-bold text-primary' : 'text-outline'}`}>
                 Payment
@@ -395,7 +398,7 @@ export default function CheckoutWizard({
 
         {/* Global Error Banner */}
         {errorMsg && (
-          <div className="mb-6 p-4 bg-error-container text-on-error-container rounded-lg border border-error/20 text-sm font-semibold">
+          <div ref={errorRef} tabIndex={-1} role="alert" className="mb-6 p-4 bg-error-container text-on-error-container rounded-lg border border-error/20 text-sm font-semibold">
             {errorMsg}
           </div>
         )}
@@ -408,31 +411,34 @@ export default function CheckoutWizard({
               {/* Date & Guests Picker */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label className="block text-sm text-on-surface-variant mb-2">Arrival Date</label>
+                  <label htmlFor="checkout-arrival" className="block text-sm text-on-surface-variant mb-2">Arrival Date</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-0 top-2 text-outline-variant">
                       calendar_month
                     </span>
                     <input
+                      id="checkout-arrival"
                       value={arrivalDate}
                       onChange={(e) => setArrivalDate(e.target.value)}
+                      readOnly={Boolean(initialSelectedBatch)}
                       className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 pl-8 text-on-surface focus:ring-0 focus:border-tertiary-fixed-dim transition-colors"
                       type="date"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm text-on-surface-variant mb-2">Guests Count</label>
+                  <label htmlFor="checkout-guests" className="block text-sm text-on-surface-variant mb-2">Guests Count</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-0 top-2 text-outline-variant">
                       group
                     </span>
                     <select
+                      id="checkout-guests"
                       value={guests}
                       onChange={(e) => setGuests(parseInt(e.target.value))}
                       className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 pl-8 text-on-surface focus:ring-0 focus:border-tertiary-fixed-dim transition-colors appearance-none"
                     >
-                      {[1, 2, 3, 4, 5, 6].map((num) => (
+                      {Array.from({ length: Math.max(1, pkg.maxGroupSize) }, (_, index) => index + 1).map((num) => (
                         <option key={num} value={num}>
                           {num} {num === 1 ? 'Adult' : 'Adults'}
                         </option>
@@ -443,81 +449,15 @@ export default function CheckoutWizard({
               </div>
 
               {/* Room Cards Option */}
-              <div>
-                <label className="block text-sm text-on-surface-variant mb-4">Accommodation Type</label>
+              <fieldset>
+                <legend className="block text-sm text-on-surface-variant mb-4">Accommodation Type</legend>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div
-                    onClick={() => setRoomType('shared')}
-                    className={`p-5 border rounded-lg cursor-pointer transition-all duration-300 flex flex-col justify-between ${
-                      roomType === 'shared'
-                        ? 'border-tertiary-fixed-dim bg-surface-container-low shadow-sm'
-                        : 'border-outline-variant/30 hover:border-outline-variant/80'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-primary">Shared Twin Room</h3>
-                        {roomType === 'shared' && (
-                          <span className="material-symbols-outlined text-[20px] text-tertiary-fixed-dim">
-                            check_circle
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-on-surface-variant mb-4">
-                        Authentic living spaces designed to share with a fellow traveler.
-                      </p>
-                    </div>
-                    <span className="font-label-price text-sm text-on-surface">Included</span>
-                  </div>
-
-                  <div
-                    onClick={() => setRoomType('private')}
-                    className={`p-5 border rounded-lg cursor-pointer transition-all duration-300 flex flex-col justify-between ${
-                      roomType === 'private'
-                        ? 'border-tertiary-fixed-dim bg-surface-container-low shadow-sm'
-                        : 'border-outline-variant/30 hover:border-outline-variant/80'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-primary">Private Suite</h3>
-                        {roomType === 'private' && (
-                          <span className="material-symbols-outlined text-[20px] text-tertiary-fixed-dim">
-                            check_circle
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-on-surface-variant mb-4">
-                        Single occupancy room with complete privacy and premium comforts.
-                      </p>
-                    </div>
-                    <span className="font-label-price text-sm text-tertiary-fixed-dim">
-                      +{formatPrice(pkg.pricePrivate - pkg.priceShared)} /person
-                    </span>
-                  </div>
+                  {roomOptions.map((option) => <label key={option.type} className={`flex cursor-pointer items-start gap-3 rounded-xl border p-5 ${roomType === option.type ? 'border-[#17372b] bg-surface-container-low' : 'border-outline-variant/40'}`}>
+                    <input type="radio" name="checkout-room" value={option.type} checked={roomType === option.type} onChange={() => setRoomType(option.type)} className="mt-1" />
+                    <span><span className="block font-bold text-primary">{option.label}</span><span className="mt-2 block text-sm text-on-surface-variant">{formatPrice(option.price)} USD / person</span></span>
+                  </label>)}
                 </div>
-              </div>
-
-              {/* Coupon */}
-              <div>
-                <label className="block text-sm text-on-surface-variant mb-2">Promo Code</label>
-                <div className="flex gap-4">
-                  <input
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-primary font-bold uppercase max-w-[200px] focus:ring-0 focus:border-tertiary-fixed-dim transition-colors"
-                    placeholder="Enter code (e.g. PEACE10)"
-                    type="text"
-                  />
-                  <button
-                    onClick={handleApplyPromo}
-                    className="text-sm font-bold text-secondary hover:text-primary transition-colors cursor-pointer"
-                    type="button"
-                  >
-                    Apply Code
-                  </button>
-                </div>
-              </div>
+              </fieldset>
 
               <div className="pt-6 flex justify-end">
                 <button
@@ -539,9 +479,11 @@ export default function CheckoutWizard({
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label className="block text-sm text-on-surface-variant mb-1">First Name *</label>
+                  <label htmlFor="checkout-first-name" className="block text-sm text-on-surface-variant mb-1">First Name *</label>
                   <input
                     value={firstName}
+                    id="checkout-first-name"
+                    autoComplete="given-name"
                     onChange={(e) => setFirstName(e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-tertiary-fixed-dim transition-colors"
                     placeholder="Jane"
@@ -550,9 +492,11 @@ export default function CheckoutWizard({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-on-surface-variant mb-1">Last Name *</label>
+                  <label htmlFor="checkout-last-name" className="block text-sm text-on-surface-variant mb-1">Last Name *</label>
                   <input
                     value={lastName}
+                    id="checkout-last-name"
+                    autoComplete="family-name"
                     onChange={(e) => setLastName(e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-tertiary-fixed-dim transition-colors"
                     placeholder="Doe"
@@ -564,9 +508,11 @@ export default function CheckoutWizard({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label className="block text-sm text-on-surface-variant mb-1">Email Address *</label>
+                  <label htmlFor="checkout-email" className="block text-sm text-on-surface-variant mb-1">Email Address *</label>
                   <input
                     value={email}
+                    id="checkout-email"
+                    autoComplete="email"
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-tertiary-fixed-dim transition-colors"
                     placeholder="jane@example.com"
@@ -575,9 +521,11 @@ export default function CheckoutWizard({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-on-surface-variant mb-1">Contact Number *</label>
+                  <label htmlFor="checkout-phone" className="block text-sm text-on-surface-variant mb-1">Contact Number *</label>
                   <input
                     value={phone}
+                    id="checkout-phone"
+                    autoComplete="tel"
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-tertiary-fixed-dim transition-colors"
                     placeholder="+1 (555) 123-4567"
@@ -589,9 +537,11 @@ export default function CheckoutWizard({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label className="block text-sm text-on-surface-variant mb-1">Country *</label>
+                  <label htmlFor="checkout-country" className="block text-sm text-on-surface-variant mb-1">Country *</label>
                   <input
                     value={country}
+                    id="checkout-country"
+                    autoComplete="country-name"
                     onChange={(e) => setCountry(e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-tertiary-fixed-dim transition-colors"
                     placeholder="United States"
@@ -600,14 +550,14 @@ export default function CheckoutWizard({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-on-surface-variant mb-1">Passport Number *</label>
+                  <label htmlFor="checkout-passport" className="block text-sm text-on-surface-variant mb-1">Passport Number (optional)</label>
                   <input
                     value={passportNumber}
+                    id="checkout-passport"
                     onChange={(e) => setPassportNumber(e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-tertiary-fixed-dim transition-colors"
                     placeholder="Enter passport number"
                     type="text"
-                    required
                   />
                 </div>
               </div>
@@ -697,7 +647,7 @@ export default function CheckoutWizard({
                   </button>
 
                   <div>
-                    {paymentMethod === 'razorpay' ? (
+                    {!isSignedIn ? <div className="max-w-xs text-right"><p className="mb-3 text-sm text-on-surface-variant">Sign in to complete payment and access your booking dashboard.</p><SignInButton mode="modal"><button type="button" disabled={!isLoaded} className="rounded-full bg-primary px-6 py-3 text-sm font-bold text-white disabled:opacity-50">{isLoaded ? 'Sign in to continue' : 'Checking account…'}</button></SignInButton></div> : paymentMethod === 'razorpay' ? (
                       <button
                         onClick={handleRazorpayPayment}
                         disabled={loading}
