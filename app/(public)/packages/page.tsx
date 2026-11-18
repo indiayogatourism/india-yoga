@@ -255,7 +255,7 @@ export default async function PackagesPage({ searchParams }: PageProps) {
                   <p className="font-body-md text-on-surface-variant mb-8 line-clamp-3 flex-grow">
                     {pkg.shortDescription}
                   </p>
-                  <Link href={`/packages/${pkg.slug}`} data-track-event="retreat_listing_click" data-track-package={pkg.slug} className="mt-auto block w-full py-3.5 border-2 border-on-tertiary-container text-on-tertiary-container font-label-price text-sm tracking-wider uppercase rounded hover:bg-on-tertiary-container hover:text-white transition-colors text-center">
+                  <Link href={`/packages/${pkg.slug}`} data-track-event="select_item" data-retreat-id={pkg.id} data-retreat-slug={pkg.slug} className="mt-auto block w-full py-3.5 border-2 border-on-tertiary-container text-on-tertiary-container font-label-price text-sm tracking-wider uppercase rounded hover:bg-on-tertiary-container hover:text-white transition-colors text-center">
                     View Retreat
                   </Link>
                 </div>

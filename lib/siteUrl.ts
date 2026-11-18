@@ -30,6 +30,21 @@ export function absoluteUrl(path = '/'): string {
   return `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`
 }
 
+/** A pasted Markdown link is not a canonical URL. Keep valid CMS overrides. */
+export function canonicalForPath(value: string | null | undefined, path: string): string {
+  const fallback = absoluteUrl(path)
+  const candidate = toPreferredUrl(value)
+  if (!candidate || /[\s<>\[\]()\\]/.test(candidate)) return fallback
+  if (!/^https?:\/\//i.test(candidate) && !/^\/(?!\/)/.test(candidate)) return fallback
+  try {
+    const url = new URL(candidate, SITE_URL)
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) return fallback
+    return url.href
+  } catch {
+    return fallback
+  }
+}
+
 export const SITE_NAME = 'India Yoga Tourism'
 
 /**

@@ -80,6 +80,7 @@ test('homepage filters before the four-card limit and excludes destinations with
   const packages = [...old, ...current]
   let databaseUnavailable = false
   const page = load('app/(public)/page.tsx', {
+    '@/lib/retreatContent': load('lib/retreatContent.ts'),
     'next/link': ({ children, ...props }) => React.createElement('a', props, children),
     '@/lib/prisma': { prisma: {
       package: { findMany: async (query) => {

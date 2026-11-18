@@ -186,7 +186,7 @@ test('enquiry endpoint saves context and package ID without returning personal d
   const body = { name: '<b>Guest</b>', email: 'guest@example.com', message: 'Ask about rooms', packageSlug: pkg.slug, destination: 'Rishikesh', preferredStartDate: '2026-11-24', preferredEndDate: '2026-11-28', guests: 2 }
   const response = await route.POST({ json: async () => body })
   assert.equal(response.status, 200)
-  assert.deepEqual(await response.json(), { success: true })
+  assert.deepEqual(await response.json(), { success: true, analytics: { package_id: pkg.id, package_slug: pkg.slug } })
   assert.equal(saved.packageId, pkg.id)
   for (const text of ['Rishikesh', '2026-11-24', '2026-11-28', 'Guests: 2', 'Ask about rooms']) assert.ok(saved.message.includes(text))
   const templates = load('lib/emails/templates.ts')
@@ -220,9 +220,11 @@ test('analytics requires explicit consent/provider and excludes personal fields;
     assert.equal(analytics.trackConversion('enquiry_submit', params), false)
     window.iytAnalyticsConsent = true
     assert.equal(analytics.trackConversion('enquiry_submit', params), true)
-    assert.deepEqual(calls[0][2], { source: 'contact', package_slug: pkg.slug, page_location: 'https://www.indiayogatourism.com/booking/confirmation', page_referrer: '' })
-    assert.equal(analytics.trackConversionOnce('booking_confirmed', { source: 'confirmation', package_slug: pkg.slug, value: 250, currency: 'USD' }, 'local-only-booking-key'), true)
-    assert.equal(analytics.trackConversionOnce('booking_confirmed', { source: 'confirmation' }, 'local-only-booking-key'), false)
+    assert.equal(calls[0][1], 'generate_lead')
+    assert.deepEqual(calls[0][2], { source: 'contact', package_slug: pkg.slug, page_location: 'https://www.indiayogatourism.com/booking/confirmation', page_referrer: '', page_title: 'India Yoga Tourism' })
+    const purchase = { source: 'confirmation', package_id: pkg.id, package_slug: pkg.slug, value: 250, price: 250, quantity: 1, currency: 'USD', transaction_id: `iyt_${'a'.repeat(64)}` }
+    assert.equal(analytics.trackConversionOnce('booking_confirmed', purchase, 'local-only-booking-key'), true)
+    assert.equal(analytics.trackConversionOnce('booking_confirmed', purchase, 'local-only-booking-key'), false)
     assert.ok(!JSON.stringify(calls).includes('local-only-booking-key'))
     assert.ok(!JSON.stringify(calls).includes('private-reference'))
     window.iytAnalyticsConsent = false
@@ -254,7 +256,7 @@ test('mocked booking preserves server pricing/gateway flow and uses four nights 
 })
 
 test('confirmation tracking only renders for an authorized paid and confirmed booking', async () => {
-  const booking = { id: 'mock-booking', package: pkg, payment: { status: 'PENDING' }, status: 'PENDING', totalAmount: 250, currency: 'USD', guests: 1, pricePerPerson: 250, arrivalDate: new Date('2026-11-24'), departureDate: new Date('2026-11-28'), fullName: 'QA Guest', email: 'qa@example.com', createdAt: new Date('2026-11-17') }
+  const booking = { id: 'mock-booking', package: pkg, payment: { status: 'PENDING', amount: 250, currency: 'USD' }, status: 'PENDING', totalAmount: 250, currency: 'USD', guests: 1, pricePerPerson: 250, arrivalDate: new Date('2026-11-24'), departureDate: new Date('2026-11-28'), fullName: 'QA Guest', email: 'qa@example.com', createdAt: new Date('2026-11-17') }
   const page = load('app/(public)/booking/confirmation/page.tsx', {
     ...baseMocks,
     '@/lib/prisma': { prisma: { booking: { findUnique: async () => booking } } },
@@ -264,7 +266,7 @@ test('confirmation tracking only renders for an authorized paid and confirmed bo
   })
   assert.equal(page.metadata.robots.index, false)
   const props = { searchParams: Promise.resolve({ ref: 'mock-only' }) }
-  assert.ok(!render(await page.default(props)).includes('data-conversion="booking_confirmed"'))
+  assert.ok(!render(await page.default(props)).includes('data-conversion="purchase"'))
   booking.status = 'CONFIRMED'; booking.payment.status = 'PAID'
-  assert.ok(render(await page.default(props)).includes('data-conversion="booking_confirmed"'))
+  assert.ok(render(await page.default(props)).includes('data-conversion="purchase"'))
 })

@@ -14,14 +14,16 @@ import PackageGalleryViewer from '@/components/PackageGalleryViewer'
 import RetreatCard from '@/components/retreats/RetreatCard'
 import { Breadcrumbs, Questions } from '@/components/retreats/Editorial'
 import ConversionTracking from '@/components/ConversionTracking'
+import { withPackageImageUrls } from '@/lib/packageImages'
 
 interface PageProps { params: Promise<{ slug: string }> }
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
-  const pkg = await getPackageDetail(slug)
-  if (!pkg) return { robots: { index: false, follow: false } }
+  const saved = await getPackageDetail(slug)
+  if (!saved) return { robots: { index: false, follow: false } }
+  const pkg = saved.status === 'PUBLISHED' ? withPackageImageUrls(saved) : saved
   if (pkg.status !== 'PUBLISHED') return { title: withBrand(pkg.metaTitle || pkg.title), robots: { index: false, follow: false } }
   const target = slug === TARGET_RETREAT_SLUG
   const title = target ? TARGET_RETREAT_TITLE : withBrand(pkg.metaTitle || pkg.title)
@@ -37,14 +39,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PackageDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const pkg = await getPackageDetail(slug)
-  if (!pkg) notFound()
+  const saved = await getPackageDetail(slug)
+  if (!saved) notFound()
+  const pkg = saved.status === 'PUBLISHED' ? withPackageImageUrls(saved) : saved
   const isDraftPreview = pkg.status !== 'PUBLISHED'
   if (isDraftPreview && !(await isAdminViewer())) notFound()
   const [config, catalog, sharedHtml] = await Promise.all([getSiteConfig(), getRetreatCatalog(), getSiteSectionHtml(PROGRAMME_RETREAT_SECTION_KEY)])
   const target = slug === TARGET_RETREAT_SLUG
   const title = target && pkg.durationDays === 5 && pkg.durationNights === 4 ? TARGET_RETREAT_NAME : pkg.title
   const rooms = getRetreatRooms(pkg)
+  const startingPrice = rooms.length ? Math.min(...rooms.map((room) => room.price)) : undefined
   const schedule = getPackageDateOptions(pkg)
   const canBook = !isDraftPreview && schedule.canBook && rooms.length > 0
   const enquiryUrl = retreatEnquiryUrl(slug)
@@ -60,7 +64,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
   // The target's saved JSON-LD contains an outdated USD 1499/InStock offer.
   // Replace only its JSON-LD at render time; preserve the CMS record and other custom tags.
   const customTags = target ? (pkg.customHtmlTags || '').replace(/<script\b(?=[^>]*\btype\s*=\s*["']application\/ld\+json["'])[^>]*>[\s\S]*?<\/script\s*>/gi, '') : pkg.customHtmlTags
-  const tripSchema = { '@context': 'https://schema.org', '@type': 'TouristTrip', '@id': `${SITE_URL}/packages/${slug}#retreat`, name: title, description: pkg.shortDescription, url: `${SITE_URL}/packages/${slug}`, image: [...new Set([pkg.featuredImage, ...pkg.gallery].filter(Boolean))] }
+  const tripSchema = { '@context': 'https://schema.org', '@type': 'TouristTrip', '@id': `${SITE_URL}/packages/${slug}#retreat`, name: title, description: pkg.shortDescription, url: `${SITE_URL}/packages/${slug}`, image: [...new Set([pkg.featuredImage, ...pkg.gallery].filter((image): image is string => !!image))].map((image) => new URL(image, SITE_URL).href) }
   const questions = [
     { question: 'What is the duration and location?', answer: `This retreat lists ${pkg.durationDays} days and ${pkg.durationNights} nights in ${pkg.location}. Review the itinerary for arrival, departure and activity details.` },
     { question: 'Which room options and prices can I choose?', answer: rooms.length ? `Currently listed options: ${rooms.map((room) => `${room.label}: ${usdPrice(room.price)} USD per person`).join('; ')}. The booking card calculates the total for your guest count. Confirm room arrangements and any extras with the team.` : 'Current accommodation prices are not listed. Please enquire before making travel plans.' },
@@ -70,8 +74,8 @@ export default async function PackageDetailPage({ params }: PageProps) {
   return <>
     <HeadTags html={customTags} skipMetadataTags />
     {target && !isDraftPreview && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(tripSchema).replace(/</g, '\\u003c') }} />}
-    {!isDraftPreview && <ConversionTracking event="package_view" packageSlug={slug} source="package" />}
-    <main className="bg-[#f8f6f0] pb-36 pt-28 lg:pb-20">
+    {!isDraftPreview && <ConversionTracking event="view_item" packageId={pkg.id} packageSlug={slug} source="package" value={startingPrice} price={startingPrice} currency={startingPrice !== undefined ? 'USD' : undefined} />}
+    <main data-retreat-id={isDraftPreview ? undefined : pkg.id} data-retreat-slug={slug} className="bg-[#f8f6f0] pb-36 pt-28 lg:pb-20">
       {isDraftPreview && <p className="bg-amber-50 p-4 text-center text-sm text-amber-950">Draft preview — only administrators can view this package.</p>}
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Yoga retreats', href: RETREATS_PATH }, { label: pkg.title }]} />
       <div className="mx-auto max-w-6xl px-5 md:px-8">
@@ -85,6 +89,7 @@ export default async function PackageDetailPage({ params }: PageProps) {
             {rooms.length > 0 && <p className="text-sm font-semibold text-[#17372b]">From {usdPrice(Math.min(...rooms.map((room) => room.price)))} USD / person</p>}
           </div>
           <p className="mt-4 text-sm text-[#536457]">{schedule.dates.length ? `Listed dates: ${schedule.dates.join(' · ')}` : schedule.flexible ? 'Flexible travel dates — confirm arrangements with the team.' : 'No current dates are listed. Enquire about the next departure.'}</p>
+          <p className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-[#17372b]"><a href="#inclusions" className="underline underline-offset-4">Inclusions &amp; exclusions</a><a href="#accommodation" className="underline underline-offset-4">Room details</a><a href="#booking-policy" className="underline underline-offset-4">Cancellation information</a></p>
         </header>
         <PackageGalleryViewer featuredImage={pkg.featuredImage} gallery={pkg.gallery} title={pkg.title} />
         <nav aria-label="Retreat sections" className="mb-8 flex flex-wrap gap-x-5 gap-y-3 border-y border-[#17372b]/15 py-5 text-sm font-semibold text-[#17372b]">

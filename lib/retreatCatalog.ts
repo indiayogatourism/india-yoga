@@ -2,6 +2,7 @@ import { cache } from 'react'
 import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { filterAvailablePackages } from '@/lib/packageAvailability'
+import { withPackageImageUrls } from '@/lib/packageImages'
 
 const retreatSelect = {
   id: true, slug: true, title: true, shortDescription: true, category: true,
@@ -21,7 +22,7 @@ export const getRetreatCatalog = cache(async (): Promise<RetreatListing[]> => {
       select: retreatSelect,
       orderBy: [{ totalBookings: 'desc' }, { title: 'asc' }],
     })
-    return filterAvailablePackages(packages)
+    return filterAvailablePackages(packages).map(withPackageImageUrls)
   } catch {
     return []
   }

@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { SITE_URL, toPreferredUrl, withBrand } from '@/lib/siteUrl'
+import { canonicalForPath, withBrand } from '@/lib/siteUrl'
 import HeadTags from '@/components/HeadTags'
 import { notFound } from 'next/navigation'
 import { isAdminViewer } from '@/lib/adminPreview'
@@ -31,7 +31,7 @@ export async function generateMetadata({
     const title = blog.metaTitle || blog.title
     const description = blog.metaDescription || blog.excerpt
     const keywords = blog.metaKeywords ? blog.metaKeywords.split(',').map((k: string) => k.trim()) : undefined
-    const canonical = toPreferredUrl(blog.canonicalUrl) || `${SITE_URL}/blog/${slug}`
+    const canonical = canonicalForPath(blog.canonicalUrl, `/blog/${slug}`)
     const ogImage = blog.ogImage || blog.coverImage
 
     return {

@@ -18,7 +18,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
   const initialRetreat = options.some((pkg) => pkg.slug === selectedSlug) ? selectedSlug : ''
   const whatsapp = config.whatsappNumber.replace(/\D/g, '')
   const phone = config.contactPhone.replace(/[^\d+]/g, '')
-  return <main className="bg-[#f8f6f0] pb-20">
+  return <main data-retreat-id={selected?.status === 'PUBLISHED' ? selected.id : undefined} data-retreat-slug={initialRetreat || undefined} className="bg-[#f8f6f0] pb-20">
     <PageHero eyebrow="Your journey starts with a conversation" title="Contact India Yoga Tourism – Plan Your Yoga Retreat" intro="Tell us where you would like to go, your preferred dates and who is travelling. Ask about the program, room arrangements or booking details before you decide." />
     <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
     <div className="mx-auto grid max-w-6xl gap-10 px-5 py-8 md:px-8 lg:grid-cols-[.8fr_1.2fr]">

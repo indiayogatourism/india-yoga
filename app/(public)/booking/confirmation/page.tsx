@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import { formatPrice, formatDate } from '@/lib/utils'
 import { getAuthorizedBookingByRef } from '@/lib/bookingAccess'
 import ConversionTracking from '@/components/ConversionTracking'
+import { getVerifiedPurchase } from '@/lib/bookingAnalytics'
+import { isAdminViewer } from '@/lib/adminPreview'
 import type { Prisma } from '@prisma/client'
 
 interface PageProps {
@@ -46,10 +48,11 @@ export default async function BookingConfirmationPage({ searchParams }: PageProp
   }
 
   const isConfirmed = booking.status === 'CONFIRMED' && booking.payment?.status === 'PAID'
+  const purchase = isConfirmed && !(await isAdminViewer()) ? getVerifiedPurchase(booking) : null
 
   return (
     <main className="pt-32 pb-24 max-w-[800px] mx-auto px-6 text-center">
-      {isConfirmed && <ConversionTracking event="booking_confirmed" packageSlug={booking.package.slug} source="confirmation" dedupeKey={booking.id} value={booking.totalAmount} currency={booking.currency} />}
+      {purchase && <ConversionTracking event="purchase" packageId={purchase.package_id} packageSlug={purchase.package_slug} source="confirmation" dedupeKey={purchase.transaction_id} transactionId={purchase.transaction_id} value={purchase.value} currency={purchase.currency} price={purchase.price} quantity={purchase.quantity} />}
       <div className="bg-surface-container-low/50 border border-outline-variant/30 rounded-xl p-8 md:p-12 soft-shadow">
         {/* Success Icon */}
         <div className="w-20 h-20 bg-secondary-container/40 text-secondary rounded-full flex items-center justify-center mx-auto mb-6">

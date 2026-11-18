@@ -7,6 +7,7 @@ import HeroSearchBar from '@/components/home/HeroSearchBar'
 import { getSiteSectionHtml, HOME_EXPERIENCE_SECTION_KEY } from '@/lib/siteSections'
 import { HOME_URL, HOME_TITLE, HOME_DESCRIPTION, homeServices, homeFaqs } from '@/lib/homepageContent'
 import { filterAvailablePackages } from '@/lib/packageAvailability'
+import { TARGET_RETREAT_SLUG, TARGET_RETREAT_PATH } from '@/lib/retreatContent'
 
 // Date-based availability must be checked on every request, including at midnight IST.
 export const dynamic = 'force-dynamic'
@@ -41,7 +42,7 @@ async function getAvailablePackages() {
   try {
     const packages = await prisma.package.findMany({
       where: { status: 'PUBLISHED' },
-      select: { id: true, location: true, startDate: true, endDate: true, upcomingDates: true, durationDays: true },
+      select: { id: true, slug: true, location: true, startDate: true, endDate: true, upcomingDates: true, durationDays: true },
       orderBy: { totalBookings: 'desc' },
     })
     return filterAvailablePackages(packages)
@@ -300,7 +301,7 @@ export default async function HomePage() {
         <img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1600&q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" width={1600} height={1000} className="absolute inset-0 object-cover w-full h-full opacity-20" />
         <div className="relative max-w-[1280px] mx-auto px-6 md:px-12 text-center">
           <h2 id="journey-title" className="font-display-lg text-3xl md:text-4xl font-bold mb-5">Start Planning Your Yoga &amp; Wellness Journey in India</h2>
-          <p className="text-white leading-relaxed mb-8">Explore retreats, compare wellness experiences and discover programs that fit your travel plans.</p>
+          <p className="text-white leading-relaxed mb-8">Explore retreats, compare wellness experiences and discover programs that fit your travel plans.{availablePackages.find((pkg) => pkg.slug === TARGET_RETREAT_SLUG) && <> Planning a shorter stay? <Link href={TARGET_RETREAT_PATH} data-track-event="select_item" data-retreat-id={availablePackages.find((pkg) => pkg.slug === TARGET_RETREAT_SLUG)?.id} data-retreat-slug={TARGET_RETREAT_SLUG} className="font-semibold underline underline-offset-4">Review the five-day yoga and spiritual retreat in Rishikesh</Link>.</>}</p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link href="/packages" className="bg-tertiary-fixed-dim hover:bg-tertiary-fixed text-on-tertiary-fixed font-bold px-7 py-3.5 rounded-full">Explore Retreats</Link>
             <Link href="/contact" className="border border-white hover:bg-white/10 text-white font-bold px-7 py-3.5 rounded-full">Contact Our Team</Link>

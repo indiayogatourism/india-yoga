@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       sendEmail({ to: process.env.ADMIN_NOTIFICATION_EMAIL || 'indiayogatourism@gmail.com', subject: 'New retreat enquiry | India Yoga Tourism', html: getEnquiryAlertTemplate(data.name, data.email, data.phone || null, message, pkg?.title) }),
       sendEmail({ to: data.email, subject: 'Your enquiry has been received | India Yoga Tourism', html: getEnquiryReceivedTemplate(data.name) }),
     ])
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, ...(pkg ? { analytics: { package_id: pkg.id, package_slug: data.packageSlug } } : {}) })
   } catch {
     return NextResponse.json({ success: false, error: 'We could not save your enquiry right now. Please try again or contact us by email or WhatsApp.' }, { status: 503 })
   }

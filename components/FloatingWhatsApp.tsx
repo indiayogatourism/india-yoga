@@ -25,7 +25,8 @@ export default function FloatingWhatsApp() {
     fetchConfig()
   }, [])
 
-  const message = 'Hello! I would like to enquire about India Yoga Tourism retreats.'
+  const packagePath = /^\/packages\/[a-z0-9-]+$/.test(pathname) ? pathname : ''
+  const message = packagePath ? `Hello! I have a question about this retreat: https://www.indiayogatourism.com${packagePath}` : 'Hello! I would like to enquire about India Yoga Tourism retreats.'
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
 
   return (

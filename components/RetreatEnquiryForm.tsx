@@ -33,7 +33,8 @@ export default function RetreatEnquiryForm({ options, initialRetreat, initialDes
       })
       const data = await response.json()
       if (!response.ok || !data.success) throw new Error(data.error || 'Your enquiry could not be saved. Please try again.')
-      trackConversion('enquiry_submit', { package_slug: packageSlug, source: 'contact' })
+      // Item context is resolved by the server only after the enquiry has been saved.
+      trackConversion('generate_lead', { package_id: data.analytics?.package_id, package_slug: data.analytics?.package_slug, source: 'contact' })
       setState('success')
     } catch (failure) {
       setState('idle')

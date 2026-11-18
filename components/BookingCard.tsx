@@ -29,7 +29,7 @@ export default function BookingCard({ packageId, packageSlug, packageTitle, room
 
   const handleBookNow = () => {
     if (!canBook || !room || (!flexibleDates && !bookingDates.includes(selectedBatch))) return
-    trackConversion('booking_cta_click', { package_slug: packageSlug, source: 'booking_card' })
+    trackConversion('booking_cta_click', { package_id: packageId, package_slug: packageSlug, source: 'booking_card' })
     const query = new URLSearchParams({ packageId, guests: String(guests), roomType: room.type })
     if (selectedBatch) query.set('selectedBatch', selectedBatch)
     router.push(`/booking/checkout?${query}`)
